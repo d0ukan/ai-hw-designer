@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "project_name": null,
+  "requirements_revision": null,
+  "pcb_requirements_revision": null,
+  "design_revision": null,
+  "input_approval": {
+    "status": "PENDING",
+    "revision": null,
+    "evidence": null
+  },
+  "pcb_input_approval": {
+    "status": "PENDING",
+    "revision": null,
+    "evidence": null
+  },
+  "reviews": {
+    "schematic": {
+      "status": "PENDING",
+      "revision": null,
+      "evidence": null
+    },
+    "pcb": {
+      "status": "PENDING",
+      "revision": null,
+      "evidence": null
+    },
+    "manufacturing": {
+      "status": "PENDING",
+      "revision": null,
+      "evidence": null
+    }
+  },
+  "export_approval": {
+    "status": "PENDING",
+    "revision": null,
+    "evidence": null
+  },
+  "blocking_issues": []
+}
