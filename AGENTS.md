@@ -5,7 +5,7 @@ Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**
 ## Önce mevcut durum
 
 1. `Project-README.md` ve `project/workflow-state.json` dosyalarını kontrol et. Projeye ait ek isterler, kurallar, kararlar ve EDA bağlantı bilgileri yalnızca Project-README'de tutulur.
-2. Yeni projede önce kullanıcının anlatım tercihini (Caveman, Balanced veya Detailed) sor; tercih varsa tekrar sorma. Ardından `Hardware-Rules.md` bölüm 00'daki ilgili soruları kullanıcıya sor. G0 onayı yoksa tasarıma başlama. Proje amacı, AC/DC ve giriş min/nom/max, kart fonksiyonu, yazılı isterler, tek/multi-PCB, hazır modül/STEP datası, dış konnektörler ve karşı parçalar, diagnostik LED, varsa programlama/flash/debug ve komple CAD teslimat tercihlerini netleştir.
+2. Yeni projede önce kullanıcının anlatım tercihini (Caveman, Balanced veya Detailed) sor; tercih varsa tekrar sorma. Proje amacından sonra kalite profilini (Hobi, Endüstriyel veya Havacılık) sor; RF ve Havacılık kuralları yalnızca ilgiliyse açılır. Ardından `Hardware-Rules.md` bölüm 00'daki ilgili soruları kullanıcıya sor. G0 onayı yoksa tasarıma başlama. Proje amacı, AC/DC ve giriş min/nom/max, kart fonksiyonu, yazılı isterler, tek/multi-PCB, hazır modül/STEP datası, dış konnektörler ve karşı parçalar, diagnostik LED, varsa programlama/flash/debug ve komple CAD teslimat tercihlerini netleştir.
 3. Mevcut projede yalnızca yeni veya değişen girdileri sor; önceki onayları gereksiz yere tekrarlama. Şematik/komponent seçimini etkileyen PCB kısıtlarını baştan öğren.
 4. Kullanıcının izin verdiği kapsamı aşma. Gizli bilgiler, API anahtarları ve özel tasarım dosyalarını harici servislere izinsiz gönderme.
 
@@ -39,6 +39,8 @@ Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**
 - G1 olmadan `Manufacturing/` içinde Gerber, drill, BOM, PnP veya diğer release çıktısı oluşturma.
 - Export öncesinde `python scripts/projectctl.py check-export` çalıştır; başarısızsa dur ve eksik bilgiyi bildir.
 - Üretim dosyalarını Reviewer doğruladıktan sonra `check-release` çalıştır.
+- Onay ve review kayıtlarını `python scripts/projectctl.py approve|review|set|block|unblock` komutlarıyla yaz; `workflow-state.json` dosyasını elle düzenleme.
+- Release öncesinde `python scripts/projectctl.py manifest` ile `Manufacturing/<design_revision>/MANIFEST.sha256` oluştur; `check-release` bu manifesti doğrular.
 - Onayları yalnızca gerçek kullanıcı kararına dayanarak kaydet. Reviewer PASS durumunu ve revizyonunu gerçek incelemeye dayanarak doğrular. Önceki onay veya review yeni revizyonu otomatik olarak kapsamaz.
 - Sipariş, yayınlama ve harici üretim işlemleri ayrı kullanıcı yetkisi gerektirir.
 

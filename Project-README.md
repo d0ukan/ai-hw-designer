@@ -5,6 +5,8 @@
 | Alan | Proje bilgisi |
 | :--- | :--- |
 | Proje adı / amaç | Belirlenecek |
+| Kalite profili (Hobi / Endüstriyel / Havacılık) | Belirlenecek |
+| RF var mı / band / kademe (RF-A, RF-B, RF-C) | Belirlenecek / N/A |
 | Kart tipi / yazılı isterler | Belirlenecek |
 | Tek PCB / multi-PCB ve kart ID'leri | Belirlenecek |
 | Kartlar arası bağlantı yöntemi | Belirlenecek / N/A |
@@ -102,6 +104,20 @@ Multi-PCB projede farklı kartların özelliklerini kart ID bazında kaydet. Kom
 | :--- | :--- | :--- | :--- |
 
 İlgili üretici stack-up'ı, malzeme, hat sınıfları, model ve ölçüm gereksinimlerinin kaynağını belirt. Alakasız projelerde bu bölümü N/A olarak bırak.
+
+## Havacılık / Aviyonik — yalnızca Havacılık profilinde
+
+| Alan | Karar / kaynak |
+| :--- | :--- |
+| Uygulanacak standartlar ve seviyeler (DO-254 DAL, DO-160 kategorileri, MIL-STD vb.) | Belirlenecek |
+| PCB / montaj kalite sınıfı (IPC-6012, IPC-A-610) ve üretici sertifikası | Belirlenecek |
+| Derating politikası | Belirlenecek |
+| Sıcaklık aralığı / çevre koşulları | Belirlenecek |
+| Güç girişi standardı / geçici rejimler | Belirlenecek / N/A |
+| Coating / staking / lehim ve kaplama politikası | Belirlenecek |
+| Gerekli analizler (FMEA, güvenilirlik, worst-case, termal) | Belirlenecek |
+
+Hobi ve Endüstriyel projelerde bu bölümü N/A bırak.
 
 ## Güncel durum ve checkpoint
 

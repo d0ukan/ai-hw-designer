@@ -2,6 +2,8 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir, fiyat/performans odaklı donanım tasarım projesi.**
 
+[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.9 ([değişiklikler](CHANGELOG.md))
+
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır.
 
 | Rol | Taşınabilir rol tanımı | Görev |
@@ -20,6 +22,18 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 
 4. Manager ilk görüşmede kullanıcının anlatım tercihini (Caveman / Balanced / Detailed) sorar. Gereksinimleri ve kararları `Project-README.md` dosyasına, onay/review durumunu ise `project/workflow-state.json` dosyasına kaydeder. G0 öncesinde kart tipi, besleme, tek/multi-PCB, hazır modül, fiziksel konnektör, diagnostik, varsa programlama/flash/debug ve CAD teslimat tercihlerini netleştirir; layout öncesinde G0.5 ile PCB teknolojisi, malzeme, kalite, köşe geometrisi ve isteğe bağlı şase halkasını onaylatır.
 5. Aktif görev gerektiğinde Designer veya Reviewer'a verilir. Üç rol sürekli çalışmaz.
+
+## Kalite profilleri
+
+Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini belirler; kullanıcı her varsayılanı değiştirebilir.
+
+| Profil | Ne için | Ne değişir |
+| :--- | :--- | :--- |
+| **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
+| **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
+| **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
+
+**RF isteğe bağlıdır.** Kartta RF yoksa RF kuralları ve soruları tamamen atlanır. RF varsa Manager bandı sorar ve kuralları banda göre açar: RF-A (< 1 GHz), RF-B (1–6 GHz), RF-C (> 6 GHz). Hobi projelerde önce sertifikalı hazır RF modülü önerilir.
 
 ### GitHub template olarak kullanma
 
@@ -53,6 +67,9 @@ Daha sonra kendi boş, tercihen private GitHub repository'ne yükleyip ayarları
 | `project/workflow-state.json` | Makine tarafından kontrol edilebilir iş akışı durumu |
 | `scripts/projectctl.py` | Modelsiz, yerel onay ve durum kontrolü |
 | `tests/` | Onay kontrol aracının otomatik testleri |
+| `.github/workflows/` | GitHub Actions: her push'ta testler ve şema/katalog kontrolü |
+| `CHANGELOG.md` | Kural ve araç sürüm geçmişi |
+| `LICENSE` | MIT lisansı |
 
 ## İş akışı
 
@@ -114,12 +131,13 @@ Yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/
 | KiCad | [Native CLI](https://docs.kicad.org/10.0/en/cli/cli.html), [IPC API](https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/index.html) ve [üçüncü taraf MCP örneği](https://github.com/Seeed-Studio/kicad-mcp-server) |
 | Altium Designer | [Resmi MCP Server](https://docs.developer.altium.com/ad-mcp-docs/) ve [scripting](https://www.altium.com/documentation/altium-designer/scripting). MCP araç kapsamını kontrol et; deneysel şematik düzenleme varsayılan olarak etkin değildir. |
 | EasyEDA Pro | [Resmi Extension API](https://prodocs.easyeda.com/en/api/guide/) ve [üçüncü taraf MCP örneği](https://github.com/vlab-software/easyeda_mcp) |
+| Autodesk EAGLE (eski) | Autodesk, EAGLE'ı Haziran 2026'da sonlandırdı. Yalnızca mevcut projeleri okumak veya KiCad/Fusion'a taşımak için kullan; yeni projeye başlama. KiCad, EAGLE dosyalarını içe aktarabilir. |
 
 MCP server/eklenti sürümü, güvenilirliği, EDA uyumu, erişim ve gerçek araç fonksiyonları proje başında doğrulanır. Bağlantının var olması tüm şematik, layout, routing, export ve 3D işlemlerini desteklediği anlamına gelmez. İzin verilen native araçlarla deterministik kontrolleri öncelikli kullan.
 
 ## RF ve High-Speed
 
-`Hardware-Rules.md` bölüm 05, ilgili projelerde kontrollü empedans ve RF/high-speed SI/PI profili sağlar. Onaylı arayüz isterleri, üretici stack-up'ı, malzeme, EDA kısıtları ve gerekli gerçek analiz/ölçüm kanıtları `Project-README.md` içinden takip edilir. Sıradan düşük hızlı kartlarda bu profil N/A bırakılır. Şablon tek başına RF performansı veya high-speed doğrulamasını garanti etmez.
+`Hardware-Rules.md` bölüm 05, ilgili projelerde kontrollü empedans, RF/high-speed SI/PI profili ve banda göre kademeli RF kuralları (RF-01…RF-09: GCPW, via fence, konnektör launch, anten keepout, izolasyon, kanıt) sağlar. Onaylı arayüz isterleri, üretici stack-up'ı, malzeme, EDA kısıtları ve gerekli gerçek analiz/ölçüm kanıtları `Project-README.md` içinden takip edilir. Sıradan düşük hızlı kartlarda bu profil N/A bırakılır. Şablon tek başına RF performansı veya high-speed doğrulamasını garanti etmez.
 
 ## Yerel kontrol komutları
 
@@ -133,6 +151,20 @@ python scripts/projectctl.py check-export
 python scripts/projectctl.py check-release
 python -m unittest discover -s tests -v
 ```
+
+Onay ve review kayıtları için JSON'u elle düzenleme; komutları kullan. Komutlar kaydı doğrular, tarih ve kişi bilgisini ekler:
+
+```bash
+python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı" --by "<isim>"
+python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
+python scripts/projectctl.py block REV-001
+python scripts/projectctl.py unblock REV-001
+python scripts/projectctl.py revoke G1
+python scripts/projectctl.py manifest
+```
+
+`manifest`, `Manufacturing/<design_revision>/` içindeki üretim dosyalarının SHA-256 listesini (`MANIFEST.sha256`) yazar. `check-release` manifest eksikse veya dosyalar sonradan değişmişse başarısız olur. Ayrıntılar: [project/README.md](project/README.md).
 
 Yeni projede `check-layout`, `check-export` ve `check-release` komutlarının başarısız olması normal ve istenen davranıştır. Manager gerçek kullanıcı onaylarını kaydetmeli, Reviewer ilgili revizyonun bağımsız kontrollerini yapmalı ve Designer layout öncesinde `check-layout`, export öncesinde `check-export` çalıştırmalıdır. Araç kayıtların tutarlılığını doğrular; onayın gerçekliğini veya kartın elektriksel doğruluğunu kendi başına kanıtlamaz ve Gerber/BOM/PnP üretmez.
 

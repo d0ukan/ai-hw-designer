@@ -4,9 +4,9 @@
 
 | Doküman | HW AI Design Rules |
 | :--- | :--- |
-| **Versiyon** | v1.8 |
-| **Kapsam** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA |
-| **Hedef üreticiler** | JLCPCB / PCBWay |
+| **Versiyon** | v1.9 |
+| **Kapsam** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Koşullu RF ve Havacılık profilleri |
+| **Hedef üreticiler** | JLCPCB / PCBWay (Hobi varsayılanı); diğer profillerde kullanıcı onaylı üretici |
 | **Tasarım önceliği** | Güvenilirlik · Üretilebilirlik · Fiyat/performans · Token verimliliği |
 
 > **Temel talimat:** Bu dokümanı tüm donanım tasarımlarında uygula. Standart, kolay üretilebilir ve uygun maliyetli PCB'leri tercih et. Bir kuralın uygulanamadığı durumda gerekçeyi açıkla ve kullanıcı onayı almadan istisna oluşturma.
@@ -28,6 +28,18 @@
 | Detailed | Teknik ayrıntılar, hesaplamalar, varsayımlar ve alternatiflerin gerekçeleri. |
 
 Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kanıt kayıtlarını veya kullanıcı onay kapılarını azaltmaz. Ajanlar arası görev ve sonuç özetleri her modda gereksiz ayrıntıdan arındırılır.
+
+### Başlangıç · Kalite profili
+
+- [ ] **INT-47** — Proje amacını öğrendikten sonra sor: **Bu kart hangi seviyede olacak? Hobi, Endüstriyel veya Havacılık?** Seçimi `Project-README.md` içinde kaydet. Profil yalnızca kuralların sertliğini ve varsayılanları belirler; kullanıcı her varsayılanı ayrıca değiştirebilir. Tahmin ederek profil seçme; yanıt yoksa kullanıcıya önerini gerekçesiyle sun ve onay bekle.
+
+| Profil | Tipik kullanım | Varsayılan yaklaşım |
+| :--- | :--- | :--- |
+| Hobi | Kişisel proje, prototip, düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ticari sıcaklık sınıfı (ör. 0…+70 °C) yeterliyse kabul, LCSC/JLC Parts gibi uygun tedarik, IPC Class 2 seviyesi üretim |
+| Endüstriyel | Sahada uzun süre güvenilir çalışma | Genişletilmiş sıcaklık (ör. −40…+85 °C), giriş koruma devreleri, uzun ömürlü ve çok kaynaklı komponent, IPC Class 2 (gerekirse Class 3) |
+| Havacılık | Uçuş, askeri veya benzeri yüksek güvenilirlik | Bölüm 08 profili zorunlu; IPC Class 3, derating politikası, izlenebilirlik, kullanıcı tarafından bildirilen standartlar ve uygun sertifikalı üretici |
+
+Profil seçimi gereksiz maliyet oluşturmamalıdır: Hobi projeye Havacılık kuralı, Havacılık projeye Hobi varsayılanı uygulama. RF ve Havacılık bölümleri yalnızca ilgili olduğunda etkinleşir; ilgisizse N/A olarak bırakılır.
 
 **Soru stratejisi:** Önce mevcut gereksinim dokümanlarını ve proje bilgilerini incele. Genel amacı öğrendikten sonra yalnızca ilgili teknik soru gruplarını, mümkün olduğunca tek bir toplu soru listesi halinde sor. Cevapları `Project-README.md` içinde Zorunlu / Tercih / Esnek / Belirsiz / N/A olarak kaydet. Kullanıcı açıkça kabul ederse önerilen ekonomik varsayılanları kullan. Şematik veya komponent seçimini etkileyen PCB ve mekanik kısıtları G0'dan önce öğren; kalan üretim ve mekanik ayrıntıları bölüm 00B'de netleştir.
 
@@ -52,7 +64,7 @@ Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kan�
 - [ ] **INT-29** — Her giriş/çıkışın yönü, sayısı, normal ve maksimum değerleri, yük tipi, beklenen akımı, zamanlama ve açılış/kapanış koşulları nedir? Belirli konnektör ve pinout zorunluluğu var mı?
 - [ ] **INT-30** — Harici kablo, bağlanacak cihaz, güç kaynağı, sensör ve yüklerin özellikleri tanımlı mı? Referans devre veya mevcut sistemle uyumluluk gerekiyor mu?
 - [ ] **INT-34** — **Sistem fiziksel olarak dışarıya hangi arayüzlerle çıkacak?** Güç, veri, sensör, RF ve diğer I/O için istenen konnektör tipi, marka/MPN, pin sayısı, pinout, panel/PCB montajı, kablo çıkış yönü ve varsa karşı konnektör/kablo takımı nedir? Konnektör seçimini kullanıcı yapacak mı, yoksa AI önerip onaylatacak mı?
-- [ ] **INT-41** — RF, kontrollü empedanslı veya high-speed arayüz bulunuyor mu? Varsa ilgili datasheet/interface specification, frekans/veri hızı ve kenar süresi bilgileri, hedef empedans, timing/skew/length limitleri, bağlantı/terminasyon ve doğrulama isterlerini al. Gerekli olmayan ayrıntıları sorma.
+- [ ] **INT-41** — RF, kontrollü empedanslı veya high-speed arayüz bulunuyor mu? Varsa ilgili datasheet/interface specification, frekans/veri hızı ve kenar süresi bilgileri, hedef empedans, timing/skew/length limitleri, bağlantı/terminasyon ve doğrulama isterlerini al. Gerekli olmayan ayrıntıları sorma. **RF yoksa** bölüm 05'in RF kısmı N/A olur ve RF sorusu sorulmaz. **RF varsa** çalışma frekansını/bandını sor ve bölüm 05'teki RF kademesini (RF-A / RF-B / RF-C) belirle.
 
 #### Kart tipine göre koşullu teknik sorular
 
@@ -62,7 +74,7 @@ Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kan�
 | Fonksiyonel / MCU kontrol kartı | Fonksiyonlar, I/O sayısı, lojik seviyeler, arayüzler, işlemci tercihi, programlama/debug, yazılım uyumluluğu |
 | Analog / ölçüm kartı | Ölçüm aralığı, doğruluk, çözünürlük, örnekleme hızı, bant genişliği, gürültü sınırı, sensör arayüzü |
 | Dijital / haberleşme kartı | Protokoller, veri hızı, arayüz seviyeleri, konektörler, diferansiyel empedans ve zamanlama gereksinimleri |
-| RF kartı | Çalışma bandı, RX/TX işlevi, arayüz ve uyumluluk isterleri, malzeme ve kontrollü empedans gereksinimi |
+| RF kartı | Çalışma frekansı/bandı, RX/TX işlevi, çıkış gücü/hassasiyet, anten veya RF konnektör tipi, sertifikalı modül kabulü, düzenleyici uyumluluk (ör. CE RED, FCC), malzeme ve kontrollü empedans gereksinimi |
 | Sensör / arayüz kartı | Sensör tipi, besleme, sinyal aralığı, kablo ve kalibrasyon gereksinimleri |
 | Motor / aktüatör kontrol kartı | Yük tipi, elektriksel arayüz, besleme ve akım sınırları, çalışma döngüsü, geri besleme ve koruma isterleri |
 | Karma kart | Yalnızca kullanılan fonksiyonların yukarıdaki isterleri |
@@ -155,7 +167,7 @@ Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kan�
 - [ ] **PCB-01** — Kartın fiziksel yapısı nedir? Standart rigid, flex, rigid-flex veya başka özel yapı mı?
 - [ ] **PCB-02** — Hangi PCB malzemesi/altlığı gerekiyor? Standart FR-4, özel/yüksek sıcaklık FR-4, alüminyum veya bakır metal-core (MCPCB/IMS), RF laminat, polyimide veya diğer? Metal-core kartı yalnızca kalın bakır folyo ile karıştırma.
 - [ ] **PCB-03** — Standart via/laminasyon yeterli mi, yoksa HDI, microvia, blind/buried via, özel katman yapısı veya başka özel işlem gerekli mi? Gereklilik ve maliyeti üreticiyle doğrula; gerekmedikçe standart üretimi seç.
-- [ ] **PCB-04** — Kalite/uygulama sınıfı nedir? Standart ticari, endüstriyel, medikal, otomotiv, havacılık/askeri veya başka bir özel şart mı? Belirli standart, kalite sınıfı, test, malzeme veya izlenebilirlik zorunluluğu var mı? Uygulama sınıfını PCB malzemesi veya yapısıyla aynı seçim olarak değerlendirme; üreticinin ilgili şartları karşılayabildiğini doğrula.
+- [ ] **PCB-04** — Kalite/uygulama sınıfı nedir? Standart ticari, endüstriyel, medikal, otomotiv, havacılık/askeri veya başka bir özel şart mı? Belirli standart, kalite sınıfı, test, malzeme veya izlenebilirlik zorunluluğu var mı? Uygulama sınıfını PCB malzemesi veya yapısıyla aynı seçim olarak değerlendirme; üreticinin ilgili şartları karşılayabildiğini doğrula. Seçim INT-47 kalite profiliyle tutarlı olmalıdır; Havacılık profilinde bölüm 08'i uygula.
 
 ### B · Board Outline & Mechanical
 
@@ -210,8 +222,8 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **GND-02** — CHASSIS_GND ring uygulandığında ring'leri, **0.80 mm** delik çapına sahip stitching via'larla **3.00 mm** aralıklarla birbirine bağla.
 - [ ] **GND-03** — CHASSIS_GND ring uygulandığında üst ve alt katmandaki ring üzerinde solder mask bulunmasın. PCB kenar mesafelerini ve uygun yüzey kaplamasını koru.
 - [ ] **GND-04** — CHASSIS_GND ve devre GND netlerini ayrı değerlendir. Bölüm 00'da onaylanan bağlantı veya izolasyon mimarisini uygula. İzolasyon gerekli ise proje bazlı onaylanan clearance ve creepage değerlerini tüm ilgili katmanlarda ve bağlantılarda koru. Kullanıcı onayı olmadan netleri birleştirme.
-- [ ] **GND-05** — Tüm katmanlardaki uygun boş bakır alanlarını ilgili GND polygon'ları ile doldur. İzole netleri, özel güç katmanlarını ve diğer netlere ait gerekli clearance'ları koru.
-- [ ] **GND-06** — GND polygon'una bağlanan komponent pad'lerinde lehimleme ve dizgiyi kolaylaştırmak amacıyla **Thermal Relief** kullan. Yüksek akım ve özel termal pad gereksinimlerini ayrıca kontrol et.
+- [ ] **GND-05** — Tüm katmanlardaki uygun boş bakır alanlarını ilgili GND polygon'ları ile doldur. İzole netleri, özel güç katmanlarını ve diğer netlere ait gerekli clearance'ları koru. RF veya kontrollü empedans hatlarının yanındaki polygon boşluğu ve via fence bölüm 05'e göre belirlenir; hat yanında hesapsız pour bırakma, anten keepout alanına bakır dökme.
+- [ ] **GND-06** — GND polygon'una bağlanan komponent pad'lerinde lehimleme ve dizgiyi kolaylaştırmak amacıyla **Thermal Relief** kullan. **İstisna:** RF komponent GND pad'leri, yüksek akım pad'leri ve exposed/termal pad'ler Direct Connect olur (bölüm 05 RF-05, LAY-02); bu pad'lerin lehimlenebilirliğini dizgi yöntemine göre ayrıca doğrula.
 - [ ] **GND-07** — GND via'larının polygon ve plane bağlantılarında **Direct Connect** kullan; via'lara Thermal Relief uygulama.
 - [ ] **GND-08** — GND dönüş yollarını kesintiye uğratma. Bağlantısız bakır adalarını (floating copper islands) kaldır.
 
@@ -220,6 +232,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 | Eleman | Bağlantı tipi |
 | :--- | :--- |
 | Komponent GND pad'i | Thermal Relief |
+| RF / yüksek akım / exposed pad | Direct Connect |
 | GND via | Direct Connect |
 | CHASSIS_GND stitching via | Direct Connect |
 
@@ -227,7 +240,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 
 ## 03 · JLCPCB / PCBWay — DFM & Cost Optimization
 
-> Üretim maliyetini düşürmek için gerekli olmayan özel PCB teknolojilerinden kaçın. Aşağıdaki varsayılanlar standart rigid FR-4 tasarım içindir; bölüm 00B'de onaylanan farklı malzeme, teknoloji ve kalite isterleri önceliklidir.
+> Üretim maliyetini düşürmek için gerekli olmayan özel PCB teknolojilerinden kaçın. Aşağıdaki varsayılanlar standart rigid FR-4 tasarım ve Hobi/Endüstriyel profil içindir; bölüm 00B'de onaylanan farklı malzeme, teknoloji ve kalite isterleri ile Havacılık profilinde bölüm 08 önceliklidir.
 
 | PCB özelliği | Varsayılan tercih |
 | :--- | :--- |
@@ -265,7 +278,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **LAY-02** — Güç hatları ve güç via'larını akım taşıma, gerilim düşümü ve sıcaklık artışı gereksinimlerine göre boyutlandır.
 - [ ] **LAY-03** — Hassas analog devreleri, gürültülü dijital devreleri ve switching power supply bölgelerini uygun şekilde yerleştir.
 - [ ] **LAY-04** — Sinyal hatlarının referans düzlemlerini ve dönüş yollarını koru.
-- [ ] **LAY-05** — Routing sırasında gereksiz 90° köşelerden kaçın; mümkün olduğunda 45° geçişleri tercih et.
+- [ ] **LAY-05** — Routing sırasında gereksiz 90° köşelerden kaçın; mümkün olduğunda 45° geçişleri tercih et. RF hatlarında mitered veya kavisli dönüş kullan (bölüm 05, RF-06).
 - [ ] **LAY-06** — Besleme hatları ve kritik sinyaller için erişilebilir test point'ler oluştur.
 - [ ] **LAY-07** — Komponent referanslarını, Pin 1 ve polarite işaretlerini okunaklı ve pad'lerle çakışmayacak şekilde silkscreen üzerinde göster.
 
@@ -305,6 +318,28 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **HS-04** — Proje isterlerine göre signal integrity / power integrity, PDN, termal ve EM/RF analiz ihtiyacını belirle. Alan çözücü, simülasyon veya laboratuvar ölçümü yalnızca gerekli ise uygulanır; araç erişimi ve kabul kriterini kaydet.
 - [ ] **HS-05** — Reviewer, ilgili hat sınıflarının onaylı gereksinimler, üretici stack-up'ı ve gerçek analiz/ölçüm kanıtlarıyla uyumunu doğrular. DRC'nin temiz olması tek başına SI/PI veya RF performansının doğrulanması değildir.
 
+### RF — koşullu, banda göre kademeli
+
+> **Yalnızca kartta RF devresi varsa uygula.** RF yoksa bu kısmın tamamı N/A'dır ve kullanıcıya RF sorusu sorulmaz. RF varsa önce bandı öğren, kademeyi seç ve `Project-README.md` içine kaydet.
+
+| Kademe | Frekans | Tipik örnek | Varsayılan yaklaşım |
+| :--- | :--- | :--- | :--- |
+| **RF-A** | < 1 GHz | 433/868/915 MHz, LoRa, kumanda | Standart FR-4 genellikle yeterli. 50 Ω microstrip veya GCPW. Via fence önerilir, zorunlu değil. |
+| **RF-B** | 1–6 GHz | GNSS, 2.4/5 GHz WiFi, BLE | FR-4 kısa hatlarda kayıp hesabıyla kabul edilebilir. GCPW tercih edilir. Via fence aralığı ≤ λg/10, tercihen ≤ λg/20. |
+| **RF-C** | > 6 GHz | Radar, X-band ve üzeri, mmWave | RF laminat veya hibrit stack-up (üretici onaylı). GCPW zorunlu, via fence ≤ λg/20. Konnektör launch'u üretici referansına göre. EM simülasyonu veya ölçüm kanıtı gerekir. |
+
+λg (dielektrik içindeki dalga boyu) ≈ c / (f · √εeff). Örnek: 2.4 GHz, FR-4 microstrip (εeff ≈ 3.3) → λg ≈ 69 mm → λg/20 ≈ 3.4 mm. Değerleri üreticinin gerçek stack-up'ı ve hesap aracıyla doğrula.
+
+- [ ] **RF-01** — RF var mı? Yoksa N/A. Varsa band, TX/RX işlevi, çıkış gücü veya hassasiyet, anten ya da konnektör tipi ve düzenleyici uyumluluk isterlerini al.
+- [ ] **RF-02** — Hobi ve basit projelerde önce **sertifikalı hazır RF modülünü** (anten dahil veya U.FL/SMA çıkışlı) öner; kendi RF devresini kullanıcı isterse veya gereksinim zorunlu kılarsa tasarla. Modül kullanılıyorsa modül üreticisinin layout kılavuzu (anten keepout, GND, besleme) bağlayıcıdır.
+- [ ] **RF-03** — 50 Ω (veya onaylı başka empedans) hat geometrisini üreticinin stack-up'ı ve hesap aracıyla belirle. Tercihen GCPW kullan. Hattın altındaki referans düzlemi kesintisiz olsun; hattın altından veya yanından başka sinyal geçirme.
+- [ ] **RF-04** — RF hattı boyunca iki yanda GND via fence uygula; aralığı kademeye göre seç. Polygon ile hat arasındaki boşluk hesaplanan GCPW değerine eşit olsun.
+- [ ] **RF-05** — RF komponentlerin GND pad'lerini Direct Connect bağla ve pad'e en yakın noktaya birden fazla GND via koy. PA/LNA exposed pad'leri için datasheet'teki termal via düzenini uygula.
+- [ ] **RF-06** — Dönüşlerde mitered veya kavisli geçiş kullan. Pad ile hat genişliği arasında büyük fark varsa taper uygula. Yüksek frekansta küçük paket (0402 veya daha küçük, dizgi yöntemi izin veriyorsa) tercih et.
+- [ ] **RF-07** — RF konnektör (SMA, U.FL, edge-launch) için üreticinin önerdiği footprint ve launch geometrisini kullan. Antenin keepout alanında tüm katmanlarda bakır bırakma. Anten veya konnektör önüne ayarlanabilir eşleştirme ağı (pi) yeri bırak.
+- [ ] **RF-08** — TX/RX, LO/clock, DC-DC ve dijital gürültü kaynaklarını RF yolundan ayır. Gerekiyorsa shield can footprint'i ve çevresine via fence ekle. RF hatlarını kısa tut.
+- [ ] **RF-09** — Doğrulama kanıtını kaydet: empedans hesabı, varsa simülasyon (ör. `.s2p`) ve varsa ölçüm (VNA, spektrum analizörü). Ölçüm veya simülasyon yapılmadıysa "doğrulanmadı" olarak işaretle.
+
 ---
 
 ## 06 · Design Review & Verification
@@ -334,6 +369,23 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **AI-06** — Tasarım ve doğrulama kapsamını proje riskiyle orantılı tut. İlgisiz maddeleri gerekçesiyle N/A olarak işaretle; kullanıcı tarafından istenmeyen dokümanları, alternatif tasarımları ve analizleri gereksiz yere üretme.
 - [ ] **AI-07** — Aşama ve revizyon değişikliklerinde mevcut Git/EDA kayıtlarını kullanarak kısa checkpoint oluştur. Kullanıcı değişikliklerini koru; yarıda kalan işleri doğrulanmış son durumdan devam ettir.
 - [ ] **AI-08** — EDA entegrasyon yöntemi bağımsızdır. Mevcut ve yetkili MCP/CLI/API araçlarını önce düşük riskli okuma/bağlantı kontrolüyle doğrula. Olmayan araç fonksiyonunu varmış gibi kullanma; native otomasyon veya kullanıcı destekli alternatif mümkünse öner. Eklentileri kurmak, yetki genişletmek veya harici veri göndermek ayrı kullanıcı onayı gerektirir.
+
+---
+
+## 08 · Havacılık / Aviyonik — koşullu profil
+
+> **Yalnızca INT-47'de Havacılık profili seçildiyse uygula.** Hobi ve Endüstriyel projelerde bu bölüm N/A'dır. Bu şablon sertifikasyon sağlamaz; DO-254 uyumu ve uçuşa elverişlilik organizasyonel süreç, yetkili otorite ve bağımsız onay gerektirir.
+
+- [ ] **AVI-01** — Uygulanacak standartları ve seviyeleri kullanıcıdan veya müşteri şartnamesinden al: DO-254 DAL, DO-160 test kategorileri, MIL-STD-461 / 704 / 810, şirket standartları. Kategori veya seviye uydurma; bilinmeyeni Belirsiz olarak kaydet.
+- [ ] **AVI-02** — PCB ve montaj kalite sınıfını kaydet: tasarım için IPC-2221/2222, bare board için IPC-6012 Class 3 (veya 3/A), montaj için IPC-A-610 Class 3. Uygun sertifikalı (ör. AS9100) üretici gerekip gerekmediğini sor. Standart düşük maliyetli hatların genelde Class 2 olduğunu kullanıcıya bildir.
+- [ ] **AVI-03** — Derating politikasını kullanıcıdan al (ör. şirket politikası, ECSS-Q-ST-30-11, NASA EEE-INST-002). Her komponent için gerilim, akım, güç ve sıcaklık derating'ini politikaya göre kontrol et ve kısa tabloyla kaydet.
+- [ ] **AVI-04** — Komponent seçiminde onaylı sıcaklık aralığını (ör. −55…+125 °C veya istenen değer), lifecycle/obsolescence durumunu, çok kaynaklılığı ve yetkili distribütör tedarikini doğrula. MSL ve saf kalay kaplama (kalay bıyığı) riskini lehim/kaplama politikasıyla birlikte değerlendir.
+- [ ] **AVI-05** — Uçak güç girişi varsa (ör. 28 VDC) ilgili standarttaki normal/anormal gerilim aralıkları, geçici rejimler, kesinti/hold-up, inrush ve ters polarite isterlerini al ve koruma devresini buna göre tasarla. Yıldırım kaynaklı geçici gerilim koruması konnektör girişinde olmalıdır.
+- [ ] **AVI-06** — EMC isterlerine göre filtrelemeyi konnektör girişinde uygula; şase bağlantısını ve kablo shield sonlandırmasını (tercihen 360°) onaylı topraklama mimarisine göre tasarla.
+- [ ] **AVI-07** — Titreşim, şok, nem ve tuz isterlerine göre ağır komponent sabitleme (staking/underfill), conformal coating (ör. IPC-CC-830) ve konnektör kilitleme gereksinimlerini kaydet.
+- [ ] **AVI-08** — İzlenebilirlik: her ister için tasarım referansı ve doğrulama yöntemi `Project-README.md` ister tablosunda bulunmalıdır. Üretim çıktıları için `python scripts/projectctl.py manifest` ile checksum manifest oluştur; BOM ve çıktıların aynı revizyondan geldiğini manifest ile doğrula.
+- [ ] **AVI-09** — Kullanıcı veya standart gerektiriyorsa FMEA, güvenilirlik tahmini (ör. MIL-HDBK-217F, FIDES), worst-case ve termal analiz yap. Yapılmamış analizi tamamlanmış gösterme.
+- [ ] **AVI-10** — Havacılık profilinde Reviewer bu bölümün maddelerini ayrıca kontrol eder; doğrulanamayan maddeler PASS sayılmaz.
 
 ---
 

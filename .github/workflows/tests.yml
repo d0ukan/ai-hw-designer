@@ -1,0 +1,39 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Validate workflow state
+        run: python scripts/projectctl.py validate
+      - name: Validate catalog headers
+        shell: python
+        run: |
+          import csv, sys
+          for path in ("Hardware-Library/catalog/components.csv", "Hardware-Library/catalog/blocks.csv"):
+              with open(path, encoding="utf-8", newline="") as f:
+                  rows = list(csv.reader(f))
+              width = len(rows[0])
+              bad = [i + 1 for i, r in enumerate(rows) if r and len(r) != width]
+              if bad:
+                  sys.exit(f"{path}: wrong column count on lines {bad}")
+              print(f"{path}: OK ({len(rows) - 1} rows)")

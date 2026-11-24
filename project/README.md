@@ -11,6 +11,24 @@
 - `export_approval`: G1 kullanıcının ilgili tasarım revizyonu için açık üretim dosyası hazırlama onayı ve referansı.
 - `blocking_issues`: açık CRITICAL/MAJOR bulgu kimlikleri veya ilgili engeller.
 
+Kayıtlar isteğe bağlı `recorded_on` (UTC tarih) ve `recorded_by` alanlarını da taşıyabilir; `projectctl.py` komutları bunları otomatik doldurur.
+
+## Kayıt komutları
+
+JSON'u elle düzenleme; komutlar dosyayı doğrulayıp güvenli şekilde yazar:
+
+```bash
+python scripts/projectctl.py set project_name "Sensör kartı"
+python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı, 2026-11-25 sohbet" --by "<isim>"
+python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
+python scripts/projectctl.py block REV-001
+python scripts/projectctl.py unblock REV-001
+python scripts/projectctl.py manifest
+```
+
+`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse veya dosyalar değişmişse başarısız olur.
+
 Approval durumları: PENDING / APPROVED. Review durumları: PENDING / PASS / REWORK / BLOCKED. Geçerli onay veya PASS için revizyon ve gerçek kanıt gereklidir. Manager review sonucunu Reviewer'ın kaydına göre işler; onayları kendi adına üretmez.
 
 Yerel kontrol aracı dosya durumunu doğrular; gerçek kullanıcı onayının ve mühendislik testinin yerine geçmez. Yeni revizyon öncekine ait onayları otomatik olarak geçerli kılmaz.

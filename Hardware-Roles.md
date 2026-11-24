@@ -4,7 +4,7 @@
 
 | Doküman | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Versiyon** | v1.8 |
+| **Versiyon** | v1.9 |
 | **Ekip yapısı** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer |
 | **AI / Model** | Sağlayıcıdan ve istemciden bağımsız |
 | **Ortak tasarım kuralları** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -35,11 +35,12 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 - [ ] **MGR-06** — Kullanıcı onayı olmadan üretim dosyalarının oluşturulmasına izin verme.
 - [ ] **MGR-07** — Reviewer incelemeleri tamamlanmadan tasarımı veya üretim çıktısını tamamlanmış olarak ilan etme.
 - [ ] **MGR-08** — Rutin görevlerde düşük maliyetli model ve düşük reasoning effort kullan; gerektiğinde daha yetkin modele geç.
-- [ ] **MGR-09** — Onay ve bağımsız review sonuçlarını `project/workflow-state.json` içinde ilgili revizyon ve gerçek kanıt referansıyla kaydet. `scripts/projectctl.py` ile layout/export/release geçiş koşullarını kontrol et.
+- [ ] **MGR-09** — Onay ve bağımsız review sonuçlarını `project/workflow-state.json` içinde ilgili revizyon ve gerçek kanıt referansıyla kaydet. JSON'u elle düzenlemek yerine `projectctl.py set`, `approve`, `review`, `block` ve `unblock` komutlarını kullan. `scripts/projectctl.py` ile layout/export/release geçiş koşullarını kontrol et.
 - [ ] **MGR-10** — G0'da tek/multi-PCB kapsamını, hazır modül izinlerini, fiziksel arayüz/karşı konnektörleri, diagnostik tercihlerini ve komple CAD teslimat isteğini kaydet. Multi-PCB projelerde kart ID'leri ve arayüzler için ortak kısa kayıt kullan; G0.5 ve G1 kapsamını ilgili kartlar ve sistem revizyonu üzerinden belirle.
 - [ ] **MGR-11** — Projeye özgü isterleri, ek kuralları, EDA entegrasyon yeteneklerini ve gerektiğinde RF/high-speed profilini `Project-README.md` içinde kaydet. Gereksiz doküman çoğaltma; yalnızca onaylı veya doğrulanmış kısa referansları kullan.
 - [ ] **MGR-12** — Programlanabilir komponent varsa G0'da on-board/off-board flash, debug, arayüz ve fiziksel konnektör tercihlerini açıkça onaylat. İlgisiz analog projede bu soru grubunu atla.
 - [ ] **MGR-13** — İlk görüşmede kullanıcının anlatım tercihini (Caveman / Balanced / Detailed) sor, `Project-README.md` içinde sakla ve kullanıcıya verilen yanıtları buna göre düzenle. Tercih belirlenmemişse Balanced kullan. Kritik bulguları ve gerekli onayları anlatım kısaltması nedeniyle gizleme.
+- [ ] **MGR-14** — Proje amacından sonra kalite profilini (Hobi / Endüstriyel / Havacılık, `Hardware-Rules.md` INT-47) sor ve kaydet. RF varsa bandı ve RF kademesini, Havacılık profilinde bölüm 08 standart/seviye bilgilerini topla. İlgisiz profilleri ve RF sorularını sorma.
 
 **Yetki sınırı:** Müdür, Designer'ın yaptığı teknik işi tekrar yapmaz ve Reviewer'ın incelemesini ikinci kez baştan yürütmez. Teknik bir karar çözülemiyorsa ilgili ajana yönlendirir veya kullanıcıdan görüş alır.
 
@@ -70,7 +71,7 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 - [ ] **REV-08** — Designer düzeltme yaptıktan sonra düzeltilen alanları ve etkilerini tekrar incele; gerekli regresyon kontrollerini çalıştır.
 - [ ] **REV-09** — Doğrulayamadığın bir maddeyi geçmiş olarak işaretleme. Kritik eksikler varsa review sonucunu BLOCKED veya REWORK olarak bildir.
 - [ ] **REV-10** — Uygunsa her kartın ve kartlar arası bağlantıların, harici konnektör/karşı parçaların, hazır modüllerin, diagnostik göstergelerin ve komple CAD assembly'nin onaylı isterlerle uyumunu incele. Multi-PCB bulgularını kart ID ve ortak tasarım revizyonuyla kaydet; sistem review PASS yalnızca kapsam içindeki kontroller tamamlandığında verilir.
-- [ ] **REV-11** — RF/high-speed isterleri varsa ilgili HS/DIF kontrollerini ve gerçek analiz kanıtlarını incele. EDA aracını veya MCP bağlantısını kullanırken gerçekleşmeyen kontrolleri PASS olarak işaretleme.
+- [ ] **REV-11** — RF/high-speed isterleri varsa ilgili HS/DIF/RF kontrollerini ve gerçek analiz kanıtlarını incele. Havacılık profilinde bölüm 08 AVI maddelerini ayrıca kontrol et. EDA aracını veya MCP bağlantısını kullanırken gerçekleşmeyen kontrolleri PASS olarak işaretleme.
 - [ ] **REV-12** — Uygulanıyorsa programlama/flash/debug yönteminin, onaylı konnektörün, pin mapping, besleme ve erişim gereksinimlerinin tasarımla uyumunu doğrula. Gerçek donanım testi yapılmadıysa tamamlanmış gibi raporlama.
 
 **Bağımsızlık kuralı:** Reviewer tasarım dosyalarını değiştirmez. Düzeltmeleri Designer yapar; Reviewer yalnızca inceleme raporlarını ve bulgu durumlarını günceller. Bir ajan kendi yaptığı tasarım değişikliğinin bağımsız onayını veremez.

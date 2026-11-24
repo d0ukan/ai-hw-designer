@@ -22,6 +22,19 @@ Proje içindeki ortak, tekrar kullanılabilir donanım kütüphanesi. İlk tasar
 6. Stok/fiyat gibi zamanla değişen bilgiler gerekiyorsa güncel olarak kontrol edilir. Lisans ve yeniden dağıtım izinlerini koru; izinsiz datasheet/CAD dosyalarını paylaşma.
 7. Onaylı hazır modülleri ve konnektör/karşı konnektör çiftlerini ayrı exact MPN/model kayıtlarıyla takip et. Kullanıcının verdiği STEP datasını ve kaynak revizyonunu kaydet; doğrulanmamış yaklaşık CAD modeli gerçek mekanik model olarak kullanma.
 
+### `components.csv` ek sütunları
+
+| Sütun | İçerik | Örnek |
+| :--- | :--- | :--- |
+| `temp_range` | Datasheet'teki çalışma sıcaklığı | `-40..+85C` |
+| `lifecycle` | Üretici yaşam döngüsü durumu ve kontrol tarihi | `Active (2026-11)` / `NRND` / `EOL` |
+| `qualification` | Kalite sınıfı | `Commercial` / `Industrial` / `AEC-Q100` / `MIL` |
+| `alternates` | Onaylı alternatif MPN'ler (`;` ile ayrılır) | `MPN-A;MPN-B` |
+| `msl` | Nem hassasiyet seviyesi | `1` / `3` |
+| `rohs` | RoHS durumu | `Yes` / `No` |
+
+Bilinmeyen alanı boş bırak; uydurma. Hobi projelerde yalnızca gerekli sütunları doldurmak yeterlidir, Havacılık profilinde `temp_range`, `lifecycle`, `qualification` ve `alternates` zorunludur.
+
 Katalog başlangıçta yalnızca sütun başlıklarını içerir. Hazır doğrulanmış komponent veya devre bulunduğu varsayılmamalıdır. Kopyalanmış proje kütüphanesi daha sonra kullanıcı tarafından template repository'ye review ile geri kazandırılabilir.
 
 Katalogda MPN veya blok kimliği aramak için EDA aracının arama özelliğini ya da örneğin `rg -i --fixed-strings "MPN" Hardware-Library/catalog/components.csv` komutunu kullan. Basit katalog sorguları ayrı LLM çağrısı gerektirmez.
