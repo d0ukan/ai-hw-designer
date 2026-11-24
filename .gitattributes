@@ -1,0 +1,64 @@
+# Normalize line endings: text files are stored and checked out with LF
+# on every OS, regardless of each user's core.autocrlf setting.
+* text=auto eol=lf
+
+# Windows-only scripts need CRLF to run correctly
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Documentation, code and config
+*.md    text
+*.txt   text
+*.csv   text
+*.json  text
+*.toml  text
+*.yaml  text
+*.yml   text
+*.py    text diff=python
+
+# KiCad sources (text-based; keep LF for clean diffs across OSes)
+*.kicad_pro  text
+*.kicad_sch  text
+*.kicad_pcb  text
+*.kicad_sym  text
+*.kicad_mod  text
+*.kicad_dru  text
+*.kicad_wks  text
+fp-lib-table  text
+sym-lib-table text
+
+# Manufacturing outputs (text, but never modify line endings)
+*.gbr  -text
+*.gb?  -text
+*.gt?  -text
+*.gm?  -text
+*.drl  -text
+*.xln  -text
+*.ipc  -text
+*.net  -text
+
+# Binary files: no line-ending conversion, no text diff
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.bmp   binary
+*.ico   binary
+*.svg   text
+*.zip   binary
+*.7z    binary
+*.gz    binary
+*.step  binary
+*.stp   binary
+*.wrl   binary
+*.stl   binary
+*.iges  binary
+*.igs   binary
+*.xlsx  binary
+*.docx  binary
+*.pptx  binary
+*.s2p   text
+*.s4p   text
+*.snp   text
