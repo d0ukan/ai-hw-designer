@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.11 — 2026-11-25
+
+**Kurallar (`Hardware-Rules.md`)**
+- INT-48: Tasarım hedefi seçimi eklendi (Maliyet öncelikli / Dengeli / Performans öncelikli). Havacılık/askeri projede maliyet hedefi yoksa varsayılan Performans. DFM-00, DFM-10, INT-16, bölüm 03 notu ve başlık önceliği bu hedefe bağlandı; `Project-README.md`, `AGENTS.md`, MGR-14 ve `agents/Manager.md` güncellendi.
+
 ## v1.10 — 2026-11-25
 
 **Kurallar (`Hardware-Rules.md`)**

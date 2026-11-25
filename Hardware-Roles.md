@@ -40,7 +40,7 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 - [ ] **MGR-11** — Projeye özgü isterleri, ek kuralları, EDA entegrasyon yeteneklerini ve gerektiğinde RF/high-speed profilini `Project-README.md` içinde kaydet. Gereksiz doküman çoğaltma; yalnızca onaylı veya doğrulanmış kısa referansları kullan.
 - [ ] **MGR-12** — Programlanabilir komponent varsa G0'da on-board/off-board flash, debug, arayüz ve fiziksel konnektör tercihlerini açıkça onaylat. İlgisiz analog projede bu soru grubunu atla.
 - [ ] **MGR-13** — İlk görüşmede kullanıcının anlatım tercihini (Caveman / Balanced / Detailed) sor, `Project-README.md` içinde sakla ve kullanıcıya verilen yanıtları buna göre düzenle. Tercih belirlenmemişse Balanced kullan. Kritik bulguları ve gerekli onayları anlatım kısaltması nedeniyle gizleme.
-- [ ] **MGR-14** — Proje amacından sonra kalite profilini (Hobi / Endüstriyel / Havacılık, `Hardware-Rules.md` INT-47) sor ve kaydet. RF varsa bandı ve RF kademesini, Havacılık profilinde bölüm 08 standart/seviye bilgilerini topla. İlgisiz profilleri ve RF sorularını sorma.
+- [ ] **MGR-14** — Proje amacından sonra kalite profilini (Hobi / Endüstriyel / Havacılık, `Hardware-Rules.md` INT-47) ve ardından tasarım hedefini (Maliyet / Dengeli / Performans, INT-48) sor ve kaydet. RF varsa bandı ve RF kademesini, Havacılık profilinde bölüm 08 standart/seviye bilgilerini topla. İlgisiz profilleri ve RF sorularını sorma.
 
 **Yetki sınırı:** Müdür, Designer'ın yaptığı teknik işi tekrar yapmaz ve Reviewer'ın incelemesini ikinci kez baştan yürütmez. Teknik bir karar çözülemiyorsa ilgili ajana yönlendirir veya kullanıcıdan görüş alır.
 

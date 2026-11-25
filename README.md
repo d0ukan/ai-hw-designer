@@ -1,8 +1,8 @@
 # Hardware Design · AI-Agnostic Template
 
-**Model ve platformdan bağımsız, tekrarlanabilir, fiyat/performans odaklı donanım tasarım projesi.**
+**Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.10 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.11 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır.
 
@@ -32,6 +32,8 @@ Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini
 | **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
 | **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
 | **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
+
+**Tasarım hedefi de seçilir (INT-48):** Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli. Varsayılan öneri: Hobi → Maliyet, Endüstriyel → Dengeli, Havacılık/askeri → Performans (kullanıcı maliyet hedefi vermediyse). Performans hedefinde maliyet engel değildir ama her maliyet artışı gerekçesiyle bildirilir. Hiçbir hedefte güvenilirlik ve doğrulama maliyet için kısılmaz.
 
 **RF isteğe bağlıdır.** Kartta RF yoksa RF kuralları ve soruları tamamen atlanır. RF varsa Manager bandı sorar ve kuralları banda göre açar: RF-A (< 1 GHz), RF-B (1–6 GHz), RF-C (> 6 GHz). Hobi projelerde önce sertifikalı hazır RF modülü önerilir.
 

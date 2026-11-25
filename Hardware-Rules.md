@@ -4,12 +4,12 @@
 
 | Doküman | HW AI Design Rules |
 | :--- | :--- |
-| **Versiyon** | v1.10 |
+| **Versiyon** | v1.11 |
 | **Kapsam** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Koşullu RF ve Havacılık profilleri |
 | **Hedef üreticiler** | JLCPCB / PCBWay (Hobi varsayılanı); diğer profillerde kullanıcı onaylı üretici |
-| **Tasarım önceliği** | Güvenilirlik · Üretilebilirlik · Fiyat/performans · Token verimliliği |
+| **Tasarım önceliği** | Güvenilirlik · Üretilebilirlik · Proje hedefine göre maliyet/performans (INT-48) · Token verimliliği |
 
-> **Temel talimat:** Bu dokümanı tüm donanım tasarımlarında uygula. Standart, kolay üretilebilir ve uygun maliyetli PCB'leri tercih et. Bir kuralın uygulanamadığı durumda gerekçeyi açıkla ve kullanıcı onayı almadan istisna oluşturma.
+> **Temel talimat:** Bu dokümanı tüm donanım tasarımlarında uygula. Standart ve kolay üretilebilir PCB'leri tercih et; maliyet ile performans arasındaki dengeyi INT-48'de seçilen tasarım hedefine göre kur. Bir kuralın uygulanamadığı durumda gerekçeyi açıkla ve kullanıcı onayı almadan istisna oluşturma.
 
 ---
 
@@ -40,6 +40,18 @@ Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kan�
 | Havacılık | Uçuş, askeri veya benzeri yüksek güvenilirlik | Bölüm 08 profili zorunlu; IPC Class 3, derating politikası, izlenebilirlik, kullanıcı tarafından bildirilen standartlar ve uygun sertifikalı üretici |
 
 Profil seçimi gereksiz maliyet oluşturmamalıdır: Hobi projeye Havacılık kuralı, Havacılık projeye Hobi varsayılanı uygulama. RF ve Havacılık bölümleri yalnızca ilgili olduğunda etkinleşir; ilgisizse N/A olarak bırakılır.
+
+### Başlangıç · Tasarım hedefi (maliyet / performans)
+
+- [ ] **INT-48** — Profilden sonra sor: **Tasarım hedefi nedir? Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli?** Hedef maliyet veya bütçe varsa onu da al (INT-03). Seçimi `Project-README.md` içinde kaydet. Yanıt yoksa profile göre varsayılanı öner ve onay al: Hobi → Maliyet öncelikli, Endüstriyel → Dengeli, Havacılık/askeri → Performans öncelikli (kullanıcı ayrıca maliyet hedefi vermediyse).
+
+| Hedef | Komponent, PCB ve layout kararları |
+| :--- | :--- |
+| Maliyet öncelikli | Gereksinimi karşılayan en ucuz yeterli çözüm; standart üretim (DFM-00), en az katman, yaygın ve ucuz parça |
+| Dengeli | Gereksinimi güvenli payla karşılayan en iyi fiyat/performans; maliyet artışı ancak ölçülebilir fayda varsa |
+| Performans öncelikli | Önce elektriksel performans, güvenilirlik, pay ve uzun ömür; gerekiyorsa daha iyi komponent, ek katman, özel laminat, kontrollü empedans, daha geniş derating. Maliyet engel değildir ama gereksiz lüks de eklenmez |
+
+Hiçbir hedefte gereksinim, güvenlik, güvenilirlik veya doğrulama maliyet uğruna kısılmaz. Performans öncelikli hedefte de maliyeti artıran her seçim gerekçesiyle bildirilir (AI-03, DFM-07); yalnızca onayı engellemez. Bu hedef yalnızca donanım kararları içindir; AI model/token verimliliği her zaman geçerlidir.
 
 **Soru stratejisi:** Önce mevcut gereksinim dokümanlarını ve proje bilgilerini incele. Genel amacı öğrendikten sonra yalnızca ilgili teknik soru gruplarını, mümkün olduğunca tek bir toplu soru listesi halinde sor. Cevapları `Project-README.md` içinde Zorunlu / Tercih / Esnek / Belirsiz / N/A olarak kaydet. Kullanıcı açıkça kabul ederse önerilen ekonomik varsayılanları kullan. Şematik veya komponent seçimini etkileyen PCB ve mekanik kısıtları G0'dan önce öğren; kalan üretim ve mekanik ayrıntıları bölüm 00B'de netleştir.
 
@@ -108,7 +120,7 @@ Profil seçimi gereksiz maliyet oluşturmamalıdır: Hobi projeye Havacılık ku
 | Hibrit | Her iki gruptan maliyet, stok, teknik uygunluk ve tedarik edilebilirliğe göre seçim |
 
 - [ ] **INT-15** — Zorunlu üretici/marka, onaylı komponent listesi, yasaklı komponentler, stok ve lifecycle politikası veya mevcut kullanılacak parçalar var mı?
-- [ ] **INT-16** — Komponent seçiminde öncelik maliyet, performans, kalite/izlenebilirlik, stok bulunabilirliği veya uzun vadeli tedarik edilebilirlikten hangisi?
+- [ ] **INT-16** — Komponent seçiminde öncelik maliyet, performans, kalite/izlenebilirlik, stok bulunabilirliği veya uzun vadeli tedarik edilebilirlikten hangisi? INT-48 tasarım hedefi varsa onunla tutarlı olsun; tekrar sorma, yalnız farkı netleştir.
 - [ ] **INT-35** — **Hazır modül kullanımı kabul ediliyor mu?** Örneğin ESP32, nRF, CC1101 veya başka hazır haberleşme/işlemci/sensör modülleri kullanılabilir mi, yoksa tasarım discrete IC ve komponentlerden mi oluşmalı? Kullanıcının elinde mevcut veya özellikle tercih ettiği modül varsa exact MPN/model/revizyonu ve datasheet'i iste. Onay olmadan hazır modül seçme.
 - [ ] **INT-36** — Hazır modül veya önceden belirlenmiş konnektör kullanılacaksa kullanıcının elinde **STEP/3D CAD datası, footprint, symbol ve mekanik çizim** bulunuyor mu? Modülün bağlantı yöntemi, pinout'u, karşı konnektör/header, montaj ve mekanik gereksinimlerini doğrula. Model yoksa önce doğrulanmış kütüphanede veya üretici kaynağında ara; gerekirse kullanıcıdan ölçü/çizim iste. Yaklaşık envelope model ancak açık onayla kullanılabilir ve doğrulanmış STEP modeli olarak gösterilemez.
 
@@ -240,7 +252,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 
 ## 03 · JLCPCB / PCBWay — DFM & Cost Optimization
 
-> Üretim maliyetini düşürmek için gerekli olmayan özel PCB teknolojilerinden kaçın. Aşağıdaki varsayılanlar standart rigid FR-4 tasarım ve Hobi/Endüstriyel profil içindir; bölüm 00B'de onaylanan farklı malzeme, teknoloji ve kalite isterleri ile Havacılık profilinde bölüm 08 önceliklidir.
+> Üretim maliyetini düşürmek için gerekli olmayan özel PCB teknolojilerinden kaçın; "gerekli" kararı INT-48 tasarım hedefine göre verilir. Aşağıdaki varsayılanlar standart rigid FR-4 tasarım ve Hobi/Endüstriyel profil içindir; bölüm 00B'de onaylanan farklı malzeme, teknoloji ve kalite isterleri ile Havacılık profilinde bölüm 08 önceliklidir.
 
 | PCB özelliği | Varsayılan tercih |
 | :--- | :--- |
@@ -253,7 +265,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 | Yüzey kaplaması | Uygun maliyetli standart seçenek; pad ve temas gereksinimlerine göre |
 | Stack-up | İlgili üreticinin standart stack-up seçenekleri |
 
-- [ ] **DFM-00** — Kullanıcı medikal, askeri/havacılık, HDI, özel stack-up veya belirli bir üretici istemediyse (Hobi, Endüstriyel veya maliyet odaklı proje) JLCPCB ve/veya PCBWay'in standart kabiliyetlerini ve standart stack-up'ını esas al; amaç en düşük maliyettir. Özel istek varsa bölüm 00B kararları ve gerekirse bölüm 08 önceliklidir.
+- [ ] **DFM-00** — Kullanıcı medikal, askeri/havacılık, HDI, özel stack-up veya belirli bir üretici istemediyse (Hobi, Endüstriyel; INT-48 hedefi Maliyet öncelikli veya Dengeli) JLCPCB ve/veya PCBWay'in standart kabiliyetlerini ve standart stack-up'ını esas al; amaç en düşük maliyettir. Performans öncelikli hedefte standart üretim yine ilk seçenektir; ancak performans gerektiriyorsa özel üretici, laminat veya stack-up gerekçesiyle önerilir. Özel istek varsa bölüm 00B kararları ve gerekirse bölüm 08 önceliklidir.
 - [ ] **DFM-01** — JLCPCB ve PCBWay'in güncel standart üretim limitlerini kontrol et.
 - [ ] **DFM-02** — Tasarım kurallarını mümkün olduğunca iki üreticinin de standart üretim kabiliyetleriyle uyumlu tut.
 - [ ] **DFM-03** — Gerekmedikçe blind via, buried via, microvia, HDI ve via-in-pad kullanma.
@@ -263,7 +275,7 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **DFM-07** — Standart üretim dışında maliyet artışına yol açan tüm seçenekleri, gerekçeleriyle kullanıcıya bildir.
 - [ ] **DFM-08** — Komponent seçimini onaylanan tedarik stratejisine ve dizgi yöntemine göre yap. Gerçek MPN, footprint, stok, lifecycle bilgisi ve üreticinin PCBA dizgi kabiliyetini doğrula; teyit edilemeyen bilgileri açıkça belirt.
 - [ ] **DFM-09** — Manuel dizgi veya stencil + SMT tercih edilmişse kullanıcı tarafından onaylanan paket boyutu, pad erişimi ve rework gereksinimlerini koru. PCBA tercih edilmişse seçilen dizgi hizmetinin komponent tedarik, paket ve montaj limitlerini doğrula.
-- [ ] **DFM-10** — Teknik gereksinimleri sağlayan seçenekler arasında BOM, PCB ve dizgi maliyetinin toplamını değerlendir. Uygun olduğunda standart, yaygın ve önceden doğrulanmış komponentleri, footprint'leri ve referans devreleri yeniden kullan. Her standart pasif için kapsamlı fiyat araştırması yapma; önemli maliyet veya tedarik riski oluşturan parçaları karşılaştır.
+- [ ] **DFM-10** — Teknik gereksinimleri sağlayan seçenekler arasında BOM, PCB ve dizgi maliyetinin toplamını INT-48 tasarım hedefine göre değerlendir; Performans öncelikli hedefte daha pahalı ama ölçülebilir fayda sağlayan seçeneği tercih edebilirsin. Uygun olduğunda standart, yaygın ve önceden doğrulanmış komponentleri, footprint'leri ve referans devreleri yeniden kullan. Her standart pasif için kapsamlı fiyat araştırması yapma; önemli maliyet veya tedarik riski oluşturan parçaları karşılaştır.
 - [ ] **DFM-11** — Kritik veya pahalı komponentlerde teknik olarak uygun, onaylanabilir alternatifleri değerlendir. Stok ve fiyat bilgilerini doğrulayabildiğin tarih itibarıyla kaydet; doğrulanmamış fiyat veya stok uydurma.
 - [ ] **DFM-12** — Yeni komponent araştırmadan önce `Hardware-Library/catalog/` kayıtlarını kontrol et. Doğrulanmış symbol, footprint, CAD model ve devre bloklarını, exact MPN ve geçerlilik koşulları uyuyorsa yeniden kullan. Yeni veya değiştirilen varlıkları bağımsız review tamamlanmadan VERIFIED olarak kaydetme.
 - [ ] **DFM-13** — Onaylı hazır modülleri ve konnektör çiftlerini exact parça/revizyon ile kütüphaneye kaydet. Modülün pin/footprint/3D modeli ile uygun karşı konnektör ve montaj yönteminin eşleşmesini doğrula; her projede aynı varlıkları yeniden modelleme.
