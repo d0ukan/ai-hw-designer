@@ -1,17 +1,17 @@
-# Revizyon geçmişi
+# Revision history
 
 ## DR00001-R01 — 2026-11-25
 
-**Onaylayan:** örnek kullanıcı
+**Approved by:** example user
 
-**Değişiklikler**
-- İlk sürüm.
+**Changes**
+- First version.
 
-**Sebep**
-- Şablon akışını gösteren örnek.
+**Reason**
+- Example showing the template flow.
 
-**Etkilenen kart / dosyalar**
-- Tek kart.
+**Affected boards / files**
+- Single board.
 
-**Önceki revizyonun bilinen hataları (errata)**
-- Yok (ilk revizyon).
+**Known errors of the previous revision (errata)**
+- None (first revision).

@@ -1,21 +1,21 @@
-# Revizyon geçmişi
+# Revision history
 
-Her revizyon geçişinde (REL-01/02) Manager kullanıcıya "ne değişti, neden?" diye sorar ve buraya madde madde ekler. Yeni revizyon en üste yazılır. Varyantlar revizyon değildir; `Project-README.md` "Varyantlar" tablosunda tutulur.
+At every revision change (REL-01/02), the Manager asks the user "what changed, and why?" and adds it here as bullet points. Write the new revision at the top. Variants are not revisions; they are kept in the "Variants" table of `Project-README.md`.
 
 <!--
-## <önek> — YYYY-AA-GG
+## <prefix> — YYYY-MM-DD
 
-**Onaylayan:** <isim>
+**Approved by:** <name>
 
-**Değişiklikler**
+**Changes**
 - ...
 
-**Sebep**
+**Reason**
 - ...
 
-**Etkilenen kart / dosyalar**
+**Affected boards / files**
 - ...
 
-**Önceki revizyonun bilinen hataları (errata)**
+**Known errors of the previous revision (errata)**
 - ...
 -->

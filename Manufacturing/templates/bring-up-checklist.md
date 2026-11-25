@@ -1,16 +1,16 @@
-# <önek> — Bring-up ve test checklist (VER-09)
+# <prefix> — Bring-up and test checklist (VER-09)
 
-Kartı ilk kez enerjilendirirken sırayla ilerle. Her adımın sonucunu ve ölçülen değeri yaz; yapılmayan adım "doğrulanmadı" kalır.
+Go in order when powering the board for the first time. Write the result and the measured value of each step; a step not done stays "not verified".
 
-| # | Adım | Beklenen | Ölçülen / sonuç |
+| # | Step | Expected | Measured / result |
 | :--- | :--- | :--- | :--- |
-| 1 | Görsel kontrol: köprü, ters parça, eksik parça, polarite | Hata yok | |
-| 2 | Enerji vermeden besleme–GND direnci (her ray) | Kısa devre yok | |
-| 3 | Akım sınırlı kaynakla ilk enerji (düşük limit) | Beklenen boşta akım | |
-| 4 | Her besleme rayının gerilimi ve ripple'ı | Tasarım değeri ± tolerans | |
-| 5 | Isınan parça kontrolü (dokunma/termal kamera) | Anormal ısınma yok | |
-| 6 | Reset, saat (kristal/osilatör) | Çalışıyor | |
-| 7 | Programlama/debug bağlantısı (varsa) | Bağlanıyor | |
-| 8 | Arayüz ve fonksiyon testleri (INT-24 kabul kriterleri) | Geçti | |
-| 9 | Varsa batarya/şarj testleri (BAT-08) | Geçti | |
-| 10 | Sonuçları `REVIEW_LOG.md` ve `Project-README.md` checkpoint'e işle | Kayıtlı | |
+| 1 | Visual check: bridges, reversed parts, missing parts, polarity | No faults | |
+| 2 | Supply–GND resistance before power-up (each rail) | No short circuit | |
+| 3 | First power-up from a current-limited supply (low limit) | Expected idle current | |
+| 4 | Voltage and ripple of each supply rail | Design value ± tolerance | |
+| 5 | Check for hot parts (touch/thermal camera) | No abnormal heating | |
+| 6 | Reset, clock (crystal/oscillator) | Working | |
+| 7 | Programming/debug connection (if any) | Connects | |
+| 8 | Interface and function tests (INT-24 acceptance criteria) | Passed | |
+| 9 | Battery/charging tests, if any (BAT-08) | Passed | |
+| 10 | Record the results in `REVIEW_LOG.md` and the `Project-README.md` checkpoint | Recorded | |

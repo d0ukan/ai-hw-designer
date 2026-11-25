@@ -1,17 +1,17 @@
-# Üretim template'leri
+# Manufacturing templates
 
-Boş başlangıç dosyaları. Projede `Manufacturing/<rev>/` içine kopyala, `<önek>` ile yeniden adlandır ve doldur. `<önek>` = `python scripts/projectctl.py name [--variant A]` (ör. `DR00627-R01`, `DR00627-AV-R01`). Kurallar: `Hardware-Rules.md` bölüm 09.
+Empty starter files. In the project, copy them into `Manufacturing/<rev>/`, rename them with `<prefix>` and fill them in. `<prefix>` = `python scripts/projectctl.py name [--variant A]` (e.g. `DR00627-R01`, `DR00627-AV-R01`). Rules: section 09 of `Hardware-Rules.md`.
 
-| Template | Proje çıktısı | Not |
+| Template | Project output | Note |
 | :--- | :--- | :--- |
-| `bom.csv` | `<önek>_BOM.csv` | Her varyant için ayrı. `DNP` = `Yes` olan parça takılmaz. `Alternate MPN` en az 1 drop-in muadil (DFM-14); yoksa `Notes` = "muadil yok". `Comment`, `Designator`, `Footprint`, `LCSC Part #` sütunları JLCPCB yüklemesiyle uyumludur. |
-| `pnp.csv` | `<önek>_PnP.csv` | Birim mm, açı derece. `Layer` = `Top` / `Bottom`. DNP parçalar listede olmaz. Üreticinin rotasyon referansını sipariş ekranında kontrol et. |
-| `schematic-outputs.md` | `<önek>_SCH.pdf` ve ekleri | Şematik çıktı listesi |
-| `assembly-drawing.md` | `<önek>_ASSY.pdf` | Draftsman tarzı montaj çizimi |
-| `fab-notes.md` | `<önek>_FAB.md` veya `.pdf` | Üreticiye fab notu |
-| `bring-up-checklist.md` | Proje kaydı (release dışı) | İlk enerji verme ve test sırası (VER-09) |
-| `review-checklist.md` | Proje kaydı (release dışı) | Reviewer için aşama aşama kısa kontrol listesi |
+| `bom.csv` | `<prefix>_BOM.csv` | One per variant. A part with `DNP` = `Yes` is not fitted. `Alternate MPN` holds at least 1 drop-in alternate part (DFM-14); if none, `Notes` = "no alternate". The `Comment`, `Designator`, `Footprint`, `LCSC Part #` columns match the JLCPCB upload. |
+| `pnp.csv` | `<prefix>_PnP.csv` | Units mm, angles in degrees. `Layer` = `Top` / `Bottom`. DNP parts are not listed. Check the manufacturer's rotation reference on the order screen. |
+| `schematic-outputs.md` | `<prefix>_SCH.pdf` and attachments | Schematic output list |
+| `assembly-drawing.md` | `<prefix>_ASSY.pdf` | Draftsman-style assembly drawing |
+| `fab-notes.md` | `<prefix>_FAB.md` or `.pdf` | Fab note for the manufacturer |
+| `bring-up-checklist.md` | Project record (not part of the release) | First power-up and test order (VER-09) |
+| `review-checklist.md` | Project record (not part of the release) | Short stage-by-stage checklist for the Reviewer |
 
-Release klasörünü kontrol etmek için: `python scripts/projectctl.py check-bom` (BOM/PnP tutarlılığı) ve `check-release`. Dolu bir örnek için `examples/DR00001-usb-c-led/` klasörüne bak.
+To check the release folder: `python scripts/projectctl.py check-bom` (BOM/PnP consistency) and `check-release`. For a filled example, see the `examples/DR00001-usb-c-led/` folder.
 
-Revizyon geçmişi kökteki `REVISION-HISTORY.md` dosyasında tutulur. Bu klasördeki template'ler release değildir; `manifest` ve `check-release` yalnızca `Manufacturing/<rev>/` klasörünü kontrol eder.
+The revision history is kept in `REVISION-HISTORY.md` at the root. The templates in this folder are not a release; `manifest` and `check-release` check only the `Manufacturing/<rev>/` folder.

@@ -1,15 +1,15 @@
-# <önek> — Montaj çizimi (`<önek>_ASSY.pdf`)
+# <prefix> — Assembly drawing (`<prefix>_ASSY.pdf`)
 
-Draftsman tarzı PDF. Altium'da Draftsman, KiCad'de Fab katmanı + çizim çerçevesi ile PDF plot, EasyEDA'da PDF export kullanılabilir.
+Draftsman-style PDF. Use Draftsman in Altium, a PDF plot of the Fab layer + drawing frame in KiCad, or PDF export in EasyEDA.
 
-## İçerik
+## Contents
 
-- [ ] Top görünüm: komponent gövdeleri ve designator'lar (Fab/Assembly katmanı)
-- [ ] Bottom görünüm: aynalı mı aynasız mı olduğu sayfada yazılı
-- [ ] Pin 1, polarite ve yön işaretleri
-- [ ] DNP parçalar işaretli (ör. çarpı veya "DNP" notu)
-- [ ] Kart ölçüleri, montaj delikleri, kritik mekanik ölçüler
-- [ ] Başlık bloğu: proje adı, `<önek>`, varyant, tarih, sayfa
-- [ ] Özel montaj notları (ör. elle lehimlenecek parçalar, coating/staking alanları)
+- [ ] Top view: component bodies and designators (Fab/Assembly layer)
+- [ ] Bottom view: the page states whether it is mirrored or not
+- [ ] Pin 1, polarity and orientation marks
+- [ ] DNP parts marked (e.g. a cross or a "DNP" note)
+- [ ] Board dimensions, mounting holes, critical mechanical dimensions
+- [ ] Title block: project name, `<prefix>`, variant, date, page
+- [ ] Special assembly notes (e.g. hand-soldered parts, coating/staking areas)
 
-Designator'lar silkscreen'de gizliyse (PCB-20) bu çizim zorunludur.
+This drawing is required if designators are hidden on the silkscreen (PCB-20).

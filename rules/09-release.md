@@ -1,19 +1,19 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
-## 09 · Revizyon, varyant ve çıktılar
+## 09 · Revision, variant and outputs
 
-- [ ] **REL-01** — **Revizyon mu, varyant mı?** Bakır, outline, delik veya stack-up değişiyorsa yeni **revizyon** olur (R01 → R02). PCB aynı kalıp yalnızca takılan parçalar veya değerler değişiyorsa **varyant** olur (`DR00627-AV-R01`, `DR00627-BV-R01`).
-- [ ] **REL-02** — **Revizyon geçişi:** Revizyon atlatılırken kullanıcıya sor: **Ne değişti, neden?** Yanıtı madde madde projenin `REVISION-HISTORY.md` dosyasına yaz (tarih, değişiklikler, sebep, etkilenen kart/dosyalar, onaylayan). Önceki revizyonun bilinen hatalarını (errata) da ekle. Yeni revizyonda tasarım review'ları, G1 ve manufacturing review yeniden yapılır. G0 ve G0.5 yalnızca gereksinim (`requirements_revision`) ve PCB girdi revizyonu (`pcb_requirements_revision`) değişmediyse geçerli kalır; değiştiyse yeniden onay alınır.
-- [ ] **REL-03** — **Çıktı seti:** Teslim edilecek çıktıları INT-25'e göre seç; tipik set aşağıdadır. Her varyantın kendi BOM ve PnP dosyası olur; DNP parçalar PnP'den çıkarılır, BOM'da DNP olarak kalır. Template'ler `Manufacturing/templates/` içindedir.
-- [ ] **REL-04** — **Release sırası:** (1) Manager teslim listesini kaydeder: `projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB` (INT-25'e göre). (2) Designer çıktıları `Manufacturing/<rev>/` içine önekle üretir, `check-bom` çalıştırır ve son adım olarak `manifest` yazar. (3) Reviewer dosyaları ve manifesti inceler. (4) Manager PASS'ı `review manufacturing PASS` ile kaydeder; kayıt manifestin hash'ini saklar. (5) `check-release` çalıştırılır. Manifest PASS'tan sonra değişirse yeniden review gerekir. Dosya adları proje koduyla başlamalıdır.
+- [ ] **REL-01** — **Revision or variant?** If copper, outline, holes or stack-up change, it is a new **revision** (R01 → R02). If the PCB stays the same and only populated parts or values change, it is a **variant** (`DR00627-AV-R01`, `DR00627-BV-R01`).
+- [ ] **REL-02** — **Revision change:** When bumping the revision, ask the user: **What changed, and why?** Write the answer item by item into the project's `REVISION-HISTORY.md` file (date, changes, reason, affected boards/files, approver). Also add the known errors (errata) of the previous revision. In the new revision, design reviews, G1 and the manufacturing review are redone. G0 and G0.5 stay valid only if the requirements (`requirements_revision`) and PCB input revision (`pcb_requirements_revision`) did not change; if they changed, approval is obtained again.
+- [ ] **REL-03** — **Output set:** Select the outputs to deliver according to INT-25; the typical set is below. Each variant has its own BOM and PnP file; DNP parts are removed from the PnP and stay in the BOM as DNP. Templates are in `Manufacturing/templates/`.
+- [ ] **REL-04** — **Release order:** (1) The Manager records the deliverables: `projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB` (according to INT-25). (2) The Designer generates the outputs with the prefix into `Manufacturing/<rev>/`, runs `check-bom` and writes the `manifest` as the last step. (3) The Reviewer inspects the files and the manifest. (4) The Manager records PASS with `review manufacturing PASS`; the record stores the manifest hash. (5) `check-release` is run. If the manifest changes after PASS, a new review is required. File names must start with the project code.
 
-| Çıktı | Dosya adı | Not |
+| Output | File name | Note |
 | :--- | :--- | :--- |
-| Gerber + drill | `<önek>_Gerber.zip` | Üreticinin istediği katman seti |
-| BOM | `<önek>_BOM.csv` | Varyant başına; MPN, muadil, DNP |
-| Pick & Place | `<önek>_PnP.csv` | Varyant başına; DNP hariç |
-| Şematik | `<önek>_SCH.pdf` | Revizyon ve tarih başlıkta |
-| Montaj çizimi (Draftsman tarzı) | `<önek>_ASSY.pdf` | Top/bottom, designator, Pin 1/polarite, DNP işaretli, ölçüler; bottom görünümün aynalı olup olmadığı yazılı |
-| Fab notu | `<önek>_FAB.md` veya `.pdf` | Stack-up, kalınlık, kaplama, renk, IPC sınıfı, özel istekler |
-| 3D model | `<önek>.step` | İstenirse |
+| Gerber + drill | `<prefix>_Gerber.zip` | Layer set the manufacturer requires |
+| BOM | `<prefix>_BOM.csv` | Per variant; MPN, alternate part, DNP |
+| Pick & Place | `<prefix>_PnP.csv` | Per variant; DNP excluded |
+| Schematic | `<prefix>_SCH.pdf` | Revision and date in the title block |
+| Assembly drawing (Draftsman style) | `<prefix>_ASSY.pdf` | Top/bottom, designators, Pin 1/polarity, DNP marked, dimensions; states whether the bottom view is mirrored |
+| Fab note | `<prefix>_FAB.md` or `.pdf` | Stack-up, thickness, finish, color, IPC class, special requests |
+| 3D model | `<prefix>.step` | If requested |
 
-`<önek>` = `projectctl.py name [--variant X]` çıktısı.
+`<prefix>` = output of `projectctl.py name [--variant X]`.

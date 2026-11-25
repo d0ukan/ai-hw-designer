@@ -1,17 +1,17 @@
 # Review Log
 
-Reviewer tarafından oluşturulan bağımsız inceleme kayıtları. Her bulgunun çözümü Designer tarafından gerçekleştirilir. Yalnızca gerçek kanıtla kapanış yapılır.
+Independent review records created by the Reviewer. The Designer resolves each finding. Close only with real evidence.
 
-Multi-PCB projelerde konum alanında kart ID'sini veya kartlar arası/harici arayüz ID'sini belirt. Ortak assembly ve konnektör uyumu kontrollerine ilgili kanıtı ekle.
+In multi-PCB projects, give the board ID or the inter-board/external interface ID in the location field. Add the relevant evidence for shared assembly and connector fit checks.
 
-| Bulgu ID | Önem | Aşama / revizyon / konum | Kanıt ve sorun | Beklenen düzeltme | Durum |
+| Finding ID | Severity | Stage / revision / location | Evidence and issue | Expected fix | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 
-Önem: CRITICAL / MAJOR / MINOR / INFO · Durum: OPEN / FIXED / VERIFIED / ACCEPTED (yalnızca uygun, onaylı istisna).
+Severity: CRITICAL / MAJOR / MINOR / INFO · Status: OPEN / FIXED / VERIFIED / ACCEPTED (only for a valid, approved exception).
 
-## Review sonuçları
+## Review results
 
-| Aşama | Revizyon | Kontrol / kanıt | Sonuç |
+| Stage | Revision | Check / evidence | Result |
 | :--- | :--- | :--- | :--- |
 
-Sonuç: PASS / REWORK / BLOCKED. Reviewer bulguları ve sonuçları doğrular; Manager bunları workflow state'e işler. Kritik veya önemli açık bulgular geçişi engeller.
+Result: PASS / REWORK / BLOCKED. The Reviewer verifies findings and results; the Manager records them in the workflow state. Open critical or major findings block the transition.

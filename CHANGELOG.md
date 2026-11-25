@@ -1,121 +1,127 @@
 # Changelog
 
+## v1.15 — 2026-11-25
+
+- All rule, role, template and example files translated to English for the public repo. `README.tr.md` stays as the Turkish overview.
+- Example BOM notes, workflow state and Codex agent instructions in English; example manifest and its review hash regenerated.
+- `check_repo.py` reads the `**Version**` rows; the BOM warning now names the `no alternate` note (`muadil yok` is still accepted).
+
 ## v1.14 — 2026-11-25
 
-Bağımsız iki inceleme ve harici bir AI incelemesinin bulguları düzeltildi.
+Fixed the findings of two independent reviews and one external AI review.
 
-**projectctl (güvenlik ve doğruluk)**
-- Git'e eklenmemiş yeni tasarım dosyaları da değişiklik sayılır.
-- `commit` alanı hex olmak zorunda (git'e seçenek olarak geçemez).
-- Varsayılan git kökü artık state dosyasının projesi (başka klasördeki proje doğru repoya bakar).
-- Tasarım commit edilmeden `review ... PASS` ve `approve G1` reddedilir.
-- `review manufacturing PASS` geçerli manifest ister ve hash'ini saklar; manifest sonradan değişirse `check-release` yeniden review ister.
-- Teslim listesi: `deliverables` komutu ve alanı; release'te her çıktı bulunmalı. `check-bom` release'te BOM yoksa hata verir.
-- `next` komutu: sıradaki eksik adım, kim yapacak ve tam komut.
-- BOM/PnP: başlık boşlukları, boş satırlar, gerçek satır numaraları, `R1-R3` aralıkları, `nan`/`inf` reddi, noktalı virgül ve UTF-8 olmayan CSV için açık hata, büyük/küçük harften bağımsız dosya bulma.
-- Manifest: bozuk dosya ve `../` girişleri temiz hata verir; `Thumbs.db`, `desktop.ini`, `.DS_Store` yok sayılır.
-- `*.OutJob` değişikliği tasarım değişikliği sayılmaz. `--state` gibi seçenekler alt komuttan önce de yazılabilir. Giriş dosyası hataları `INPUT ERROR` olarak ayrılır.
-- 13 yeni test (toplam 54).
+**projectctl (security and correctness)**
+- New design files not yet added to Git also count as changes.
+- The `commit` field must be hex (it cannot be passed to git as an option).
+- The default git root is now the state file's project (a project in another folder looks at the right repo).
+- `review ... PASS` and `approve G1` are rejected until the design is committed.
+- `review manufacturing PASS` requires a valid manifest and stores its hash; if the manifest changes later, `check-release` requires a new review.
+- Deliverables: `deliverables` command and field; every output must be present at release. `check-bom` fails at release if there is no BOM.
+- `next` command: the next missing step, who does it, and the exact command.
+- BOM/PnP: header whitespace, blank lines, real line numbers, `R1-R3` ranges, `nan`/`inf` rejection, clear errors for semicolon and non-UTF-8 CSV, case-insensitive file lookup.
+- Manifest: corrupt files and `../` entries give a clean error; `Thumbs.db`, `desktop.ini`, `.DS_Store` are ignored.
+- A `*.OutJob` change does not count as a design change. Options such as `--state` can also be written before the subcommand. Input file errors are reported separately as `INPUT ERROR`.
+- 13 new tests (54 total).
 
 **check_repo**
-- Dizindeki kural aralıkları gerçek kurallarla karşılaştırılır; `[x]` işaretli kurallar sayılır; önekler tanımlı kurallardan türetilir; link kontrolü kod bloklarını, `%20` ve kökten linkleri doğru işler; UTF-8 olmayan CSV temiz hata verir; iki README'nin sürüm satırı kontrol edilir.
+- Rule ranges in the index are compared with the actual rules; rules marked `[x]` are counted; prefixes are derived from defined rules; the link check handles code blocks, `%20` and root-relative links correctly; non-UTF-8 CSV gives a clean error; the version lines of both READMEs are checked.
 
-**Kurallar ve dokümanlar**
-- Belgelerdeki komutlar düzeltildi (`--revision R01`); `project/README.md` içinde G0'dan release'e tam komut sırası.
-- Release sırası netleşti (REL-04): manifesti Designer yazar, PASS'ı Manager kaydeder, sonra `check-release`.
-- Bulgu kimlikleri `F-001` (kural kimliği `REV-01` ile karışmasın).
-- Dizin: INT-52, batarya tetik ifadesi, "Aşamaya göre okuma seti" tablosu; bölüm 07 ilk oturumda bir kez.
-- AI-09: dur koşulları (şebeke/SELV üstü gerilim, çok hücreli lityum, medikal, DAL A/B) için insan mühendis onayı.
-- Soru sırası tek yerde; INT-49 `project_name` da kaydeder; ertelenen kart kararları en geç G0.5.
-- 3W kuralı netleşti (merkezden 3W, kenardan ≥ 2W). Roles iş akışı şemasına G0.5 eklendi. REL-02: yeni revizyonda hangi onayların geçerli kaldığı.
-- `rules/01` limitlerine son kontrol tarihi; Manager okuma seti küçüldü; web sohbeti akışı ve `next` AGENTS'ta.
+**Rules and docs**
+- Fixed commands in the docs (`--revision R01`); `project/README.md` has the full command sequence from G0 to release.
+- Release order clarified (REL-04): the Designer writes the manifest, the Manager records the PASS, then `check-release`.
+- Finding IDs are `F-001` (so they are not confused with rule ID `REV-01`).
+- Index: INT-52, battery trigger wording, "Reading set by stage" table; section 07 once in the first session.
+- AI-09: stop conditions (voltage above mains/SELV, multi-cell lithium, medical, DAL A/B) require human engineer approval.
+- Question order in one place; INT-49 also records `project_name`; deferred board decisions by G0.5 at the latest.
+- 3W rule clarified (3W center-to-center, ≥ 2W edge-to-edge). G0.5 added to the Roles workflow diagram. REL-02: which approvals stay valid in a new revision.
+- Last-checked date on `rules/01` limits; smaller Manager reading set; web chat flow and `next` in AGENTS.
 
-**Örnek proje**
-- R4 artık takılı seri köprü (DNP iken LED yanmıyordu); R3 = 1.5 kΩ (~2 mA); yeşil LED'in yanlış muadili kaldırıldı ("muadil yok"); gerçek bir DNP opsiyonu (C1) eklendi; `REVIEW_LOG.md` ve teslim listesi eklendi.
+**Example project**
+- R4 is now a fitted series bridge (the LED did not light while it was DNP); R3 = 1.5 kΩ (~2 mA); removed the wrong alternate part for the green LED ("no alternate"); added a real DNP option (C1); added `REVIEW_LOG.md` and deliverables.
 
 **README**
-- Ana `README.md` artık İngilizce; Türkçesi `README.tr.md`. Repo adı `hardware-for-anything` olarak güncellendi.
+- The main `README.md` is now English; the Turkish version is `README.tr.md`. Repo name updated to `hardware-for-anything`.
 
 ## v1.13 — 2026-11-25
 
-**AI ile kullanım ve token**
-- `Hardware-Rules.md` artık bir dizin; kurallar `rules/` altında 11 bölüm dosyasına ayrıldı (içerik ve kural kimlikleri aynı). AI yalnızca ilgili bölümü okur.
-- `AGENTS.md`: "Repo linkiyle başlayan AI" bölümü (neyi okuyacağı, kendi kopya, dosya erişimi olmayan web sohbeti, ilk sorular).
-- `llms.txt` eklendi; README başına İngilizce özet ve "AI sohbetinde repo linkiyle başlamak" bölümü.
+**Use with AI and tokens**
+- `Hardware-Rules.md` is now an index; the rules are split into 11 section files under `rules/` (content and rule IDs unchanged). The AI reads only the relevant section.
+- `AGENTS.md`: "AI starting from the repo link" section (what to read, own copy, web chat without file access, first questions).
+- Added `llms.txt`; English summary at the top of the README and a "Starting from the repo link in an AI chat" section.
 
 **projectctl**
-- Commit bağı: `approve`/`review` git commit'ini kaydeder; review'dan sonra tasarım dosyaları değişirse `check-export`/`check-release` durur (şematik review yalnız şematik dosyalarına bakar).
-- `check-bom`: BOM/PnP designator eşleşmesi, Qty, DNP, MPN; muadil eksikse uyarı. `check-release` bunu da çalıştırır.
-- Dosya adı kontrolü alt klasörlere genişledi (önekli klasörlerin içi serbest); `templates` revizyon adı olarak yasak. 7 yeni test (toplam 41).
-- `scripts/check_repo.py`: kural kimliği çakışması, tanımsız referans, bozuk link, sürüm satırları, CSV kolonları.
+- Commit binding: `approve`/`review` records the git commit; if design files change after a review, `check-export`/`check-release` stop (schematic review looks only at schematic files).
+- `check-bom`: BOM/PnP designator match, Qty, DNP, MPN; warning if an alternate part is missing. `check-release` also runs it.
+- File name check extended to subfolders (contents of prefixed folders are free); `templates` is forbidden as a revision name. 7 new tests (41 total).
+- `scripts/check_repo.py`: rule ID collisions, undefined references, broken links, version lines, CSV columns.
 
-**Kurallar ve şablonlar**
-- Bölüm 10 (BAT-01…08): batarya ve şarj, koşullu; INT-52 tetikler.
+**Rules and templates**
+- Section 10 (BAT-01…08): battery and charging, conditional; triggered by INT-52.
 - `Manufacturing/templates/`: `bring-up-checklist.md`, `review-checklist.md`.
-- `examples/DR00001-usb-c-led/`: dolu örnek proje (iki varyant, BOM/PnP, manifest); CI uçtan uca kontrol eder.
+- `examples/DR00001-usb-c-led/`: filled example project (two variants, BOM/PnP, manifest); CI checks it end to end.
 
 **Repo**
-- CI: `check_repo.py` ve örnek proje adımları.
-- `CONTRIBUTING.md`, issue ve PR şablonları; `.gitattributes` ve README'de Git LFS notu.
+- CI: `check_repo.py` and example project steps.
+- `CONTRIBUTING.md`, issue and PR templates; Git LFS note in `.gitattributes` and the README.
 
 ## v1.12 — 2026-11-25
 
-**Proje kimliği ve çıktılar**
-- INT-49/50: İlk iş proje adı, kodu, revizyon ve varyant sorulur; çıktılar `<kod>-<rev>` veya `<kod>-<harf>V-<rev>` önekiyle adlandırılır (ör. `DR00627-R01`, `DR00627-AV-R01`).
-- `projectctl.py`: `project_code` alanı (eski state dosyalarıyla uyumlu), `name [--variant X]` komutu; `check-export` proje kodu ister, `check-release` kök dosya adlarının proje koduyla başlamasını kontrol eder. 7 yeni test (toplam 34).
-- Bölüm 09 (REL-01…04): revizyon/varyant ayrımı, revizyon geçişinde "ne değişti, neden?" kaydı, çıktı seti ve isimleri.
-- `REVISION-HISTORY.md` ve `Manufacturing/templates/` eklendi: `bom.csv`, `pnp.csv`, `schematic-outputs.md`, `assembly-drawing.md` (Draftsman tarzı `_ASSY.pdf`), `fab-notes.md`.
+**Project identity and outputs**
+- INT-49/50: The first task asks for the project name, code, revision and variant; outputs are named with the `<code>-<rev>` or `<code>-<letter>V-<rev>` prefix (e.g. `DR00627-R01`, `DR00627-AV-R01`).
+- `projectctl.py`: `project_code` field (compatible with old state files), `name [--variant X]` command; `check-export` requires a project code, `check-release` checks that root file names start with the project code. 7 new tests (34 total).
+- Section 09 (REL-01…04): revision/variant distinction, "what changed, and why?" record at a revision change, output set and names.
+- Added `REVISION-HISTORY.md` and `Manufacturing/templates/`: `bom.csv`, `pnp.csv`, `schematic-outputs.md`, `assembly-drawing.md` (Draftsman-style `_ASSY.pdf`), `fab-notes.md`.
 
-**Kurallar**
-- INT-51: Kritik olmayan sorularda "Sonra karar ver" seçeneği; ertelenen karar ilgili kapıda tekrar sorulur, yanıt yoksa güvenli varsayılan.
-- PCB-17…21: logo/ikon, kart kodu (silk/bakır, yüz, tarih), konnektör etiketi, designator (açık/gizli, boyut, konum), imza/easter egg soruları.
-- LAY-30/31: Silkscreen her yüzde çakışmasız; işaretleme kararlarının uygulanması.
-- DFM-14: Her komponente mümkünse en az 1 drop-in muadil. DFM-15: Ortak footprint katman haritası (KiCad KLC, Altium sabit mechanical harita).
-- Roller: MGR-15/16, REV-13 (MCP'de Reviewer yalnız okur), REV-14 (çıktı seti kontrolü).
+**Rules**
+- INT-51: "Decide later" option for non-critical questions; a deferred decision is asked again at the relevant gate, with a safe default if there is no answer.
+- PCB-17…21: questions on logo/icon, board code (silk/copper, side, date), connector label, designator (shown/hidden, size, position), signature/easter egg.
+- LAY-30/31: Silkscreen without overlaps on each side; applying the marking decisions.
+- DFM-14: At least 1 drop-in alternate part for each component where possible. DFM-15: Common footprint layer map (KiCad KLC, Altium fixed mechanical map).
+- Roles: MGR-15/16, REV-13 (Reviewer is read-only in MCP), REV-14 (output set check).
 
-**MCP ve Git**
-- README: KiCAD-MCP-Server ve altium-mcp kullanım notları.
-- `.gitignore`: KiCad `fp-info-cache`, MCP `logs/`, Freerouting `*.dsn/*.ses`, Altium önizleme/log/çıktı klasörleri.
-- `.gitattributes`: Altium tasarım dosyaları `binary`, `.PrjPcb`/`.OutJob` CRLF, EasyEDA `.epro` binary.
+**MCP and Git**
+- README: KiCAD-MCP-Server and altium-mcp usage notes.
+- `.gitignore`: KiCad `fp-info-cache`, MCP `logs/`, Freerouting `*.dsn/*.ses`, Altium preview/log/output folders.
+- `.gitattributes`: Altium design files `binary`, `.PrjPcb`/`.OutJob` CRLF, EasyEDA `.epro` binary.
 
 ## v1.11.1 — 2026-11-25
 
-- `README.md`: İş akışı şemasına şematik ve üretim kontrolü için REWORK geri dönüşleri eklendi; G1 yeniden onay kuralı açıklandı.
+- `README.md`: Added REWORK loops for the schematic and manufacturing checks to the workflow diagram; explained the G1 re-approval rule.
 
 ## v1.11 — 2026-11-25
 
-**Kurallar (`Hardware-Rules.md`)**
-- INT-48: Tasarım hedefi seçimi eklendi (Maliyet öncelikli / Dengeli / Performans öncelikli). Havacılık/askeri projede maliyet hedefi yoksa varsayılan Performans. DFM-00, DFM-10, INT-16, bölüm 03 notu ve başlık önceliği bu hedefe bağlandı; `Project-README.md`, `AGENTS.md`, MGR-14 ve `agents/Manager.md` güncellendi.
+**Rules (`Hardware-Rules.md`)**
+- INT-48: Added design target choice (Cost first / Balanced / Performance first). For aerospace/military projects with no cost target, the default is Performance. DFM-00, DFM-10, INT-16, the section 03 note and header priority are tied to this target; updated `Project-README.md`, `AGENTS.md`, MGR-14 and `agents/Manager.md`.
 
 ## v1.10 — 2026-11-25
 
-**Kurallar (`Hardware-Rules.md`)**
-- Bölüm 04 alt başlıklara ayrıldı: Genel, Yerleşim, Routing, SI / PI.
-- SCH-03…SCH-07 şematik kuralları eklendi: güç ağacı ve ray filtreleri (PI), pin bazlı decoupling, SI hazırlığı (seri terminasyon, I²C pull-up, düşük kapasitanslı ESD, strapping pinleri), kısıtların şematikte işaretlenmesi, 0 Ω / DNP opsiyon yeri.
-- DFM-00: Özel istek yoksa JLCPCB/PCBWay standart kabiliyeti ve stack-up'ı esas alınır.
-- LAY-08…LAY-13 yerleşim kuralları eklendi: datasheet/app note referans layout'u, yerleşim sırası, giriş koruması, switching regülatör döngüsü, kristal, termal, hizalama ve erişim.
-- LAY-14…LAY-24 routing kuralları eklendi: routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem ve dönüş via'sı, clock/3W, analog GND, güç dağıtımı ve Kelvin, yüksek gerilim, pad girişi/teardrop/acid trap, en kısa ve doğrudan yol (dolanan hat yasak, önce yerleşimi düzelt), kullanıcı onaylı free-angle/organik routing.
-- LAY-25…LAY-29 SI/PI kuralları eklendi: decoupling döngüsü, kritik uzunluk (`tr × 2.5 cm`), empedans eşleştirme, length/delay matching, bitiş kontrolü.
-- `README.md`: "Yerleşim ve routing" bölümü eklendi.
+**Rules (`Hardware-Rules.md`)**
+- Section 04 split into subsections: General, Layout, Routing, SI / PI.
+- Added SCH-03…SCH-07 schematic rules: power tree and rail filters (PI), per-pin decoupling, SI preparation (series termination, I²C pull-up, low-capacitance ESD, strapping pins), marking constraints in the schematic, 0 Ω / DNP option footprint.
+- DFM-00: Unless specially requested, JLCPCB/PCBWay standard capability and stack-up are the baseline.
+- Added LAY-08…LAY-13 layout rules: datasheet/app note reference layout, placement order, input protection, switching regulator loop, crystal, thermal, alignment and access.
+- Added LAY-14…LAY-24 routing rules: routing order, net class and IPC-2152, layer usage, split plane and return via, clock/3W, analog GND, power distribution and Kelvin, high voltage, pad entry/teardrop/acid trap, shortest and most direct path (meandering traces forbidden, fix the placement first), user-approved free-angle/organic routing.
+- Added LAY-25…LAY-29 SI/PI rules: decoupling loop, critical length (`tr × 2.5 cm`), impedance matching, length/delay matching, final check.
+- `README.md`: Added a "Layout and routing" section.
 
 ## v1.9 — 2026-11-25
 
-**Kurallar (`Hardware-Rules.md`)**
-- INT-47: Kalite profili seçimi eklendi: Hobi / Endüstriyel / Havacılık.
-- Bölüm 05: RF kuralları isteğe bağlı ve banda göre kademeli hale getirildi (RF-A < 1 GHz, RF-B 1–6 GHz, RF-C > 6 GHz; RF-01…RF-09). RF yoksa bölüm N/A.
-- Bölüm 08: Havacılık/Aviyonik koşullu profili eklendi (AVI-01…AVI-10: standartlar, IPC Class 3, derating, komponent, güç girişi, EMC, çevre, izlenebilirlik, analizler).
-- GND-05/GND-06/LAY-05: RF, yüksek akım ve exposed pad istisnaları eklendi.
+**Rules (`Hardware-Rules.md`)**
+- INT-47: Added quality profile choice: Hobby / Industrial / Aerospace.
+- Section 05: RF rules made optional and tiered by band (RF-A < 1 GHz, RF-B 1–6 GHz, RF-C > 6 GHz; RF-01…RF-09). Without RF, the section is N/A.
+- Section 08: Added the Aerospace/Avionics conditional profile (AVI-01…AVI-10: standards, IPC Class 3, derating, components, power input, EMC, environment, traceability, analyses).
+- GND-05/GND-06/LAY-05: Added RF, high-current and exposed pad exceptions.
 
-**Roller ve şablonlar**
-- `Hardware-Roles.md`: MGR-14 (profil sorusu), MGR-09 ve REV-11 güncellendi.
-- `AGENTS.md`, `agents/*.md`, `Project-README.md`: profil, RF bandı ve Havacılık alanları eklendi.
-- `components.csv`: `temp_range`, `lifecycle`, `qualification`, `alternates`, `msl`, `rohs` sütunları eklendi.
+**Roles and templates**
+- `Hardware-Roles.md`: MGR-14 (profile question), MGR-09 and REV-11 updated.
+- `AGENTS.md`, `agents/*.md`, `Project-README.md`: Added profile, RF band and Aerospace fields.
+- `components.csv`: Added `temp_range`, `lifecycle`, `qualification`, `alternates`, `msl`, `rohs` columns.
 
-**Araçlar**
-- `projectctl.py`: `set`, `approve`, `revoke`, `review`, `block`, `unblock` kayıt komutları; `recorded_on` / `recorded_by` alanları.
-- `projectctl.py manifest`: üretim çıktıları için SHA-256 manifest; `check-release` manifesti doğrular.
-- GitHub Actions CI (Ubuntu + Windows, Python 3.10/3.12), MIT lisansı.
+**Tools**
+- `projectctl.py`: `set`, `approve`, `revoke`, `review`, `block`, `unblock` record commands; `recorded_on` / `recorded_by` fields.
+- `projectctl.py manifest`: SHA-256 manifest for manufacturing outputs; `check-release` verifies the manifest.
+- GitHub Actions CI (Ubuntu + Windows, Python 3.10/3.12), MIT license.
 
 ## v1.8
 
-- İlk yayımlanan şablon.
+- First published template.

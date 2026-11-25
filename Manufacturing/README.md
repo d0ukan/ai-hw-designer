@@ -1,11 +1,11 @@
 # Manufacturing
 
-Bu klasör başlangıçta yalnızca `templates/` içerir (boş BOM, PnP, şematik çıktı, montaj çizimi ve fab notu şablonları; bkz. [templates/README.md](templates/README.md)). G1 üretim dosyası onayı ve başarılı yerel `check-export` doğrulaması olmadan Gerber, drill, BOM, PnP/CPL, stencil veya diğer release dosyaları oluşturulmaz.
+At the start this folder holds only `templates/` (empty BOM, PnP, schematic output, assembly drawing and fab note templates; see [templates/README.md](templates/README.md)). Gerber, drill, BOM, PnP/CPL, stencil or other release files are not created without G1 manufacturing file approval and a successful local `check-export`.
 
-Onay verildiğinde ilgili tasarım revizyonu için bir alt klasör kullan (ör. `R01/`). Dosyaları `projectctl.py name` önekiyle adlandır (ör. `DR00627-R01_BOM.csv`, varyant için `DR00627-AV-R01_BOM.csv`); çıktı seti `Hardware-Rules.md` bölüm 09'dadır. Tüm dosyalar aynı onaylı kaynaktan üretilir. Reviewer bunları kontrol eder. Tasarım değişmişse eski onayla yeni export yapılmaz.
+Once approved, use a subfolder for the design revision (e.g. `R01/`). Name files with the `projectctl.py name` prefix (e.g. `DR00627-R01_BOM.csv`, for a variant `DR00627-AV-R01_BOM.csv`); the output set is in section 09 of `Hardware-Rules.md`. All files are generated from the same approved source. The Reviewer checks them. If the design has changed, do not export with an old approval.
 
-Multi-PCB projede onaylı üretim dosyalarını `<revision>/<board-id>/` altında ayrı tut. İstenmişse onaylı komple sistem CAD/STEP çıktısı için `<revision>/Assembly/` kullan. Kartları ve konnektör/kablo ilişkilerini ortak proje revizyonuyla tutarlı kaydet.
+In a multi-PCB project, keep approved manufacturing files separately under `<revision>/<board-id>/`. If requested, use `<revision>/Assembly/` for the approved full system CAD/STEP output. Record boards and connector/cable relations consistently with the shared project revision.
 
-Üretim dosyalarının oluşturulması tek başına PCB siparişi verme yetkisi değildir.
+Creating manufacturing files alone does not authorize ordering PCBs.
 
-Release öncesinde `python scripts/projectctl.py manifest` ile revizyon klasörüne `MANIFEST.sha256` yaz. `check-release` bu manifesti doğrular; manifestten sonra dosya değişirse release engellenir.
+Before release, write `MANIFEST.sha256` to the revision folder with `python scripts/projectctl.py manifest`. `check-release` verifies this manifest; if a file changes after the manifest, the release is blocked.

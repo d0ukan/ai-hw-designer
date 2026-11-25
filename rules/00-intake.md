@@ -1,165 +1,165 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
-## 00 · Project Intake — Proje başlangıç anketi
+## 00 · Project Intake — Project start questionnaire
 
-> **ZORUNLU — TASARIMA BAŞLAMADAN ÖNCE:** Soru sırası: anlatım tercihi (INT-46) → proje kimliği (INT-49) → projenin amacı (INT-01) → kalite profili (INT-47) → tasarım hedefi (INT-48) → ilgili teknik sorular. Aşağıdaki soruları projenin kapsamına göre kullanıcıya yönelt. Daha önce verilen bilgileri tekrar sorma. Kritik gereksinimler ve tasarım tercihleri netleşmeden komponent seçimine, şematiğe veya PCB layout'a başlama.
+> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions. Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
 
-### Başlangıç · İletişim tercihi
+### Start · Communication preference
 
-- [ ] **INT-46** — İlk görüşmede kullanıcıya sor: **Anlatım nasıl olsun? Caveman (çok kısa ve sade), Balanced (dengeli) veya Detailed (detaylı)?** Seçimini `Project-README.md` içinde kaydet ve sonraki kullanıcı yanıtlarında uygula. Mevcut tercih varsa yeniden sorma; kullanıcı daha sonra değiştirebilir. Yanıt alınmazsa Balanced kullan.
+- [ ] **INT-46** — In the first session ask the user: **How should explanations be? Caveman (very short and plain), Balanced, or Detailed?** Record the choice in `Project-README.md` and apply it to later user replies. If a preference exists, do not ask again; the user may change it later. If there is no answer, use Balanced.
 
-| Mod | Kullanıcıya anlatım biçimi |
+| Mode | Communication style toward the user |
 | :--- | :--- |
-| Caveman | Kısa, doğrudan, sade cümleler; yalnızca gerekli bilgiler ve kararlar. |
-| Balanced | Özlü açıklama, önemli teknik gerekçeler ve gerektiğinde küçük karşılaştırmalar. |
-| Detailed | Teknik ayrıntılar, hesaplamalar, varsayımlar ve alternatiflerin gerekçeleri. |
+| Caveman | Short, direct, plain sentences; only the necessary information and decisions. |
+| Balanced | Concise explanation, key technical rationale and small comparisons when needed. |
+| Detailed | Technical details, calculations, assumptions and rationale for alternatives. |
 
-Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kanıt kayıtlarını veya kullanıcı onay kapılarını azaltmaz. Ajanlar arası görev ve sonuç özetleri her modda gereksiz ayrıntıdan arındırılır.
+The communication preference does not reduce engineering verification, critical warnings, real evidence records or user approval gates. Inter-agent task and result summaries are stripped of unnecessary detail in every mode.
 
-### Başlangıç · Proje kimliği
+### Start · Project identity
 
-- [ ] **INT-49** — Anlatım tercihinden hemen sonra sor: **proje adı, proje kodu ve revizyon** (ör. ad "Sensör kartı", kod `DR00627`, revizyon `R01`). Kod biçimini kullanıcı belirler; örnek biçimi dayatma. Varyant varsa harfini sor (A, B, …). Adı `projectctl.py set project_name`, kodu `set project_code`, revizyonu `set design_revision` ile kaydet. Bu soru ertelenemez; kod olmadan export yapılmaz.
-- [ ] **INT-50** — Tüm çıktılar bu kimlikle adlandırılır (bölüm 09): `<kod>-<rev>` → `DR00627-R01`, varyant için `<kod>-<harf>V-<rev>` → `DR00627-AV-R01`. Öneki `python scripts/projectctl.py name [--variant A]` verir.
+- [ ] **INT-49** — Right after the communication preference, ask: **project name, project code and revision** (e.g. name "Sensor board", code `DR00627`, revision `R01`). The user defines the code format; do not impose the example format. If there is a variant, ask for its letter (A, B, …). Record the name with `projectctl.py set project_name`, the code with `set project_code`, the revision with `set design_revision`. This question cannot be deferred; no export without a code.
+- [ ] **INT-50** — All outputs are named with this identity (section 09): `<code>-<rev>` → `DR00627-R01`, for a variant `<code>-<letter>V-<rev>` → `DR00627-AV-R01`. `python scripts/projectctl.py name [--variant A]` gives the prefix.
 
-### Başlangıç · "Sonra karar ver" seçeneği
+### Start · "Decide later" option
 
-- [ ] **INT-51** — Kritik olmayan sorularda (ör. logo/ikon, silkscreen yazıları, designator görünümü, imza, renk) kullanıcıya **"Sonra karar ver"** seçeneği sun. Ertelenen soruyu `Project-README.md` "Açık kararlar" tablosuna AÇIK olarak yaz ve en geç ilgili kapıda tekrar sor: kart üzerindeki her şey (logo, yazılar, designator, imza; PCB-17…21) için **G0.5**, yani layout başlamadan önce. Hâlâ yanıt yoksa güvenli varsayılanı kullan ve kaydet (logo, imza, bakır yazı yok; designator açık). Kritik sorularda (besleme, güvenlik, izolasyon, konnektör/pinout, gerilim/akım, kalite profili, proje kimliği) bu seçenek yoktur.
+- [ ] **INT-51** — For non-critical questions (e.g. logo/icon, silkscreen text, designator visibility, signature, color) offer the user a **"Decide later"** option. Write the deferred question as OPEN in the `Project-README.md` "Open decisions" table and ask again at the latest at the related gate: for everything on the board (logo, text, designator, signature; PCB-17…21) that is **G0.5**, i.e. before layout starts. If there is still no answer, use the safe default and record it (no logo, no signature, no copper text; designators visible). Critical questions (power, safety, isolation, connector/pinout, voltage/current, quality profile, project identity) do not have this option.
 
-### Başlangıç · Kalite profili
+### Start · Quality profile
 
-- [ ] **INT-47** — Proje amacını öğrendikten sonra sor: **Bu kart hangi seviyede olacak? Hobi, Endüstriyel veya Havacılık?** Seçimi `Project-README.md` içinde kaydet. Profil yalnızca kuralların sertliğini ve varsayılanları belirler; kullanıcı her varsayılanı ayrıca değiştirebilir. Tahmin ederek profil seçme; yanıt yoksa kullanıcıya önerini gerekçesiyle sun ve onay bekle.
+- [ ] **INT-47** — After learning the project purpose, ask: **What level will this board be? Hobby, Industrial or Aerospace?** Record the choice in `Project-README.md`. The profile only sets rule strictness and defaults; the user may override each default separately. Do not pick a profile by guessing; if there is no answer, present your recommendation with rationale and wait for approval.
 
-| Profil | Tipik kullanım | Varsayılan yaklaşım |
+| Profile | Typical use | Default approach |
 | :--- | :--- | :--- |
-| Hobi | Kişisel proje, prototip, düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ticari sıcaklık sınıfı (ör. 0…+70 °C) yeterliyse kabul, LCSC/JLC Parts gibi uygun tedarik, IPC Class 2 seviyesi üretim |
-| Endüstriyel | Sahada uzun süre güvenilir çalışma | Genişletilmiş sıcaklık (ör. −40…+85 °C), giriş koruma devreleri, uzun ömürlü ve çok kaynaklı komponent, IPC Class 2 (gerekirse Class 3) |
-| Havacılık | Uçuş, askeri veya benzeri yüksek güvenilirlik | Bölüm 08 profili zorunlu; IPC Class 3, derating politikası, izlenebilirlik, kullanıcı tarafından bildirilen standartlar ve uygun sertifikalı üretici |
+| Hobby | Personal project, prototype, low cost | JLCPCB/PCBWay standard line, fewest layers, commercial temperature grade (e.g. 0…+70 °C) accepted if sufficient, affordable sourcing such as LCSC/JLC Parts, IPC Class 2 level manufacturing |
+| Industrial | Long-term reliable operation in the field | Extended temperature (e.g. −40…+85 °C), input protection circuits, long-life and multi-source components, IPC Class 2 (Class 3 if needed) |
+| Aerospace | Flight, military or similar high reliability | Section 08 profile mandatory; IPC Class 3, derating policy, traceability, user-specified standards and a suitably certified manufacturer |
 
-Profil seçimi gereksiz maliyet oluşturmamalıdır: Hobi projeye Havacılık kuralı, Havacılık projeye Hobi varsayılanı uygulama. RF ve Havacılık bölümleri yalnızca ilgili olduğunda etkinleşir; ilgisizse N/A olarak bırakılır.
+Profile choice must not create unnecessary cost: do not apply Aerospace rules to a Hobby project or Hobby defaults to an Aerospace project. The RF and Aerospace sections are enabled only when relevant; otherwise they are left as N/A.
 
-### Başlangıç · Tasarım hedefi (maliyet / performans)
+### Start · Design goal (cost / performance)
 
-- [ ] **INT-48** — Profilden sonra sor: **Tasarım hedefi nedir? Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli?** Hedef maliyet veya bütçe varsa onu da al (INT-03). Seçimi `Project-README.md` içinde kaydet. Yanıt yoksa profile göre varsayılanı öner ve onay al: Hobi → Maliyet öncelikli, Endüstriyel → Dengeli, Havacılık/askeri → Performans öncelikli (kullanıcı ayrıca maliyet hedefi vermediyse).
+- [ ] **INT-48** — After the profile, ask: **What is the design goal? Cost first, Balanced (price/performance) or Performance first?** If there is a target cost or budget, get it too (INT-03). Record the choice in `Project-README.md`. If there is no answer, propose the default by profile and get approval: Hobby → Cost first, Industrial → Balanced, Aerospace/military → Performance first (unless the user gave a separate cost target).
 
-| Hedef | Komponent, PCB ve layout kararları |
+| Goal | Component, PCB and layout decisions |
 | :--- | :--- |
-| Maliyet öncelikli | Gereksinimi karşılayan en ucuz yeterli çözüm; standart üretim (DFM-00), en az katman, yaygın ve ucuz parça |
-| Dengeli | Gereksinimi güvenli payla karşılayan en iyi fiyat/performans; maliyet artışı ancak ölçülebilir fayda varsa |
-| Performans öncelikli | Önce elektriksel performans, güvenilirlik, pay ve uzun ömür; gerekiyorsa daha iyi komponent, ek katman, özel laminat, kontrollü empedans, daha geniş derating. Maliyet engel değildir ama gereksiz lüks de eklenmez |
+| Cost first | Cheapest adequate solution that meets the requirement; standard manufacturing (DFM-00), fewest layers, common and cheap parts |
+| Balanced | Best price/performance that meets the requirement with a safe margin; cost increase only if there is a measurable benefit |
+| Performance first | Electrical performance, reliability, margin and long life first; if needed, better components, extra layers, special laminate, controlled impedance, wider derating. Cost is not a blocker, but no unnecessary luxury is added |
 
-Hiçbir hedefte gereksinim, güvenlik, güvenilirlik veya doğrulama maliyet uğruna kısılmaz. Performans öncelikli hedefte de maliyeti artıran her seçim gerekçesiyle bildirilir (AI-03, DFM-07); yalnızca onayı engellemez. Bu hedef yalnızca donanım kararları içindir; AI model/token verimliliği her zaman geçerlidir.
+Under no goal are requirements, safety, reliability or verification cut for cost. Under Performance first, every choice that raises cost is still reported with rationale (AI-03, DFM-07); it just does not block approval. This goal applies only to hardware decisions; AI model/token efficiency always applies.
 
-**Soru stratejisi:** Önce mevcut gereksinim dokümanlarını ve proje bilgilerini incele. Genel amacı öğrendikten sonra yalnızca ilgili teknik soru gruplarını, mümkün olduğunca tek bir toplu soru listesi halinde sor. Cevapları `Project-README.md` içinde Zorunlu / Tercih / Esnek / Belirsiz / N/A olarak kaydet. Kullanıcı açıkça kabul ederse önerilen ekonomik varsayılanları kullan. Şematik veya komponent seçimini etkileyen PCB ve mekanik kısıtları G0'dan önce öğren; kalan üretim ve mekanik ayrıntıları bölüm 00B'de netleştir.
+**Question strategy:** First review existing requirement documents and project information. After learning the general purpose, ask only the relevant technical question groups, as a single batched question list where possible. Record answers in `Project-README.md` as Mandatory / Preferred / Flexible / Unclear / N/A. Use the proposed economical defaults if the user explicitly accepts them. Learn PCB and mechanical constraints that affect the schematic or component selection before G0; clarify the remaining manufacturing and mechanical details in section 00B.
 
-### A · Proje amacı ve kapsamı
+### A · Project purpose and scope
 
-- [ ] **INT-01** — **Bu projenin amacı nedir?** PCB ne yapacak, hangi cihazda veya sistemde kullanılacak ve temel fonksiyonları neler olacak?
-- [ ] **INT-02** — Tasarım sıfırdan mı yapılacak, yoksa mevcut bir şematik/PCB revize mi edilecek? Gereksinim dokümanı, referans tasarım veya mevcut dosya var mı?
-- [ ] **INT-03** — Tasarım prototip, seri üretim veya test/geliştirme amaçlı mı? Tahmini üretim adedi ve hedef PCB/PCBA birim maliyeti nedir?
-- [ ] **INT-04** — Hangi EDA yazılımı ve sürümü kullanılacak? (KiCad, Altium Designer, EasyEDA Pro vb.) Kullanıcının mevcut ve yetkili MCP server, native CLI, API/script veya GUI erişimi var mı? Mevcut entegrasyon tercihlerini ve gerçek yeteneklerini kaydet.
-- [ ] **INT-27** — Projeye ait yazılı isterler, müşteri gereksinimleri, ICD, teknik şartname, referans kart veya zorunlu komponent listesi var mı? Hangi isterler kesin, hangileri tasarımcıya bırakılmış?
-- [ ] **INT-40** — Kullanıcının bu projeye özel ilave tasarım kuralları, tercihleri, kabul kriterleri veya yasakları var mı? Bunları kaynağı ve onayıyla `Project-README.md` içine kaydet; genel kurallarla çelişen noktaları netleştir.
-- [ ] **INT-28** — Kartın ana işlevi/tipi nedir? Güç kaynağı veya güç dağıtımı, fonksiyonel kontrol/MCU, analog ölçüm, dijital haberleşme, RF, sensör/arayüz, motor sürücü veya karma bir kart mı? Yalnızca ilgili teknik soru grubunu aç.
-- [ ] **INT-32** — **Proje tek PCB mi, yoksa multi-PCB sistem mi olacak?** Birden fazla kart varsa kart sayısı, kart isimleri/ID'leri, her kartın fonksiyonu ve varsa mevcut kartlar nelerdir? Güç ve sinyal dağılımını kart bazında netleştir.
-- [ ] **INT-33** — Multi-PCB sistemde kartlar birbirine nasıl bağlanacak? Board-to-board (mezzanine/header/backplane), cable-to-board/harness, flex bağlantı veya farklı bir yöntem mi? Mevcut konnektörler, karşı konnektörler, pinout, besleme/sinyal arayüzleri ve mekanik bağlantı kısıtları var mı? Yalnızca multi-PCB projede ilgili soruları aç.
+- [ ] **INT-01** — **What is the purpose of this project?** What will the PCB do, in which device or system will it be used, and what are its main functions?
+- [ ] **INT-02** — Is the design from scratch, or a revision of an existing schematic/PCB? Is there a requirements document, reference design or existing file?
+- [ ] **INT-03** — Is the design for prototype, series production or test/development? What is the estimated production quantity and target PCB/PCBA unit cost?
+- [ ] **INT-04** — Which EDA software and version will be used? (KiCad, Altium Designer, EasyEDA Pro, etc.) Does the user have existing, authorized MCP server, native CLI, API/script or GUI access? Record existing integration preferences and real capabilities.
+- [ ] **INT-27** — Are there written requirements, customer requirements, ICD, technical specification, reference board or mandatory component list for the project? Which requirements are fixed and which are left to the designer?
+- [ ] **INT-40** — Does the user have additional project-specific design rules, preferences, acceptance criteria or prohibitions? Record them with source and approval in `Project-README.md`; clarify points that conflict with the general rules.
+- [ ] **INT-28** — What is the board's main function/type? Power supply or power distribution, functional control/MCU, analog measurement, digital communication, RF, sensor/interface, motor driver or a mixed board? Open only the relevant technical question group.
+- [ ] **INT-32** — **Is the project a single PCB or a multi-PCB system?** If there are multiple boards, what are the board count, board names/IDs, each board's function and any existing boards? Clarify power and signal distribution per board.
+- [ ] **INT-33** — In a multi-PCB system, how will the boards connect? Board-to-board (mezzanine/header/backplane), cable-to-board/harness, flex connection or another method? Are there existing connectors, mating connectors, pinout, power/signal interfaces and mechanical connection constraints? Open the related questions only in a multi-PCB project.
 
-### B · Elektriksel gereksinimler
+### B · Electrical requirements
 
-- [ ] **INT-05** — Besleme AC mi, DC mi, batarya mı, USB mi veya birden fazla kaynaktan mı sağlanacak? Minimum / nominal / maksimum giriş gerilimi, sürekli ve tepe akım/güç değerleri, gerekli çıkış beslemeleri ve mevcut besleme kaynağının sınırları nedir? AC ise frekans ve faz bilgisi; DC ise polarite, giriş dalgalanması ve varsa geçici gerilim koşullarını sor.
-- [ ] **INT-06** — Giriş/çıkışlar, konnektörler, haberleşme arayüzleri ve sinyal seviyeleri nelerdir? Diferansiyel veya kontrollü empedans gerektiren hat var mı?
-- [ ] **INT-07** — Ölçüm doğruluğu, frekans, örnekleme hızı, akım kapasitesi veya diğer performans gereksinimleri neler?
-- [ ] **INT-08** — ESD, surge, ters polarite, aşırı gerilim/akım, EMC/EMI veya belirli bir test/standart gereksinimi bulunuyor mu?
-- [ ] **INT-29** — Her giriş/çıkışın yönü, sayısı, normal ve maksimum değerleri, yük tipi, beklenen akımı, zamanlama ve açılış/kapanış koşulları nedir? Belirli konnektör ve pinout zorunluluğu var mı?
-- [ ] **INT-30** — Harici kablo, bağlanacak cihaz, güç kaynağı, sensör ve yüklerin özellikleri tanımlı mı? Referans devre veya mevcut sistemle uyumluluk gerekiyor mu?
-- [ ] **INT-34** — **Sistem fiziksel olarak dışarıya hangi arayüzlerle çıkacak?** Güç, veri, sensör, RF ve diğer I/O için istenen konnektör tipi, marka/MPN, pin sayısı, pinout, panel/PCB montajı, kablo çıkış yönü ve varsa karşı konnektör/kablo takımı nedir? Konnektör seçimini kullanıcı yapacak mı, yoksa AI önerip onaylatacak mı?
-- [ ] **INT-41** — RF, kontrollü empedanslı veya high-speed arayüz bulunuyor mu? Varsa ilgili datasheet/interface specification, frekans/veri hızı ve kenar süresi bilgileri, hedef empedans, timing/skew/length limitleri, bağlantı/terminasyon ve doğrulama isterlerini al. Gerekli olmayan ayrıntıları sorma. **RF yoksa** bölüm 05'in RF kısmı N/A olur ve RF sorusu sorulmaz. **RF varsa** çalışma frekansını/bandını sor ve bölüm 05'teki RF kademesini (RF-A / RF-B / RF-C) belirle.
+- [ ] **INT-05** — Is power supplied by AC, DC, battery, USB or multiple sources? What are the minimum / nominal / maximum input voltage, continuous and peak current/power values, required output rails and limits of the existing power source? If AC, ask frequency and phase; if DC, ask polarity, input ripple and any transient voltage conditions.
+- [ ] **INT-06** — What are the inputs/outputs, connectors, communication interfaces and signal levels? Is there any line requiring differential or controlled impedance?
+- [ ] **INT-07** — What are the measurement accuracy, frequency, sampling rate, current capacity or other performance requirements?
+- [ ] **INT-08** — Is there any ESD, surge, reverse polarity, overvoltage/overcurrent, EMC/EMI or specific test/standard requirement?
+- [ ] **INT-29** — For each input/output, what are the direction, count, normal and maximum values, load type, expected current, timing and power-up/power-down conditions? Is a specific connector and pinout mandatory?
+- [ ] **INT-30** — Are the specifications of external cables, connected devices, power supply, sensors and loads defined? Is compatibility with a reference circuit or existing system required?
+- [ ] **INT-34** — **Which interfaces will the system physically expose to the outside?** For power, data, sensor, RF and other I/O, what are the desired connector type, brand/MPN, pin count, pinout, panel/PCB mounting, cable exit direction and any mating connector/cable harness? Will the user select connectors, or will the AI propose them for approval?
+- [ ] **INT-41** — Is there an RF, controlled-impedance or high-speed interface? If so, get the related datasheet/interface specification, frequency/data rate and edge time, target impedance, timing/skew/length limits, connection/termination and verification requirements. Do not ask for unneeded detail. **If there is no RF**, the RF part of section 05 is N/A and no RF question is asked. **If there is RF**, ask the operating frequency/band and set the RF tier (RF-A / RF-B / RF-C) in section 05.
 
-#### Kart tipine göre koşullu teknik sorular
+#### Conditional technical questions by board type
 
-| Kart tipi | Yalnızca uygulanabilen ek gereksinimleri sor |
+| Board type | Ask only the applicable additional requirements |
 | :--- | :--- |
-| Güç kartı | Çıkış gerilim/akımları, sürekli/tepe yük, verim, ripple, sıcaklık sınırı, koruma ve izolasyon isterleri |
-| Fonksiyonel / MCU kontrol kartı | Fonksiyonlar, I/O sayısı, lojik seviyeler, arayüzler, işlemci tercihi, programlama/debug, yazılım uyumluluğu |
-| Analog / ölçüm kartı | Ölçüm aralığı, doğruluk, çözünürlük, örnekleme hızı, bant genişliği, gürültü sınırı, sensör arayüzü |
-| Dijital / haberleşme kartı | Protokoller, veri hızı, arayüz seviyeleri, konektörler, diferansiyel empedans ve zamanlama gereksinimleri |
-| RF kartı | Çalışma frekansı/bandı, RX/TX işlevi, çıkış gücü/hassasiyet, anten veya RF konnektör tipi, sertifikalı modül kabulü, düzenleyici uyumluluk (ör. CE RED, FCC), malzeme ve kontrollü empedans gereksinimi |
-| Sensör / arayüz kartı | Sensör tipi, besleme, sinyal aralığı, kablo ve kalibrasyon gereksinimleri |
-| Motor / aktüatör kontrol kartı | Yük tipi, elektriksel arayüz, besleme ve akım sınırları, çalışma döngüsü, geri besleme ve koruma isterleri |
-| Karma kart | Yalnızca kullanılan fonksiyonların yukarıdaki isterleri |
+| Power board | Output voltages/currents, continuous/peak load, efficiency, ripple, temperature limit, protection and isolation requirements |
+| Functional / MCU control board | Functions, I/O count, logic levels, interfaces, processor preference, programming/debug, software compatibility |
+| Analog / measurement board | Measurement range, accuracy, resolution, sampling rate, bandwidth, noise limit, sensor interface |
+| Digital / communication board | Protocols, data rate, interface levels, connectors, differential impedance and timing requirements |
+| RF board | Operating frequency/band, RX/TX function, output power/sensitivity, antenna or RF connector type, acceptance of certified modules, regulatory compliance (e.g. CE RED, FCC), material and controlled impedance requirement |
+| Sensor / interface board | Sensor type, power, signal range, cable and calibration requirements |
+| Motor / actuator control board | Load type, electrical interface, supply and current limits, duty cycle, feedback and protection requirements |
+| Mixed board | Requirements above only for the functions used |
 
-### C · Şase, GND ve izolasyon
+### C · Chassis, GND and isolation
 
-- [ ] **INT-09** — Cihazda metal şase/kasa, PE (Protective Earth) veya ayrı bir CHASSIS_GND bağlantısı var mı? Topraklama mimarisini belirle; kart çevresindeki CHASSIS_GND ring kullanımını ayrı bir tercih olarak bölüm 00B'de kesinleştir.
-- [ ] **INT-10** — Galvanik izolasyon gerekiyor mu? Varsa hangi devreler, beslemeler ve GND bölgeleri birbirinden izole olacak? Devre GND'si ile CHASSIS_GND de izole mi olacak?
-- [ ] **INT-11** — **İzolasyon yoksa ve CHASSIS_GND mevcutsa:** CHASSIS_GND ile ana devre GND'si doğrudan bağlanabilir mi? Bağlanacaksa kullanıcı hangi bağlantı şeklini ve noktasını tercih ediyor?
-- [ ] **INT-12** — **İzolasyon varsa:** Maksimum çalışma ve geçici gerilimler, izolasyon tipi ve varsa uygulanacak standart nedir? Bu gerilimlere göre kullanıcı tarafından istenen minimum GND–CHASSIS_GND clearance ve creepage mesafeleri kaç mm'dir? Diğer izole bölgeler arasındaki mesafeleri de sor.
-- [ ] **INT-13** — Montaj delikleri, konnektör shield'ları ve metal kasa hangi GND netine bağlanacak? Belirtilmemiş bağlantıları otomatik kurma.
+- [ ] **INT-09** — Does the device have a metal chassis/enclosure, PE (Protective Earth) or a separate CHASSIS_GND connection? Define the grounding architecture; finalize use of a CHASSIS_GND ring around the board as a separate preference in section 00B.
+- [ ] **INT-10** — Is galvanic isolation required? If so, which circuits, supplies and GND regions will be isolated from each other? Will circuit GND also be isolated from CHASSIS_GND?
+- [ ] **INT-11** — **If there is no isolation and CHASSIS_GND exists:** May CHASSIS_GND be connected directly to the main circuit GND? If so, which connection method and point does the user prefer?
+- [ ] **INT-12** — **If there is isolation:** What are the maximum working and transient voltages, the isolation type and any applicable standard? Based on these voltages, what minimum GND–CHASSIS_GND clearance and creepage distances in mm does the user require? Also ask for the distances between other isolated regions.
+- [ ] **INT-13** — Which GND net will mounting holes, connector shields and the metal enclosure connect to? Do not create unspecified connections automatically.
 
-| Kullanıcının kararı | AI'ın uygulaması |
+| User's decision | AI's action |
 | :--- | :--- |
-| İzolasyon yok ve doğrudan bağlantı onaylı | CHASSIS_GND ile ana GND'yi onaylanan bağlantı mimarisine göre birleştir. |
-| İzolasyon yok ancak bağlantı onaylanmadı | Netleri ayrı tut; bağlantı tercihinin belirlenmesini bekle. |
-| GND–CHASSIS_GND izolasyonu gerekli | Onaylanan minimum clearance/creepage mesafelerini tüm ilgili bakır ve bağlantılar için uygula. |
-| İzolasyon gereksinimi veya mesafeler bilinmiyor | Kullanıcıdan gerekli gerilim ve izolasyon bilgilerini iste; rastgele bir mesafe belirleme. |
-| CHASSIS_GND ring kullanılmayacak | Çevre halkası ve ona ait stitching via/mask açıklığı oluşturma. Kullanıcı onaylı topraklama mimarisini koru. Bu olağan bir tercih olup istisna değildir. |
+| No isolation and direct connection approved | Join CHASSIS_GND and main GND according to the approved connection architecture. |
+| No isolation but connection not approved | Keep the nets separate; wait for the connection preference to be defined. |
+| GND–CHASSIS_GND isolation required | Apply the approved minimum clearance/creepage distances to all related copper and connections. |
+| Isolation requirement or distances unknown | Ask the user for the required voltage and isolation information; do not pick an arbitrary distance. |
+| No CHASSIS_GND ring | Do not create the perimeter ring or its stitching vias/mask openings. Keep the user-approved grounding architecture. This is a normal preference, not an exception. |
 
-**Önemli:** Normal netler için tanımlanan 0.20 mm copper clearance, galvanik izolasyon mesafesi olarak kabul edilmemelidir. İzolasyon gereksinimleri projeye ve geçerli standarda göre ayrıca doğrulanmalıdır.
+**Important:** The 0.20 mm copper clearance defined for normal nets must not be treated as a galvanic isolation distance. Isolation requirements must be verified separately per project and applicable standard.
 
-### D · Komponent seçimi ve tedarik stratejisi
+### D · Component selection and sourcing strategy
 
-- [ ] **INT-14** — Komponentler hangi tedarik kanallarından seçilecek?
+- [ ] **INT-14** — From which sourcing channels will components be selected?
 
-| Seçenek | Tedarik yaklaşımı |
+| Option | Sourcing approach |
 | :--- | :--- |
-| Global | DigiKey, Mouser, Farnell, RS vb. |
-| Asya / PCBA ekosistemi | LCSC, JLCPCB Parts ve onaylı diğer tedarikçiler |
-| Hibrit | Her iki gruptan maliyet, stok, teknik uygunluk ve tedarik edilebilirliğe göre seçim |
+| Global | DigiKey, Mouser, Farnell, RS, etc. |
+| Asia / PCBA ecosystem | LCSC, JLCPCB Parts and other approved suppliers |
+| Hybrid | Selection from both groups based on cost, stock, technical fit and availability |
 
-- [ ] **INT-15** — Zorunlu üretici/marka, onaylı komponent listesi, yasaklı komponentler, stok ve lifecycle politikası veya mevcut kullanılacak parçalar var mı?
-- [ ] **INT-16** — Komponent seçiminde öncelik maliyet, performans, kalite/izlenebilirlik, stok bulunabilirliği veya uzun vadeli tedarik edilebilirlikten hangisi? INT-48 tasarım hedefi varsa onunla tutarlı olsun; tekrar sorma, yalnız farkı netleştir.
-- [ ] **INT-35** — **Hazır modül kullanımı kabul ediliyor mu?** Örneğin ESP32, nRF, CC1101 veya başka hazır haberleşme/işlemci/sensör modülleri kullanılabilir mi, yoksa tasarım discrete IC ve komponentlerden mi oluşmalı? Kullanıcının elinde mevcut veya özellikle tercih ettiği modül varsa exact MPN/model/revizyonu ve datasheet'i iste. Onay olmadan hazır modül seçme.
-- [ ] **INT-52** — Kart batarya ile mi çalışacak veya batarya şarj edecek mi? Evetse kimya, hücre sayısı ve kapasiteyi al ve bölüm 10 (Batarya ve şarj) kurallarını aç; hayırsa bölüm 10 N/A.
-- [ ] **INT-36** — Hazır modül veya önceden belirlenmiş konnektör kullanılacaksa kullanıcının elinde **STEP/3D CAD datası, footprint, symbol ve mekanik çizim** bulunuyor mu? Modülün bağlantı yöntemi, pinout'u, karşı konnektör/header, montaj ve mekanik gereksinimlerini doğrula. Model yoksa önce doğrulanmış kütüphanede veya üretici kaynağında ara; gerekirse kullanıcıdan ölçü/çizim iste. Yaklaşık envelope model ancak açık onayla kullanılabilir ve doğrulanmış STEP modeli olarak gösterilemez.
+- [ ] **INT-15** — Is there a mandatory manufacturer/brand, approved component list, prohibited components, stock and lifecycle policy, or existing parts to use?
+- [ ] **INT-16** — Which is the priority in component selection: cost, performance, quality/traceability, stock availability or long-term availability? If an INT-48 design goal exists, stay consistent with it; do not ask again, only clarify the difference.
+- [ ] **INT-35** — **Are ready-made modules accepted?** For example, may ESP32, nRF, CC1101 or other ready communication/processor/sensor modules be used, or must the design consist of discrete ICs and components? If the user has or specifically prefers a module, ask for the exact MPN/model/revision and datasheet. Do not select a ready module without approval.
+- [ ] **INT-52** — Will the board run on a battery or charge a battery? If yes, get chemistry, cell count and capacity and enable section 10 (Battery and charging) rules; if no, section 10 is N/A.
+- [ ] **INT-36** — If a ready module or predefined connector will be used, does the user have **STEP/3D CAD data, footprint, symbol and mechanical drawing**? Verify the module's connection method, pinout, mating connector/header, mounting and mechanical requirements. If there is no model, first search a verified library or the manufacturer source; if needed, ask the user for dimensions/drawing. An approximate envelope model may be used only with explicit approval and cannot be presented as a verified STEP model.
 
-### E · PCB üretimi, mekanik tasarım ve dizgi
+### E · PCB manufacturing, mechanical design and assembly
 
-- [ ] **INT-17** — PCB hangi üreticide üretilecek? JLCPCB, PCBWay veya her ikisiyle uyumlu tasarım mı isteniyor?
-- [ ] **INT-18** — PCB nasıl dizilecek?
+- [ ] **INT-17** — Which manufacturer will produce the PCB? JLCPCB, PCBWay, or a design compatible with both?
+- [ ] **INT-18** — How will the PCB be assembled?
 
-| Seçenek | Dizgi yöntemi |
+| Option | Assembly method |
 | :--- | :--- |
-| Manuel | El lehimleme (THT / SMT) |
-| Stencil + SMT | Stencil ile lehim pastası, manuel yerleştirme ve reflow |
-| PCBA | Üreticinin otomatik komponent dizgi hizmeti |
-| Hibrit | Otomatik PCBA ve belirli komponentlerin manuel dizgisi |
+| Manual | Hand soldering (THT / SMT) |
+| Stencil + SMT | Solder paste via stencil, manual placement and reflow |
+| PCBA | Manufacturer's automated component assembly service |
+| Hybrid | Automated PCBA plus manual assembly of specific components |
 
-- [ ] **INT-19** — PCB'nin boyutları, şekli, maksimum komponent yüksekliği, montaj deliği konumları ve mekanik/kasa kısıtları nelerdir?
-- [ ] **INT-20** — Katman sayısı, PCB kalınlığı, bakır kalınlığı veya yüzey kaplaması için özel bir şart var mı? Yoksa bölüm 03'teki ekonomik varsayılanlar kullanılabilir mi?
-- [ ] **INT-21** — Çalışma ortamı ve sıcaklık aralığı nedir? Nem, titreşim, toz/su, muhafaza veya soğutmaya ilişkin özel gereksinimler var mı?
-- [ ] **INT-22** — Tek veya çift taraflı komponent dizgisi tercih ediliyor mu? Kullanılabilecek en küçük komponent paketi, manuel lehimleme ve rework kısıtları var mı?
-- [ ] **INT-31** — Şematik/komponent seçimini etkileyen bir PCB teknolojisi, laminat, yüksek güç/ısı dağıtımı, flex bölgesi, boyut, özel kalite veya üretim kısıtı var mı? Varsa G0 öncesinde kaydet; detayları layout öncesi kesinleştir.
+- [ ] **INT-19** — What are the PCB dimensions, shape, maximum component height, mounting hole positions and mechanical/enclosure constraints?
+- [ ] **INT-20** — Is there a special requirement for layer count, PCB thickness, copper thickness or surface finish? Otherwise, may the economical defaults in section 03 be used?
+- [ ] **INT-21** — What are the operating environment and temperature range? Are there special requirements for humidity, vibration, dust/water, enclosure or cooling?
+- [ ] **INT-22** — Is single- or double-sided component assembly preferred? Are there limits on the smallest component package, manual soldering and rework?
+- [ ] **INT-31** — Is there a PCB technology, laminate, high power/heat dissipation, flex region, size, special quality or manufacturing constraint that affects the schematic/component selection? If so, record it before G0; finalize details before layout.
 
-### F · Test, doğrulama ve teslimat
+### F · Test, verification and delivery
 
-- [ ] **INT-23** — Projede MCU, FPGA veya başka programlanabilir komponent var mı? Varsa aşağıdaki programlama/debug seçimini tamamla. Programlama gerektirmeyen analog tasarımda bu soru grubunu N/A bırak; gerektiğinde test point, test düzeneği ve üretim testini ayrıca sor.
+- [ ] **INT-23** — Does the project have an MCU, FPGA or other programmable component? If so, complete the programming/debug selection below. For an analog design with no programming, leave this question group N/A; ask separately about test points, test fixtures and production test when needed.
 
-#### Programlama, flash ve debug — yalnızca gerektiğinde
+#### Programming, flash and debug — only when needed
 
-- [ ] **INT-42** — Programlama **kart üzerinde (in-system/on-board)** mı yapılacak, yoksa komponent kart dışında (off-board) programlanıp mı takılacak? Fabrika çıkışı programlı komponent, bootloader ile güncelleme, üretim/test fikstürü veya başka bir yöntem isteniyor mu? Geliştirme, üretim ve saha güncellemesi ihtiyaçlarını ayırt et.
-- [ ] **INT-43** — On-board programlama ve/veya debug isteniyorsa hangi arayüz kullanılacak? JTAG, SWD, ISP/ICSP, UART/USB bootloader veya hedef komponentin desteklediği başka bir arayüz mü? Sadece flashlama mı, debug da mı yapılacak? Standart debugger/programmer (modeli ve dokümanı) tercih ediliyor mu?
-- [ ] **INT-44** — Programlama/debug fiziksel bağlantısı nasıl olacak? Standart JTAG/SWD konnektörü, üreticiye özel header, custom konnektör, pogo-pin/test pad/Tag-Connect tarzı konnektörsüz pad-fikstür çözümü veya başka bir seçenek mi? Konnektör MPN, pin sayısı/pinout, pitch, Pin 1/yön, mating connector ve kart/kasa içindeki erişim gereksinimlerini netleştir. Kullanıcı tercihi yoksa öneri sun ve onaylat.
-- [ ] **INT-45** — Seçilen hedef komponent ve programmer/debugger dokümanlarına göre gereken referans gerilim/lojik seviyeleri, kartın programlama sırasındaki besleme yöntemi, gerekli reset/boot sinyalleri ve varsa programlama/test kabul kriterlerini kaydet. Off-board programlama seçilmişse kullanıcı ayrıca on-board debug/güncelleme istemedikçe gereksiz programlama konnektörü ekleme.
+- [ ] **INT-42** — Will programming be done **on the board (in-system/on-board)**, or will the component be programmed off the board (off-board) and then fitted? Is a factory-programmed component, bootloader update, production/test fixture or another method required? Distinguish development, production and field update needs.
+- [ ] **INT-43** — If on-board programming and/or debug is required, which interface will be used? JTAG, SWD, ISP/ICSP, UART/USB bootloader or another interface the target component supports? Flashing only, or debug too? Is a standard debugger/programmer (model and document) preferred?
+- [ ] **INT-44** — What will the physical programming/debug connection be? Standard JTAG/SWD connector, vendor-specific header, custom connector, connectorless pad-fixture solution such as pogo-pin/test pad/Tag-Connect, or another option? Clarify connector MPN, pin count/pinout, pitch, Pin 1/orientation, mating connector and access requirements on the board/in the enclosure. If the user has no preference, propose one and get approval.
+- [ ] **INT-45** — Based on the selected target component and programmer/debugger documents, record the required reference voltage/logic levels, the board's power method during programming, required reset/boot signals and any programming/test acceptance criteria. If off-board programming is selected, do not add an unnecessary programming connector unless the user also wants on-board debug/update.
 
-#### Diagnostik, test ve teslimat
+#### Diagnostics, test and delivery
 
-- [ ] **INT-37** — **Diagnostik ve durum göstergeleri isteniyor mu?** Power LED, MCU/status/heartbeat LED, haberleşme TX/RX veya link LED, fault/error LED, debug LED, test point, reset/programlama arayüzü gibi öğelerden hangileri gerekiyor? Göstergelerin anlamı, renk tercihi, kullanıcı tarafından görünürlüğü ve gerekirse yazılım davranışını sor. Kullanıcı istemiyorsa gereksiz LED veya debug devresi ekleme.
-- [ ] **INT-24** — Tasarımın doğrulanması için hangi testler, ölçümler ve kabul kriterleri gerekli?
-- [ ] **INT-25** — Hangi dosyalar teslim edilecek? Native EDA projesi, PDF schematic, Gerber, drill, BOM, Pick & Place (CPL), montaj çizimi (`_ASSY.pdf`), fab notu, stencil ve/veya 3D STEP gerekli mi? Varsayılan set ve dosya adları bölüm 09'dadır.
-- [ ] **INT-38** — Proje sonunda tek tek PCB 3D modelleri dışında **komple sistemin birleştirilmiş STEP/CAD assembly** dosyası isteniyor mu? PCB'ler, hazır modüller, konnektörler, karşı parçalar, varsa kasa ve mekanik referansların hangileri modele dahil olacak? Kullanıcının mevcut CAD datasını ve istenen teslim formatını baştan öğren.
+- [ ] **INT-37** — **Are diagnostics and status indicators required?** Which of these are needed: power LED, MCU/status/heartbeat LED, communication TX/RX or link LED, fault/error LED, debug LED, test points, reset/programming interface? Ask about indicator meaning, color preference, visibility to the user and, if needed, software behavior. If the user does not want them, do not add unnecessary LEDs or debug circuitry.
+- [ ] **INT-24** — Which tests, measurements and acceptance criteria are needed to verify the design?
+- [ ] **INT-25** — Which files will be delivered? Are native EDA project, PDF schematic, Gerber, drill, BOM, Pick & Place (CPL), assembly drawing (`_ASSY.pdf`), fab note, stencil and/or 3D STEP needed? The default set and file names are in section 09.
+- [ ] **INT-38** — Besides individual PCB 3D models, is a **combined STEP/CAD assembly of the complete system** required at project end? Which of the PCBs, ready modules, connectors, mating parts, any enclosure and mechanical references will be included in the model? Learn the user's existing CAD data and the desired delivery format from the start.
 
-### Tasarıma başlama koşulu — Design Input Approval
+### Design start condition — Design Input Approval
 
-- [ ] **INT-26** — Projenin karmaşıklığına uygun kısa bir sistem mimarisi, fonksiyonel bloklar, arayüzler ve gerekiyorsa güç bütçesi belirle. Basit tasarımlarda birkaç maddelik özet yeterlidir; blok diyagramı ve ayrı raporları yalnızca fayda sağlayacaksa oluştur.
-- [ ] **INT-39** — Multi-PCB projelerde kart kimliklerini ve kartlar arası/harici arayüzleri tek bir kısa arayüz tablosunda kaydet. Modül, konnektör ve diagnostik tercihleri şematik/komponent seçimine başlamadan önce onaylat.
-- [ ] Projeye özel gereksinimleri ve alınan kararları tek bir kısa proje özeti halinde kullanıcıya sun.
-- [ ] Yanıtlanmamış kritik konuları ve önerilen varsayımları açıkça belirt.
-- [ ] Kullanıcının onayını aldıktan sonra tasarıma başla. Onaylanan bilgiler sonradan değişirse ilgili tasarım kararlarını yeniden değerlendir.
+- [ ] **INT-26** — Define a short system architecture, functional blocks, interfaces and, if needed, a power budget suited to the project complexity. For simple designs a few-bullet summary is enough; create a block diagram and separate reports only if they add value.
+- [ ] **INT-39** — In multi-PCB projects, record board IDs and inter-board/external interfaces in a single short interface table. Get approval for module, connector and diagnostic preferences before starting schematic/component selection.
+- [ ] Present project-specific requirements and decisions to the user as a single short project summary.
+- [ ] Clearly state unanswered critical topics and proposed assumptions.
+- [ ] Start the design after getting the user's approval. If approved information changes later, re-evaluate the related design decisions.

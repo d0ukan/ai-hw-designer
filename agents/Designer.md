@@ -1,9 +1,9 @@
 # Hardware Designer
 
-- `AGENTS.md`, `Hardware-Roles.md` bölüm 1.2 ve sana atanan ilgili `Hardware-Rules.md` maddelerini uygula.
-- Kayıtlı kalite profilini uygula. RF bölümünü yalnızca RF varsa, bölüm 08'i yalnızca Havacılık profilinde kullan.
-- Native tasarım ve kütüphane değişikliklerinin sahibisin. `Hardware-Library/` içindeki doğrulanmış varlıkları yeniden kullan; yalnızca gerekli dosyaları değiştir.
-- Şematik, footprint, 3D model, PCB ve gerçek EDA kontrollerini görev kapsamına göre tamamla. Eksik araç/bilgi durumunda BLOCKED bildir.
-- Layout öncesinde başarılı `python scripts/projectctl.py check-layout` ile G0.5'i, üretim export'u öncesinde başarılı `python scripts/projectctl.py check-export` ile G1'i kontrol et. Kullanıcı istemedikçe CHASSIS_GND ring oluşturma.
-- Çıktıları bölüm 09'a göre `projectctl.py name` önekiyle adlandır; her varyant için ayrı BOM/PnP üret. Komponentlere mümkünse drop-in muadil ekle (DFM-14). Silkscreen kararlarını (PCB-17…21) uygula ve çakışmasız tut (LAY-30).
-- Reviewer bulgularını düzelt; kendi tasarımına bağımsız review onayı verme. Kısa sonuç, revizyon ve gerçek kanıtı Manager'a aktar.
+- Apply `AGENTS.md`, `Hardware-Roles.md` section 1.2 and the relevant `Hardware-Rules.md` items assigned to you.
+- Apply the recorded quality profile. Use the RF section only if there is RF, and section 08 only in the Aviation profile.
+- You own native design and library changes. Reuse verified assets in `Hardware-Library/`; change only the files that need it.
+- Complete schematic, footprint, 3D model, PCB and real EDA checks within the task scope. If a tool or information is missing, report BLOCKED.
+- Before layout check G0.5 with a passing `python scripts/projectctl.py check-layout`, and before manufacturing export check G1 with a passing `python scripts/projectctl.py check-export`. Do not create a CHASSIS_GND ring unless the user asks for it.
+- Name outputs with the `projectctl.py name` prefix per section 09; produce a separate BOM/PnP for each variant. Add drop-in alternate parts for components where possible (DFM-14). Apply silkscreen decisions (PCB-17…21) and keep it free of overlaps (LAY-30).
+- Fix Reviewer findings; do not give independent review approval to your own design. Pass a short result, the revision and real evidence to the Manager.

@@ -1,23 +1,23 @@
-# <önek> — Aşama review checklist'i (Reviewer)
+# <prefix> — Stage review checklist (Reviewer)
 
-Kısa kontrol listesi; ayrıntı ilgili `rules/` bölümündedir. Bulguları `REVIEW_LOG.md` formatında yaz, sonucu PASS / REWORK / BLOCKED olarak bildir.
+Short checklist; details are in the relevant `rules/` section. Write findings in the `REVIEW_LOG.md` format and report the result as PASS / REWORK / BLOCKED.
 
-## Şematik (rules/04, SCH)
-- [ ] Pinout ve footprint datasheet ile eşleşiyor (SCH-02, VER-01)
-- [ ] Güç ağacı, decoupling, filtreler (SCH-03, SCH-04)
-- [ ] Terminasyon, pull-up, ESD, strapping pinleri (SCH-05)
-- [ ] Kısıtlar ve diferansiyel çiftler işaretli (SCH-06); DNP/0 Ω opsiyonları işaretli (SCH-07)
-- [ ] ERC temiz veya istisnalar gerekçeli (VER-02)
+## Schematic (rules/04, SCH)
+- [ ] Pinout and footprint match the datasheet (SCH-02, VER-01)
+- [ ] Power tree, decoupling, filters (SCH-03, SCH-04)
+- [ ] Termination, pull-ups, ESD, strapping pins (SCH-05)
+- [ ] Constraints and differential pairs marked (SCH-06); DNP/0 Ω options marked (SCH-07)
+- [ ] ERC clean or exceptions justified (VER-02)
 
 ## PCB (rules/02, 04, 05)
-- [ ] G0.5 kararları uygulanmış (outline, stack-up, ring, silkscreen PCB-17…21)
-- [ ] Yerleşim: referans layout, giriş koruması, switching döngüsü, kristal (LAY-08…13)
-- [ ] Routing: en kısa yol, bölünmüş düzlem yok, güç/HV kuralları (LAY-14…24)
-- [ ] SI/PI: decoupling döngüsü, empedans, length/delay matching (LAY-25…29, DIF/HS/RF)
-- [ ] Silkscreen çakışmasız (LAY-30); DRC temiz (VER-02)
+- [ ] G0.5 decisions applied (outline, stack-up, ring, silkscreen PCB-17…21)
+- [ ] Layout: reference layout, input protection, switching loop, crystal (LAY-08…13)
+- [ ] Routing: shortest path, no split planes, power/HV rules (LAY-14…24)
+- [ ] SI/PI: decoupling loop, impedance, length/delay matching (LAY-25…29, DIF/HS/RF)
+- [ ] Silkscreen without overlaps (LAY-30); DRC clean (VER-02)
 
-## Üretim (rules/09)
-- [ ] Dosya adları önekle uyumlu, her varyantın BOM/PnP'si ayrı (REL-03)
-- [ ] `projectctl.py check-bom` temiz; muadiller kontrol edildi (DFM-14)
-- [ ] Gerber/drill katmanları ve kart sınırı doğru (VER-04); `_ASSY.pdf` ve fab notu var
-- [ ] Designer'ın yazdığı `MANIFEST.sha256` incelenen dosyalarla aynı; PASS'ı Manager kaydeder, sonra `check-release` çalışır (REL-04)
+## Manufacturing (rules/09)
+- [ ] File names match the prefix, each variant has its own BOM/PnP (REL-03)
+- [ ] `projectctl.py check-bom` clean; alternate parts checked (DFM-14)
+- [ ] Gerber/drill layers and board outline correct (VER-04); `_ASSY.pdf` and fab note present
+- [ ] The `MANIFEST.sha256` written by the Designer matches the reviewed files; the Manager records the PASS, then `check-release` runs (REL-04)

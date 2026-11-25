@@ -86,8 +86,8 @@ def version_problems():
     patterns = {
         "README.md": r"Version: (v[\d.]+)",
         "README.tr.md": r"Sürüm: (v[\d.]+)",
-        "Hardware-Rules.md": r"\*\*Versiyon\*\* \| (v[\d.]+)",
-        "Hardware-Roles.md": r"\*\*Versiyon\*\* \| (v[\d.]+)",
+        "Hardware-Rules.md": r"\*\*Version\*\* \| (v[\d.]+)",
+        "Hardware-Roles.md": r"\*\*Version\*\* \| (v[\d.]+)",
         "CHANGELOG.md": r"^## (v[\d.]+)",
     }
     for name, pattern in patterns.items():

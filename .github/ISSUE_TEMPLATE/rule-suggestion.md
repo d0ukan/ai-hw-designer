@@ -1,13 +1,13 @@
 ---
-name: Kural önerisi
-about: Yeni kural veya mevcut kuralda değişiklik öner
+name: Rule suggestion
+about: Suggest a new rule or a change to an existing rule
 labels: rule
 ---
 
-**İlgili bölüm / kural kimliği:** (ör. rules/04, LAY-23)
+**Related section / rule ID:** (e.g. rules/04, LAY-23)
 
-**Öneri:**
+**Suggestion:**
 
-**Neden / kaynak:** (standart, datasheet, saha deneyimi)
+**Why / source:** (standard, datasheet, field experience)
 
-**Hangi profilleri etkiler:** Hobi / Endüstriyel / Havacılık
+**Affected profiles:** Hobby / Industrial / Aerospace

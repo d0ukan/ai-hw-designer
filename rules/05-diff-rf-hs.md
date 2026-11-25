@@ -1,56 +1,56 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 05 · Differential Pairs, RF & High-Speed (SI/PI)
 
-> **Zorunlu ön koşul:** Diferansiyel hatlar bulunuyorsa empedans veya routing geometrisini tahmin ederek belirleme.
+> **Mandatory precondition:** If differential traces are present, do not set impedance or routing geometry by guessing.
 
-### Routing öncesinde doğrulanacak bilgiler
+### Information to verify before routing
 
-| Bilgi | Kaynak |
+| Information | Source |
 | :--- | :--- |
-| Haberleşme arayüzü ve hedef diferansiyel empedans | Kullanıcı / interface specification / datasheet |
-| İzin verilen impedance tolerance | Kullanıcı / interface specification |
-| Pair içi length matching ve diğer uzunluk limitleri | Kullanıcı / interface specification / datasheet |
-| PCB üreticisi ve standart stack-up | Kullanıcı / JLCPCB / PCBWay |
-| Katman yapısı, dielektrik ve bakır kalınlıkları | PCB üreticisi |
-| Trace width, pair spacing ve gerekli copper clearance | Üreticinin stack-up ve empedans hesabı |
+| Communication interface and target differential impedance | User / interface specification / datasheet |
+| Allowed impedance tolerance | User / interface specification |
+| Intra-pair length matching and other length limits | User / interface specification / datasheet |
+| PCB manufacturer and standard stack-up | User / JLCPCB / PCBWay |
+| Layer structure, dielectric and copper thicknesses | PCB manufacturer |
+| Trace width, pair spacing and required copper clearance | Manufacturer's stack-up and impedance calculation |
 
-- [ ] **DIF-01** — Tasarımdaki tüm diferansiyel sinyal çiftlerini tespit et.
-- [ ] **DIF-02** — Eksik empedans, tolerans ve uzunluk gereksinimlerini kullanıcıdan veya ilgili teknik dokümandan al.
-- [ ] **DIF-03** — JLCPCB ve/veya PCBWay'den kullanılacak üretim koşullarına ait stack-up ve empedans bilgilerini edin.
-- [ ] **DIF-04** — Hesaplanan trace width ve differential pair spacing değerlerini PCB design rules içerisine tanımla.
-- [ ] **DIF-05** — Her çift için sürekli referans düzlemi, gerekli length matching ve pair spacing kurallarını uygula.
-- [ ] **DIF-06** — Kontrollü empedans gerektiren hatları, doğrulanmış üretici stack-up'ı olmadan finalize etme.
-- [ ] **DIF-07** — Üretici değişirse empedans geometrisini yeni üreticinin stack-up bilgileriyle yeniden doğrula.
-- [ ] **DIF-08** — Özel üretim gerektirmeyen düşük hızlı diferansiyel hatlar ile kontrollü empedans gerektiren hatları ayırt et; gereksiz üretim maliyeti oluşturma.
+- [ ] **DIF-01** — Identify all differential signal pairs in the design.
+- [ ] **DIF-02** — Obtain missing impedance, tolerance and length requirements from the user or the relevant technical document.
+- [ ] **DIF-03** — Obtain the stack-up and impedance information for the manufacturing conditions to be used from JLCPCB and/or PCBWay.
+- [ ] **DIF-04** — Define the calculated trace width and differential pair spacing values in the PCB design rules.
+- [ ] **DIF-05** — For each pair, apply a continuous reference plane and the required length matching and pair spacing rules.
+- [ ] **DIF-06** — Do not finalize traces that need controlled impedance without a verified manufacturer stack-up.
+- [ ] **DIF-07** — If the manufacturer changes, re-verify the impedance geometry with the new manufacturer's stack-up information.
+- [ ] **DIF-08** — Distinguish low-speed differential traces that need no special manufacturing from traces that need controlled impedance; do not create unnecessary manufacturing cost.
 
-### RF / High-Speed — koşullu tasarım profili
+### RF / High-Speed — conditional design profile
 
-> Yalnızca projede ilgili gereksinimler varsa bu profili etkinleştir. Genel PCB limitlerini kontrollü empedans veya SI/PI gereksiniminin yerine kullanma.
+> Enable this profile only if the project has the related requirements. Do not use general PCB limits in place of controlled impedance or SI/PI requirements.
 
-- [ ] **HS-01** — İlgili sinyal gruplarını ve cihaz/interface dokümanlarından gelen empedans, tolerans, timing, skew/length, terminasyon, kayıp ve gürültü gereksinimlerini `Project-README.md` içinde kısa referanslarla tanımla.
-- [ ] **HS-02** — Uygun üretici stack-up'ı, malzeme, katman yapısı ve toleransları doğrula. RF/high-speed için özel malzeme veya üretim ancak gerçek teknik gereksinim varsa seçilsin.
-- [ ] **HS-03** — Onaylanan hat şartlarını EDA net class ve routing constraint'lerine aktar. Reference plane/return path, hat geçişleri, konnektör ve via kaynaklı süreksizlikler için ilgili kuralları incele.
-- [ ] **HS-04** — Proje isterlerine göre signal integrity / power integrity, PDN, termal ve EM/RF analiz ihtiyacını belirle. Alan çözücü, simülasyon veya laboratuvar ölçümü yalnızca gerekli ise uygulanır; araç erişimi ve kabul kriterini kaydet.
-- [ ] **HS-05** — Reviewer, ilgili hat sınıflarının onaylı gereksinimler, üretici stack-up'ı ve gerçek analiz/ölçüm kanıtlarıyla uyumunu doğrular. DRC'nin temiz olması tek başına SI/PI veya RF performansının doğrulanması değildir.
+- [ ] **HS-01** — Define the relevant signal groups and the impedance, tolerance, timing, skew/length, termination, loss and noise requirements from device/interface documents in `Project-README.md` with short references.
+- [ ] **HS-02** — Verify a suitable manufacturer stack-up, material, layer structure and tolerances. Choose special material or manufacturing for RF/high-speed only if there is a real technical requirement.
+- [ ] **HS-03** — Transfer the approved trace requirements to EDA net classes and routing constraints. Review the relevant rules for reference plane/return path, trace transitions, and discontinuities from connectors and vias.
+- [ ] **HS-04** — Determine the need for signal integrity / power integrity, PDN, thermal and EM/RF analysis from the project requirements. Field solvers, simulation or lab measurement are applied only if required; record tool access and acceptance criteria.
+- [ ] **HS-05** — The Reviewer verifies that the relevant trace classes comply with the approved requirements, the manufacturer stack-up and real analysis/measurement evidence. A clean DRC alone does not verify SI/PI or RF performance.
 
-### RF — koşullu, banda göre kademeli
+### RF — conditional, tiered by band
 
-> **Yalnızca kartta RF devresi varsa uygula.** RF yoksa bu kısmın tamamı N/A'dır ve kullanıcıya RF sorusu sorulmaz. RF varsa önce bandı öğren, kademeyi seç ve `Project-README.md` içine kaydet.
+> **Apply only if the board has an RF circuit.** If there is no RF, this whole part is N/A and the user is not asked RF questions. If there is RF, first learn the band, choose the tier and record it in `Project-README.md`.
 
-| Kademe | Frekans | Tipik örnek | Varsayılan yaklaşım |
+| Tier | Frequency | Typical example | Default approach |
 | :--- | :--- | :--- | :--- |
-| **RF-A** | < 1 GHz | 433/868/915 MHz, LoRa, kumanda | Standart FR-4 genellikle yeterli. 50 Ω microstrip veya GCPW. Via fence önerilir, zorunlu değil. |
-| **RF-B** | 1–6 GHz | GNSS, 2.4/5 GHz WiFi, BLE | FR-4 kısa hatlarda kayıp hesabıyla kabul edilebilir. GCPW tercih edilir. Via fence aralığı ≤ λg/10, tercihen ≤ λg/20. |
-| **RF-C** | > 6 GHz | Radar, X-band ve üzeri, mmWave | RF laminat veya hibrit stack-up (üretici onaylı). GCPW zorunlu, via fence ≤ λg/20. Konnektör launch'u üretici referansına göre. EM simülasyonu veya ölçüm kanıtı gerekir. |
+| **RF-A** | < 1 GHz | 433/868/915 MHz, LoRa, remote control | Standard FR-4 is usually sufficient. 50 Ω microstrip or GCPW. Via fence recommended, not mandatory. |
+| **RF-B** | 1–6 GHz | GNSS, 2.4/5 GHz WiFi, BLE | FR-4 acceptable for short traces with a loss calculation. GCPW preferred. Via fence spacing ≤ λg/10, preferably ≤ λg/20. |
+| **RF-C** | > 6 GHz | Radar, X-band and above, mmWave | RF laminate or hybrid stack-up (manufacturer-approved). GCPW mandatory, via fence ≤ λg/20. Connector launch per manufacturer reference. EM simulation or measurement evidence required. |
 
-λg (dielektrik içindeki dalga boyu) ≈ c / (f · √εeff). Örnek: 2.4 GHz, FR-4 microstrip (εeff ≈ 3.3) → λg ≈ 69 mm → λg/20 ≈ 3.4 mm. Değerleri üreticinin gerçek stack-up'ı ve hesap aracıyla doğrula.
+λg (wavelength in the dielectric) ≈ c / (f · √εeff). Example: 2.4 GHz, FR-4 microstrip (εeff ≈ 3.3) → λg ≈ 69 mm → λg/20 ≈ 3.4 mm. Verify values with the manufacturer's real stack-up and a calculation tool.
 
-- [ ] **RF-01** — RF var mı? Yoksa N/A. Varsa band, TX/RX işlevi, çıkış gücü veya hassasiyet, anten ya da konnektör tipi ve düzenleyici uyumluluk isterlerini al.
-- [ ] **RF-02** — Hobi ve basit projelerde önce **sertifikalı hazır RF modülünü** (anten dahil veya U.FL/SMA çıkışlı) öner; kendi RF devresini kullanıcı isterse veya gereksinim zorunlu kılarsa tasarla. Modül kullanılıyorsa modül üreticisinin layout kılavuzu (anten keepout, GND, besleme) bağlayıcıdır.
-- [ ] **RF-03** — 50 Ω (veya onaylı başka empedans) hat geometrisini üreticinin stack-up'ı ve hesap aracıyla belirle. Tercihen GCPW kullan. Hattın altındaki referans düzlemi kesintisiz olsun; hattın altından veya yanından başka sinyal geçirme.
-- [ ] **RF-04** — RF hattı boyunca iki yanda GND via fence uygula; aralığı kademeye göre seç. Polygon ile hat arasındaki boşluk hesaplanan GCPW değerine eşit olsun.
-- [ ] **RF-05** — RF komponentlerin GND pad'lerini Direct Connect bağla ve pad'e en yakın noktaya birden fazla GND via koy. PA/LNA exposed pad'leri için datasheet'teki termal via düzenini uygula.
-- [ ] **RF-06** — Dönüşlerde mitered veya kavisli geçiş kullan. Pad ile hat genişliği arasında büyük fark varsa taper uygula. Yüksek frekansta küçük paket (0402 veya daha küçük, dizgi yöntemi izin veriyorsa) tercih et.
-- [ ] **RF-07** — RF konnektör (SMA, U.FL, edge-launch) için üreticinin önerdiği footprint ve launch geometrisini kullan. Antenin keepout alanında tüm katmanlarda bakır bırakma. Anten veya konnektör önüne ayarlanabilir eşleştirme ağı (pi) yeri bırak.
-- [ ] **RF-08** — TX/RX, LO/clock, DC-DC ve dijital gürültü kaynaklarını RF yolundan ayır. Gerekiyorsa shield can footprint'i ve çevresine via fence ekle. RF hatlarını kısa tut.
-- [ ] **RF-09** — Doğrulama kanıtını kaydet: empedans hesabı, varsa simülasyon (ör. `.s2p`) ve varsa ölçüm (VNA, spektrum analizörü). Ölçüm veya simülasyon yapılmadıysa "doğrulanmadı" olarak işaretle.
+- [ ] **RF-01** — Is there RF? If not, N/A. If yes, obtain the band, TX/RX function, output power or sensitivity, antenna or connector type and regulatory compliance requirements.
+- [ ] **RF-02** — For hobby and simple projects, first propose a **certified off-the-shelf RF module** (antenna included or with U.FL/SMA output); design a custom RF circuit only if the user asks or the requirements demand it. If a module is used, the module manufacturer's layout guide (antenna keepout, GND, supply) is binding.
+- [ ] **RF-03** — Set the 50 Ω (or other approved impedance) trace geometry with the manufacturer's stack-up and a calculation tool. Prefer GCPW. Keep the reference plane under the trace continuous; do not route other signals under or beside the trace.
+- [ ] **RF-04** — Apply a GND via fence on both sides along the RF trace; choose the spacing by tier. The gap between polygon and trace must equal the calculated GCPW value.
+- [ ] **RF-05** — Connect RF component GND pads with Direct Connect and place multiple GND vias at the point closest to the pad. For PA/LNA exposed pads, follow the thermal via pattern in the datasheet.
+- [ ] **RF-06** — Use mitered or curved transitions at bends. Apply a taper if pad and trace widths differ greatly. At high frequency, prefer small packages (0402 or smaller, if the assembly method allows).
+- [ ] **RF-07** — For RF connectors (SMA, U.FL, edge-launch), use the manufacturer-recommended footprint and launch geometry. Leave no copper on any layer in the antenna keepout area. Leave a position for a tunable matching network (pi) in front of the antenna or connector.
+- [ ] **RF-08** — Separate TX/RX, LO/clock, DC-DC and digital noise sources from the RF path. If needed, add a shield can footprint with a via fence around it. Keep RF traces short.
+- [ ] **RF-09** — Record verification evidence: impedance calculation, simulation if any (e.g. `.s2p`) and measurement if any (VNA, spectrum analyzer). If no measurement or simulation was done, mark it "not verified".

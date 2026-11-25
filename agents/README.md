@@ -1,20 +1,20 @@
 # Portable Agent Roles
 
-Bu dosyalar belirli bir AI sağlayıcısı veya ajan API'si gerektirmez. Ortak çalışma kuralları `../AGENTS.md`, detaylı teknik kurallar `../Hardware-Rules.md` ve `../Hardware-Roles.md` içindedir.
+These files do not require a specific AI provider or agent API. Shared working rules are in `../AGENTS.md`; detailed technical rules are in `../Hardware-Rules.md` and `../Hardware-Roles.md`.
 
-## Otomatik ajan desteği varsa
+## If automatic agent support exists
 
-Manager ana oturumda kalır; gerektiğinde Designer ve Reviewer rollerini ilgili modelle başlatır. Kullanılan istemcinin yeteneklerini ve desteklenen model/efor ayarlarını doğrula. Platform adaptörleri yalnızca kolaylık sağlar; ortak rol dosyaları tüm istemcilerde kullanılabilir.
+The Manager stays in the main session; when needed it starts the Designer and Reviewer roles with the right model. Verify the client's capabilities and the supported model/effort settings. Platform adapters are only a convenience; the shared role files work in every client.
 
-## Otomatik ajan desteği yoksa / AI değiştiriliyorsa
+## If there is no automatic agent support / the AI is being changed
 
-1. Manager mevcut proje kayıtlarından kısa bir görev paketi hazırlar (`Hardware-Roles.md` §05).
-2. Kullanıcı ilgili rol dosyasını ve gerekli proje dosyalarını seçtiği AI oturumuna verir.
-3. Görev sonucunu, gerçek dosya değişikliklerini ve review kanıtını Manager'a geri iletir.
-4. Manager mevcut revizyon ve onayları koruyarak sıradaki aşamayı yönetir.
+1. The Manager prepares a short task package from the current project records (`Hardware-Roles.md` §05).
+2. The user gives the relevant role file and the required project files to the AI session of their choice.
+3. The user passes the task result, the real file changes and the review evidence back to the Manager.
+4. The Manager runs the next stage, keeping the current revision and approvals.
 
-Örnek istem:
+Example prompt:
 
-> AGENTS.md ve agents/Reviewer.md talimatlarını uygula. Atanan tasarım revizyonunu ve sadece ilgili dosyaları incele. Designer'ın tasarımını değiştirme. Gerçek bulguları kısa raporla; doğrulayamadığın işlemleri BLOCKED olarak bildir.
+> Follow the AGENTS.md and agents/Reviewer.md instructions. Review the assigned design revision and only the relevant files. Do not change the Designer's design. Report real findings briefly; report anything you could not verify as BLOCKED.
 
-Farklı bir AI ile devam etmek için tüm sohbeti yeniden göndermek gerekmez. Proje dosyaları ortak kayıt kaynağıdır. Dosyaya veya EDA aracına erişemeyen istemcide işlemleri yapılmış göstermeme kuralı geçerlidir.
+To continue with a different AI there is no need to resend the whole chat. The project files are the shared source of record. In a client that cannot access files or the EDA tool, the rule of not presenting actions as done still applies.

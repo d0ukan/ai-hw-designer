@@ -4,9 +4,9 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.14 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.15 ([changelog](CHANGELOG.md))
 
-One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. The rule and role files are written in Turkish; AI assistants read them fine and answer in your language.
+One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
 | Role | Portable role file | Job |
 | :--- | :--- | :--- |
@@ -20,7 +20,7 @@ The shortest path: give any AI assistant the repo link and write:
 
 > Inspect this repo (start with AGENTS.md and llms.txt). I want to design a board using it.
 
-The AI then ([AGENTS.md](AGENTS.md), section "Repo linkiyle başlayan AI"):
+The AI then ([AGENTS.md](AGENTS.md), section "AI started from a repo link"):
 - Does not read every rule up front; it uses the index and the per-stage reading set, which saves tokens and credits.
 - Asks you to create your own copy with GitHub's **Use this template**.
 - Without file access (web chat) it keeps decisions in the chat, gives you content to paste into files and commands to run, and never reports a check that did not run. Paste the output of `projectctl.py next` and it continues from there.
@@ -123,7 +123,7 @@ Every Reviewer check ends in `PASS`, `REWORK` or `BLOCKED`. On `REWORK` the Desi
 ## Tokens and price/performance
 
 - The main session is the Manager; no third sub-agent is started.
-- At each stage the AI reads only the files in the "Aşamaya göre okuma seti" (per-stage reading set) table in `Hardware-Rules.md`.
+- At each stage the AI reads only the files in the "Reading set by stage" table in `Hardware-Rules.md`.
 - Simple work is done first with deterministic tools (`projectctl.py`, `check-bom`).
 - The default model/effort is economical; harder technical work moves to a stronger model.
 - Verified library entries are reused; reports stay short.

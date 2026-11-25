@@ -1,48 +1,48 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
-## 00B · PCB Intake — Layout öncesi teknik ve mekanik kararlar
+## 00B · PCB Intake — Pre-layout technical and mechanical decisions
 
-> **ZORUNLU — PCB TASARIMINA GEÇMEDEN ÖNCE (G0.5):** Manager, onaylı şematik girdileri ve bilinen mekanik/üretim tercihleri üzerinden eksik PCB özelliklerini sorar. Önceden açıkça onaylanmış, değişmemiş kararları yeniden sorma; tek bir PCB tasarım özetiyle kullanıcının onayını al. Bu aşama tamamlanmadan kart sınırını, stack-up'ı, placement ve routing'i finalize etme veya PCB layout'a başlama.
+> **MANDATORY — BEFORE MOVING TO PCB DESIGN (G0.5):** The Manager asks for missing PCB properties based on approved schematic inputs and known mechanical/manufacturing preferences. Do not re-ask decisions already explicitly approved and unchanged; get the user's approval with a single PCB design summary. Until this stage is complete, do not finalize the board outline, stack-up, placement and routing, or start PCB layout.
 
-### A · PCB teknolojisi, malzeme ve kalite
+### A · PCB technology, material and quality
 
-- [ ] **PCB-01** — Kartın fiziksel yapısı nedir? Standart rigid, flex, rigid-flex veya başka özel yapı mı?
-- [ ] **PCB-02** — Hangi PCB malzemesi/altlığı gerekiyor? Standart FR-4, özel/yüksek sıcaklık FR-4, alüminyum veya bakır metal-core (MCPCB/IMS), RF laminat, polyimide veya diğer? Metal-core kartı yalnızca kalın bakır folyo ile karıştırma.
-- [ ] **PCB-03** — Standart via/laminasyon yeterli mi, yoksa HDI, microvia, blind/buried via, özel katman yapısı veya başka özel işlem gerekli mi? Gereklilik ve maliyeti üreticiyle doğrula; gerekmedikçe standart üretimi seç.
-- [ ] **PCB-04** — Kalite/uygulama sınıfı nedir? Standart ticari, endüstriyel, medikal, otomotiv, havacılık/askeri veya başka bir özel şart mı? Belirli standart, kalite sınıfı, test, malzeme veya izlenebilirlik zorunluluğu var mı? Uygulama sınıfını PCB malzemesi veya yapısıyla aynı seçim olarak değerlendirme; üreticinin ilgili şartları karşılayabildiğini doğrula. Seçim INT-47 kalite profiliyle tutarlı olmalıdır; Havacılık profilinde bölüm 08'i uygula.
+- [ ] **PCB-01** — What is the board's physical construction? Standard rigid, flex, rigid-flex or another special construction?
+- [ ] **PCB-02** — Which PCB material/substrate is required? Standard FR-4, special/high-temperature FR-4, aluminum or copper metal-core (MCPCB/IMS), RF laminate, polyimide or other? Do not confuse a metal-core board with mere heavy copper foil.
+- [ ] **PCB-03** — Are standard vias/lamination enough, or are HDI, microvias, blind/buried vias, a special layer structure or another special process required? Verify need and cost with the manufacturer; choose standard manufacturing unless needed.
+- [ ] **PCB-04** — What is the quality/application class? Standard commercial, industrial, medical, automotive, aerospace/military or another special requirement? Is there a mandatory standard, quality class, test, material or traceability requirement? Do not treat the application class as the same choice as PCB material or construction; verify the manufacturer can meet the related requirements. The choice must be consistent with the INT-47 quality profile; under the Aerospace profile apply section 08.
 
 ### B · Board Outline & Mechanical
 
-- [ ] **PCB-05** — Boyut, birim, kart şekli (dikdörtgen, daire, özel profil), maksimum kalınlık/yükseklik, varsa toleranslar ve muhafaza/STEP referansı nedir?
-- [ ] **PCB-06** — Dikdörtgen veya köşeli kartta köşeler nasıl olacak? **Keskin/küt 90° köşe, radius (R) ile yuvarlatılmış köşe veya pah (chamfer)** mı? Radius değeri (mm), pah ölçüsü/açısı ve hangi köşelere uygulanacağını sor; farklı köşe tipleri varsa ayrı kaydet.
-- [ ] **PCB-07** — Montaj deliklerinin konumu ve çapı, PTH/NPTH tercihi, slot/cutout, kenar boşluğu, konnektör yönleri, kasa teması ve mekanik keepout alanları nedir? İç köşe, slot ve profil detaylarını üreticinin frezeleme kabiliyetiyle doğrula.
-- [ ] **PCB-08** — Kasa/soğutucu teması, komponent maksimum Z yüksekliği, özel mekanik veya flex/bükülme kısıtları var mı? Mevcut mekanik dosyaları öncelikli kullan.
-- [ ] **PCB-14** — Multi-PCB projelerde her kartın ayrı outline, katman, montaj ve şase halkası tercihini; kartların yerleşim yönünü, birbirine göre konumunu, board-to-board mesafesini ve varsa kablo güzergâhı/mekanik kısıtlarını onaylat. Sadece değişen veya eksik kart girdilerini sor.
-- [ ] **PCB-15** — Modül ve konnektörlerin onaylı STEP/CAD modellerini, karşı konnektör eşleşmesini, birleşim yönünü, pin 1/yön, yerleşim ve erişim sınırlarını doğrula. Toplam CAD assembly isteniyorsa kartlar ve ilgili mekanik öğeler arasında çakışma/uyum kontrolü planla.
-- [ ] **PCB-16** — On-board programlama veya debug onaylandıysa ilgili konnektör/pad/fikstür için yerleşim, Pin 1, erişim ve mekanik boşluk gereksinimini doğrula. G0'da belirlenen yöntemi değiştirme; programlama gerektirmeyen ya da yalnız off-board programlanan tasarımda bu kontrolü uygun şekilde N/A bırak.
+- [ ] **PCB-05** — What are the size, unit, board shape (rectangle, circle, custom profile), maximum thickness/height, any tolerances and enclosure/STEP reference?
+- [ ] **PCB-06** — On a rectangular or cornered board, what will the corners be? **Sharp/square 90° corner, radius (R) rounded corner or chamfer**? Ask the radius value (mm), chamfer size/angle and which corners it applies to; if corner types differ, record them separately.
+- [ ] **PCB-07** — What are the mounting hole positions and diameters, PTH/NPTH preference, slots/cutouts, edge clearance, connector orientations, enclosure contact and mechanical keepout areas? Verify inner corners, slots and profile details against the manufacturer's routing capability.
+- [ ] **PCB-08** — Are there enclosure/heatsink contact, maximum component Z height, special mechanical or flex/bend constraints? Prefer existing mechanical files.
+- [ ] **PCB-14** — In multi-PCB projects, get approval for each board's outline, layers, mounting and chassis ring preference; the boards' placement orientation, relative position, board-to-board distance and any cable routing/mechanical constraints. Ask only for changed or missing board inputs.
+- [ ] **PCB-15** — Verify the approved STEP/CAD models of modules and connectors, mating connector match, mating direction, pin 1/orientation, placement and access limits. If a full CAD assembly is required, plan a collision/fit check between boards and related mechanical items.
+- [ ] **PCB-16** — If on-board programming or debug is approved, verify placement, Pin 1, access and mechanical clearance requirements for the related connector/pad/fixture. Do not change the method set at G0; in a design with no programming or with off-board programming only, leave this check N/A as appropriate.
 
 ### C · Stack-up & Manufacturing
 
-- [ ] **PCB-09** — Üretici, standart katman sayısı/stack-up, bitmiş PCB kalınlığı, dış/iç copper weight, solder mask/silkscreen rengi ve yüzey kaplaması için özel istek var mı? Yoksa bölüm 03'teki fiyat/performans varsayılanlarını kullanıcıya öner.
-- [ ] **PCB-10** — Kontrollü empedans, özel via, edge plating/castellation, panelleme, stencil, tek/çift taraflı dizgi veya özel üretim toleransları gerekiyor mu? Gerekiyorsa sadece ilgili üretici ve kullanıcı bilgilerini al; bölüm 05'i uygula.
+- [ ] **PCB-09** — Is there a special request for manufacturer, standard layer count/stack-up, finished PCB thickness, outer/inner copper weight, solder mask/silkscreen color and surface finish? Otherwise propose the price/performance defaults in section 03 to the user.
+- [ ] **PCB-10** — Are controlled impedance, special vias, edge plating/castellation, panelization, stencil, single/double-sided assembly or special manufacturing tolerances required? If so, get only the related manufacturer and user information; apply section 05.
 
-### D · İsteğe bağlı CHASSIS_GND çevre halkası
+### D · Optional CHASSIS_GND perimeter ring
 
-- [ ] **PCB-11** — Kullanıcıdan açıkça sor: **Kartın etrafını dolaşan CHASSIS_GND copper ring istiyor musunuz? (Evet / Hayır)** Şase mevcut olsa dahi ring'i otomatik olarak oluşturma.
-- [ ] **PCB-12** — Kullanıcı evet derse bölüm 01–02'deki varsayılan 1.50 mm halka, 3.00 mm via aralığı, 0.80 mm via hole ve açık solder mask tercihlerini öner; seçilen PCB teknolojisine ve üretici limitlerine uygunluğunu doğrula. Ring ana GND'ye bağlanacak mı, ayrı mı kalacak? Bölüm 00, C kısmında onaylanmış GND/izolasyon kararı geçerliyse yeniden sorma; eksikse netleştir.
-- [ ] **PCB-13** — Kullanıcı hayır derse ring, ring'e ait stitching via ve ring solder mask açıklığı oluşturma; diğer devre GND polygon ve onaylı şase bağlantıları geçerlidir. Tercih belirsizse ring oluşturma ve G0.5 onayını bekle.
+- [ ] **PCB-11** — Ask the user explicitly: **Do you want a CHASSIS_GND copper ring around the board? (Yes / No)** Do not create the ring automatically even if a chassis exists.
+- [ ] **PCB-12** — If the user says yes, propose the default 1.50 mm ring, 3.00 mm via spacing, 0.80 mm via hole and open solder mask from sections 01–02; verify suitability for the selected PCB technology and manufacturer limits. Will the ring connect to main GND or stay separate? If the GND/isolation decision approved in section 00, part C still applies, do not ask again; clarify if missing.
+- [ ] **PCB-13** — If the user says no, do not create the ring, its stitching vias or its solder mask opening; other circuit GND polygons and approved chassis connections still apply. If the preference is unclear, do not create the ring and wait for G0.5 approval.
 
-### E · Silkscreen ve işaretleme (her soru INT-51'e göre ertelenebilir)
+### E · Silkscreen and marking (each question may be deferred per INT-51)
 
-- [ ] **PCB-17** — **Logo/ikon:** Kullanıcının kendi logosu veya sembolü konacak mı? Top, bottom veya ikisi? Dosyayı (tercihen SVG/PNG) ve kullanım hakkını kullanıcı sağlar; başkasına ait marka izinsiz konmaz.
-- [ ] **PCB-18** — **Kart kodu:** `<kod>-<rev>` (ör. `DR00627-R01`) kart üzerine yazılsın mı? Silkscreen mi bakır mı; top, bottom veya ikisi? Tarih de eklensin mi? Bakır yazı net, RF, yüksek gerilim ve empedans hatlarından uzak, DRC uyumlu olur.
-- [ ] **PCB-19** — **Konnektör etiketi:** Konnektörlerde pin numarası mı, net adı mı, ikisi mi yazılsın? Top, bottom veya ikisi?
-- [ ] **PCB-20** — **Designator:** Açık mı gizli mi? Açıksa boyut (varsayılan: üretici minimumu, ör. JLCPCB için ~0.8–1.0 mm yükseklik, 0.15 mm çizgi) ve konum (parçanın içi veya kenarı/köşesi). Gizli designator kartı küçültebilir ama dizgi ve tamiri zorlaştırır; o durumda `_ASSY.pdf` zorunludur ve designator Fab/Assembly katmanında kalır. Hobi/elle dizgide ve Havacılık profilinde bu riski kullanıcıya hatırlat.
-- [ ] **PCB-21** — **İmza / easter egg:** Kullanıcı isterse küçük bir imza veya çizim konabilir. DRC'yi bozmaz; RF, anten, yüksek gerilim ve test bölgelerine konmaz; uygunsuz içerik olmaz. Havacılık profilinde varsayılan kapalıdır.
+- [ ] **PCB-17** — **Logo/icon:** Will the user's own logo or symbol be placed? Top, bottom or both? The user provides the file (preferably SVG/PNG) and usage rights; no third-party brand is placed without permission.
+- [ ] **PCB-18** — **Board code:** Should `<code>-<rev>` (e.g. `DR00627-R01`) be written on the board? Silkscreen or copper; top, bottom or both? Add the date too? Copper text stays away from nets, RF, high-voltage and impedance traces and is DRC-compliant.
+- [ ] **PCB-19** — **Connector label:** Should connectors show pin numbers, net names or both? Top, bottom or both?
+- [ ] **PCB-20** — **Designator:** Visible or hidden? If visible, size (default: manufacturer minimum, e.g. for JLCPCB ~0.8–1.0 mm height, 0.15 mm stroke) and position (inside the part or at its edge/corner). Hidden designators can shrink the board but make assembly and repair harder; in that case `_ASSY.pdf` is mandatory and designators stay on the Fab/Assembly layer. Remind the user of this risk for hobby/hand assembly and under the Aerospace profile.
+- [ ] **PCB-21** — **Signature / easter egg:** If the user wants, a small signature or drawing may be placed. It does not break DRC; it is not placed in RF, antenna, high-voltage or test areas; no inappropriate content. Default off under the Aerospace profile.
 
 ### G0.5 · PCB Input Approval
 
-- [ ] PCB özelliklerini ve mekanik kararları `Project-README.md` içinde tek bir kısa özetle kaydet.
-- [ ] Şematikle çelişiyorsa yalnızca etkilenen gereksinimi ve tasarım alanını yeniden değerlendir. Gerekli durumda G0 onayını ve ilgili şematik review'u güncelle.
-- [ ] PCB girdilerine ait revizyon ve gerçek kullanıcı onayını kaydet. Onaylanan, değişmeyen kararları ve doğrulama kanıtlarını tekrar üretme.
-- [ ] INT-51 ile ertelenen kritik olmayan kararları (PCB-17…21) tekrar sor; yanıt yoksa güvenli varsayılanı kaydet.
-- [ ] Layout'a başlamadan önce `python scripts/projectctl.py check-layout` başarılı olmalıdır.
+- [ ] Record PCB properties and mechanical decisions in a single short summary in `Project-README.md`.
+- [ ] If it conflicts with the schematic, re-evaluate only the affected requirement and design area. If needed, update the G0 approval and the related schematic review.
+- [ ] Record the revision of the PCB inputs and the real user approval. Do not regenerate approved, unchanged decisions and verification evidence.
+- [ ] Ask again the non-critical decisions deferred under INT-51 (PCB-17…21); if there is no answer, record the safe default.
+- [ ] `python scripts/projectctl.py check-layout` must pass before starting layout.

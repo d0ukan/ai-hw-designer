@@ -1,16 +1,16 @@
 ---
-name: Hata
-about: projectctl, CI veya dokümanda hata bildir
+name: Bug
+about: Report a bug in projectctl, CI or the docs
 labels: bug
 ---
 
-**Ne oldu:**
+**What happened:**
 
-**Beklenen:**
+**Expected:**
 
-**Komut ve çıktı:**
+**Command and output:**
 
 ```
 ```
 
-**Ortam:** işletim sistemi, Python sürümü
+**Environment:** operating system, Python version

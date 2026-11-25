@@ -1,11 +1,11 @@
 # Hardware
 
-Onaylı proje girdilerine göre seçilen EDA yazılımının native schematic, PCB, constraints ve projeye özel kütüphaneleri burada tutulur. Henüz EDA yazılımı veya kart amacı seçilmediğinden şablon örnek PCB dosyası içermez.
+This folder holds the native schematic, PCB, constraints and project-specific libraries of the EDA software chosen from the approved project inputs. The template has no sample PCB file because no EDA software or board purpose has been chosen yet.
 
-Layout öncesinde G0.5 PCB girdileri onaylanır ve check-layout kontrolü çalıştırılır. CHASSIS_GND çevre halkası yalnızca açık kullanıcı onayı varsa oluşturulur.
+Before layout, the G0.5 PCB inputs are approved and the check-layout check is run. A CHASSIS_GND perimeter ring is created only with explicit user approval.
 
-Tek PCB projede ortak bir EDA proje alanı yeterlidir. Multi-PCB proje onaylandıysa her kartı `Hardware/<board-id>/` gibi ayrı bir native EDA alanında tut. Kart sayısı ve ID'leri kullanıcı girdisinden gelir; gereksiz placeholder kartları oluşturma. Kartlar arası ve harici bağlantıların ortak pinout/konnektör referansını `Project-README.md` içinde koru.
+A single-PCB project needs one shared EDA project area. If a multi-PCB project is approved, keep each board in its own native EDA area, such as `Hardware/<board-id>/`. The number of boards and their IDs come from user input; do not create unneeded placeholder boards. Keep the shared pinout/connector reference for inter-board and external connections in `Project-README.md`.
 
-Ortak `Hardware-Library/` varlıklarını mümkün olduğunca göreli yollarla kullan; başka bilgisayarda çalışmayacak mutlak kütüphane yollarından kaçın. Tasarım revizyonlarını kaydet, geçerli kullanıcı değişikliklerini koru ve gerekli ERC/DRC kontrollerini gerçek EDA aracıyla yürüt.
+Use shared `Hardware-Library/` assets with relative paths where possible; avoid absolute library paths that will not work on another computer. Save design revisions, keep valid user changes, and run the required ERC/DRC checks with the real EDA tool.
 
-MCP zorunlu değildir. Seçilen EDA'nın desteklediği MCP, CLI, API/script veya GUI erişimini proje başlamadan doğrula. `Project-README.md` içinde mevcut yetenekleri ve kısıtları kaydet; aynı proje revizyonunda doğrulanmamış dönüştürme veya otomasyon sonuçlarını başarılı sayma.
+MCP is not required. Verify the MCP, CLI, API/script or GUI access supported by the chosen EDA before the project starts. Record the available capabilities and limits in `Project-README.md`; do not count unverified conversion or automation results as successful in the same project revision.

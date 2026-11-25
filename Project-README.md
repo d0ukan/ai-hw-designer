@@ -1,157 +1,157 @@
-# Project README — Projeye özel bilgiler, isterler ve kurallar
+# Project README — Project-specific information, requirements and rules
 
-> Yeni projede bu dosya boş bir başlangıç şablonudur. Manager, gerçek kullanıcı cevaplarını, projeye özel isterleri, ek kuralları, alınan kararları ve güncel durumu burada tutar. Bu dosya proje için tek bilgi kaynağıdır; tam sohbet veya uzun teknik dokümanları kopyalama, ilgili dosya/sayfa referansını kaydet. Makine onay kaydı `project/workflow-state.json`, bağımsız review kanıtı `REVIEW_LOG.md` içindedir.
+> In a new project this file is an empty starting template. Manager keeps the real user answers, project-specific requirements, extra rules, decisions made and the current state here. This file is the single source of truth for the project; do not copy the full chat or long technical documents, record the relevant file/page reference. The machine approval record is in `project/workflow-state.json`, the independent review evidence in `REVIEW_LOG.md`.
 
-| Alan | Proje bilgisi |
+| Field | Project information |
 | :--- | :--- |
-| Proje adı / amaç | Belirlenecek |
-| Proje kodu / revizyon / varyantlar (INT-49) | Belirlenecek — ör. `DR00627` / `R01` / A, B |
-| Çıktı öneki (`projectctl.py name`) | Belirlenecek — ör. `DR00627-R01`, `DR00627-AV-R01` |
-| Kalite profili (Hobi / Endüstriyel / Havacılık) | Belirlenecek |
-| Tasarım hedefi (Maliyet / Dengeli / Performans, INT-48) | Belirlenecek |
-| RF var mı / band / kademe (RF-A, RF-B, RF-C) | Belirlenecek / N/A |
-| Batarya / kimya / hücre (INT-52, bölüm 10) | Belirlenecek / N/A |
-| Kart tipi / yazılı isterler | Belirlenecek |
-| Tek PCB / multi-PCB ve kart ID'leri | Belirlenecek |
-| Kartlar arası bağlantı yöntemi | Belirlenecek / N/A |
-| Hazır modül kullanımı / mevcut STEP-CAD | Belirlenecek |
-| Harici fiziksel konnektörler / karşı parçalar | Belirlenecek |
-| Diagnostik / status / haberleşme LED'leri | Belirlenecek |
-| Programlama/flash/debug (on-board / off-board / N/A) | Belirlenecek |
-| Komple STEP/CAD assembly teslimi | Belirlenecek |
-| Besleme türü / min–nom–max | Belirlenecek |
-| EDA yazılımı | Belirlenecek |
-| EDA sürümü / bağlantı yöntemi | Belirlenecek |
-| Gereksinim revizyonu | Belirlenecek |
-| PCB girdi revizyonu | Belirlenecek |
-| Üretici / dizgi | Belirlenecek |
-| Hedef adet / maliyet | Belirlenecek |
-| Tedarik stratejisi | Belirlenecek |
-| Çalışma ortamı | Belirlenecek |
-| AI bütçesi / model tercihleri | Kullanıcı tanımlarsa kaydet |
-| Kullanıcı anlatım tercihi | Caveman / Balanced / Detailed — belirlenecek |
-| Aktif rol / yürütme ortamı | Manager / belirlenecek |
+| Project name / purpose | TBD |
+| Project code / revision / variants (INT-49) | TBD — e.g. `DR00627` / `R01` / A, B |
+| Output prefix (`projectctl.py name`) | TBD — e.g. `DR00627-R01`, `DR00627-AV-R01` |
+| Quality profile (Hobby / Industrial / Aviation) | TBD |
+| Design goal (Cost / Balanced / Performance, INT-48) | TBD |
+| RF present? / band / tier (RF-A, RF-B, RF-C) | TBD / N/A |
+| Battery / chemistry / cells (INT-52, section 10) | TBD / N/A |
+| Board type / written requirements | TBD |
+| Single PCB / multi-PCB and board IDs | TBD |
+| Board-to-board connection method | TBD / N/A |
+| Ready-made module use / existing STEP-CAD | TBD |
+| External physical connectors / mating parts | TBD |
+| Diagnostic / status / communication LEDs | TBD |
+| Programming/flash/debug (on-board / off-board / N/A) | TBD |
+| Full STEP/CAD assembly delivery | TBD |
+| Supply type / min–nom–max | TBD |
+| EDA software | TBD |
+| EDA version / connection method | TBD |
+| Requirements revision | TBD |
+| PCB input revision | TBD |
+| Manufacturer / assembly | TBD |
+| Target quantity / cost | TBD |
+| Sourcing strategy | TBD |
+| Operating environment | TBD |
+| AI budget / model preferences | Record if the user defines them |
+| User communication preference | Caveman / Balanced / Detailed — TBD |
+| Active role / execution environment | Manager / TBD |
 
-## Onaylı gereksinimler
+## Approved requirements
 
-`Hardware-Rules.md` bölüm 00'daki proje ile ilgili cevapları burada özetle. Besleme, I/O, mekanik, şase/izolasyon, standart, test ve teslimat gereksinimlerini kapsa.
+Summarize the project-relevant answers from `Hardware-Rules.md` section 00 here. Cover supply, I/O, mechanical, chassis/isolation, standards, test and delivery requirements.
 
-İsterleri Zorunlu / Tercih / Esnek / Belirsiz / N/A olarak ayır. Kart tipine göre gerekli elektriksel değerleri ve yazılı kaynakları kaydet; aynı soruları tekrar sorma.
+Classify requirements as Mandatory / Preferred / Flexible / Unclear / N/A. Record the electrical values and written sources needed for the board type; do not ask the same questions again.
 
-| İster ID | İster / hedef | Öncelik | Kaynak / onay | Doğrulama / kabul kriteri |
+| Requirement ID | Requirement / target | Priority | Source / approval | Verification / acceptance criterion |
 | :--- | :--- | :--- | :--- | :--- |
 
-## Projeye özel ek kurallar
+## Project-specific extra rules
 
-| Kural ID | Uygulanacağı kart / alan | Kullanıcı kuralı veya onaylı istisna | Kaynak / onay |
+| Rule ID | Applies to board / area | User rule or approved exception | Source / approval |
 | :--- | :--- | :--- | :--- |
 
-Genel `Hardware-Rules.md` ve `Hardware-Roles.md` dosyalarını kopyalama. Projeye özgü ilave kuralları burada kaydet. Genel kuralla çelişen bir tercih varsa gerekçeyi ve kullanıcı kararını kaydet; zorunlu standart ve güvenlik gereksinimlerini ihlal eden bir istisnayı kabul edilmiş sayma.
+Do not copy the general `Hardware-Rules.md` and `Hardware-Roles.md` files. Record project-specific extra rules here. If a preference conflicts with a general rule, record the reason and the user decision; never treat an exception that violates mandatory standards or safety requirements as accepted.
 
 ## EDA & Tool Integration
 
-| Bilgi | Doğrulanmış değer |
+| Information | Verified value |
 | :--- | :--- |
-| EDA / sürüm | Belirlenecek |
-| Bağlantı | MCP / native CLI / API-script / GUI / manuel |
-| Adaptör adı, sürümü ve güvenilir kaynak | Belirlenecek / N/A |
-| Dosya erişimi ve okuma/yazma yetkisi | Belirlenecek |
-| Şematik, PCB, kütüphane düzenleme yetenekleri | Belirlenecek |
-| ERC/DRC, export, STEP/CAD yetenekleri | Belirlenecek |
-| Bağlantı testi ve bilinen kısıtlar | Belirlenecek |
+| EDA / version | TBD |
+| Connection | MCP / native CLI / API-script / GUI / manual |
+| Adapter name, version and trusted source | TBD / N/A |
+| File access and read/write permission | TBD |
+| Schematic, PCB, library editing capabilities | TBD |
+| ERC/DRC, export, STEP/CAD capabilities | TBD |
+| Connection test and known limits | TBD |
 
-Sadece gerçekten test edilmiş yetenekleri kullanılabilir olarak kaydet. API anahtarı veya gizli bilgileri bu dosyaya yazma.
+Record only capabilities that were actually tested as usable. Do not write API keys or secrets to this file.
 
-## Kartlar ve fiziksel arayüzler
+## Boards and physical interfaces
 
-Yalnızca uygulanıyorsa doldur. Tek PCB ve basit arayüzlerde kısa özet yeterlidir.
+Fill in only if applicable. For a single PCB and simple interfaces a short summary is enough.
 
-| Kart ID | Fonksiyon | Native EDA yolu / mekanik referans |
+| Board ID | Function | Native EDA path / mechanical reference |
 | :--- | :--- | :--- |
 
-| Arayüz ID | Kaynak → hedef | Bağlantı tipi / pinout referansı | Konnektör / karşı konnektör / STEP referansı |
+| Interface ID | Source → target | Connection type / pinout reference | Connector / mating connector / STEP reference |
 | :--- | :--- | :--- | :--- |
 
-Onaylı hazır modüller ve gerekli 3D modeller için `Hardware-Library/catalog/components.csv` kayıtlarına referans ver. Diagnostik göstergeleri ve anlamlarını kısa gereksinim notu olarak kaydet.
+Reference `Hardware-Library/catalog/components.csv` records for approved ready-made modules and required 3D models. Record diagnostic indicators and their meanings as a short requirement note.
 
-## Programlama ve Debug — yalnızca programlanabilir komponent varsa
+## Programming and Debug — only if a programmable component exists
 
-| Hedef komponent / kart ID | On-board / off-board / fabrika programlı | Arayüz / programmer-debugger | Konnektör / pinout / besleme / test referansı |
+| Target component / board ID | On-board / off-board / factory programmed | Interface / programmer-debugger | Connector / pinout / supply / test reference |
 | :--- | :--- | :--- | :--- |
 
-Flash, debug ve saha güncellemesi gereksinimlerini ayrı değerlendir. Standart veya custom konnektör, pads/fikstür, Pin 1, besleme yöntemi ve mekanik erişim tercihlerini onay referansıyla kaydet. Programlama gerektirmeyen proje için N/A.
+Evaluate flash, debug and field update requirements separately. Record standard or custom connector, pads/fixture, Pin 1, supply method and mechanical access preferences with an approval reference. N/A for projects that need no programming.
 
-## Onaylı PCB girdileri — G0.5
+## Approved PCB inputs — G0.5
 
-| Alan | Karar / onay referansı |
+| Field | Decision / approval reference |
 | :--- | :--- |
-| Fiziksel PCB yapısı / laminat / teknoloji | Belirlenecek |
-| Kalite sınıfı / özel standartlar | Belirlenecek |
-| Board outline / ölçüler / radius / pah | Belirlenecek |
-| Montaj delikleri / slot / keepout / yükseklik | Belirlenecek |
-| Üretici / stack-up / copper weight / kaplama | Belirlenecek |
-| CHASSIS_GND çevre halkası (Evet / Hayır) | Belirlenecek — açık onay olmadan oluşturulmaz |
-| GND bağlantısı / izolasyon | Bölüm 00'daki onaylı karara referans ver |
-| Logo / ikon (yüz) — PCB-17 | Belirlenecek / Sonra karar ver / Yok |
-| Kart kodu yazısı: silk/bakır, yüz, tarih — PCB-18 | Belirlenecek / Sonra karar ver |
-| Konnektör etiketi: pin no / net adı / ikisi, yüz — PCB-19 | Belirlenecek / Sonra karar ver |
-| Designator: açık/gizli, boyut, iç/kenar — PCB-20 | Belirlenecek / Sonra karar ver |
-| İmza / easter egg — PCB-21 | Belirlenecek / Sonra karar ver / Yok |
+| Physical PCB structure / laminate / technology | TBD |
+| Quality class / special standards | TBD |
+| Board outline / dimensions / radius / chamfer | TBD |
+| Mounting holes / slots / keepout / height | TBD |
+| Manufacturer / stack-up / copper weight / finish | TBD |
+| CHASSIS_GND perimeter ring (Yes / No) | TBD — not created without explicit approval |
+| GND connection / isolation | Reference the approved decision in section 00 |
+| Logo / icon (side) — PCB-17 | TBD / Decide later / None |
+| Board code text: silk/copper, side, date — PCB-18 | TBD / Decide later |
+| Connector label: pin no / net name / both, side — PCB-19 | TBD / Decide later |
+| Designator: visible/hidden, size, inside/edge — PCB-20 | TBD / Decide later |
+| Signature / easter egg — PCB-21 | TBD / Decide later / None |
 
-Varsa ilgili mekanik dosyalar ve doğrulanmış üretici parametrelerine referans ekle. Değişmeyen girdileri yeniden yazma.
+If available, add references to the relevant mechanical files and verified manufacturer parameters. Do not rewrite unchanged inputs.
 
-Multi-PCB projede farklı kartların özelliklerini kart ID bazında kaydet. Komple assembly kapsamı ve eşleşen konnektör/mekanik referansları için `Mechanical/` kaynaklarına referans ver.
+In a multi-PCB project, record each board's properties by board ID. For full assembly scope and matching connector/mechanical references, reference the `Mechanical/` sources.
 
-## Mimari ve tasarım kararları
+## Architecture and design decisions
 
-| ID | Karar / gereksinim | Kaynak veya kullanıcı onayı |
+| ID | Decision / requirement | Source or user approval |
 | :--- | :--- | :--- |
 
-## RF / High-Speed / SI-PI — yalnızca uygulanıyorsa
+## RF / High-Speed / SI-PI — only if applicable
 
-| Hat / arayüz ID | Kaynak ister / standart | Onaylı empedans, zamanlama ve diğer limitler | Stack-up / analiz / kabul kriteri referansı |
+| Line / interface ID | Source requirement / standard | Approved impedance, timing and other limits | Stack-up / analysis / acceptance criterion reference |
 | :--- | :--- | :--- | :--- |
 
-İlgili üretici stack-up'ı, malzeme, hat sınıfları, model ve ölçüm gereksinimlerinin kaynağını belirt. Alakasız projelerde bu bölümü N/A olarak bırak.
+State the source of the relevant manufacturer stack-up, material, line classes, models and measurement requirements. Leave this section N/A in unrelated projects.
 
-## Havacılık / Aviyonik — yalnızca Havacılık profilinde
+## Aviation / Avionics — only in the Aviation profile
 
-| Alan | Karar / kaynak |
+| Field | Decision / source |
 | :--- | :--- |
-| Uygulanacak standartlar ve seviyeler (DO-254 DAL, DO-160 kategorileri, MIL-STD vb.) | Belirlenecek |
-| PCB / montaj kalite sınıfı (IPC-6012, IPC-A-610) ve üretici sertifikası | Belirlenecek |
-| Derating politikası | Belirlenecek |
-| Sıcaklık aralığı / çevre koşulları | Belirlenecek |
-| Güç girişi standardı / geçici rejimler | Belirlenecek / N/A |
-| Coating / staking / lehim ve kaplama politikası | Belirlenecek |
-| Gerekli analizler (FMEA, güvenilirlik, worst-case, termal) | Belirlenecek |
+| Applicable standards and levels (DO-254 DAL, DO-160 categories, MIL-STD etc.) | TBD |
+| PCB / assembly quality class (IPC-6012, IPC-A-610) and manufacturer certification | TBD |
+| Derating policy | TBD |
+| Temperature range / environmental conditions | TBD |
+| Power input standard / transients | TBD / N/A |
+| Coating / staking / solder and finish policy | TBD |
+| Required analyses (FMEA, reliability, worst-case, thermal) | TBD |
 
-Hobi ve Endüstriyel projelerde bu bölümü N/A bırak.
+Leave this section N/A in Hobby and Industrial projects.
 
-## Güncel durum ve checkpoint
+## Current state and checkpoint
 
-| Revizyon | Değişiklik / kontrol | Kısa kanıt veya commit |
+| Revision | Change / check | Short evidence or commit |
 | :--- | :--- | :--- |
 
-**Son tamamlanan aşama:** Belirlenecek · **Sıradaki görev / bekleyen onay:** Belirlenecek.
+**Last completed stage:** TBD · **Next task / pending approval:** TBD.
 
-Başka AI veya istemciye geçerken mevcut revizyon, yalnızca ilgili dosyalar, açık bulgular ve sıradaki görev üzerinden devam et. Eski sohbeti yeniden analiz etme.
+When switching to another AI or client, continue from the current revision, only the relevant files, open findings and the next task. Do not re-analyze the old chat.
 
-## Doğrulanmış teknik kaynaklar
+## Verified technical sources
 
-Ortak komponent/kütüphane kayıtlarına referans ver. Yeni kaynakları MPN, revizyon, ilgili sayfa ve geçerlilik koşuluyla özetle.
+Reference shared component/library records. Summarize new sources with MPN, revision, relevant page and validity condition.
 
-## Açık kararlar ("Sonra karar ver", INT-51)
+## Open decisions ("Decide later", INT-51)
 
-| ID | Ertelenen karar | En geç sorulacağı kapı | Yanıt yoksa güvenli varsayılan |
+| ID | Deferred decision | Latest gate to ask | Safe default if no answer |
 | :--- | :--- | :--- | :--- |
 
-## Varyantlar — yalnızca varsa
+## Variants — only if any
 
-| Varyant | Önek | Fark (takılan/takılmayan parçalar, değerler) | BOM / PnP |
+| Variant | Prefix | Difference (fitted/unfitted parts, values) | BOM / PnP |
 | :--- | :--- | :--- | :--- |
 
-## Açık konular
+## Open issues
 
-| ID | Açık konu | Sonraki adım |
+| ID | Open issue | Next step |
 | :--- | :--- | :--- |

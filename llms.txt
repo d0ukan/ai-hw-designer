@@ -4,7 +4,7 @@
 
 ## Start here
 - Run `python scripts/projectctl.py next` (or ask the user to run it) to see the next missing step and its command.
-- [AGENTS.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/AGENTS.md): How an AI should work with this repo; section "Repo linkiyle başlayan AI" is for chats that only got the link.
+- [AGENTS.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/AGENTS.md): How an AI should work with this repo; section "AI started from a repo link" is for chats that only got the link.
 - [Hardware-Rules.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/Hardware-Rules.md): Index of rule sections and when to read each.
 - [rules/00-intake.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/rules/00-intake.md): First questions to ask the user (read at project start).
 

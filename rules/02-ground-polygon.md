@@ -1,20 +1,20 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 02 · Chassis, Ground & Polygon
 
-- [ ] **GND-01** — Yalnızca bölüm 00B'de CHASSIS_GND ring kullanımı açıkça onaylandıysa kart çevresinde, uygulanabilir tüm bakır katmanlarda en az **1.50 mm** genişliğinde CHASSIS_GND copper ring oluştur. Kullanıcı istemiyorsa bu madde ve GND-02/GND-03 N/A'dır.
-- [ ] **GND-02** — CHASSIS_GND ring uygulandığında ring'leri, **0.80 mm** delik çapına sahip stitching via'larla **3.00 mm** aralıklarla birbirine bağla.
-- [ ] **GND-03** — CHASSIS_GND ring uygulandığında üst ve alt katmandaki ring üzerinde solder mask bulunmasın. PCB kenar mesafelerini ve uygun yüzey kaplamasını koru.
-- [ ] **GND-04** — CHASSIS_GND ve devre GND netlerini ayrı değerlendir. Bölüm 00'da onaylanan bağlantı veya izolasyon mimarisini uygula. İzolasyon gerekli ise proje bazlı onaylanan clearance ve creepage değerlerini tüm ilgili katmanlarda ve bağlantılarda koru. Kullanıcı onayı olmadan netleri birleştirme.
-- [ ] **GND-05** — Tüm katmanlardaki uygun boş bakır alanlarını ilgili GND polygon'ları ile doldur. İzole netleri, özel güç katmanlarını ve diğer netlere ait gerekli clearance'ları koru. RF veya kontrollü empedans hatlarının yanındaki polygon boşluğu ve via fence bölüm 05'e göre belirlenir; hat yanında hesapsız pour bırakma, anten keepout alanına bakır dökme.
-- [ ] **GND-06** — GND polygon'una bağlanan komponent pad'lerinde lehimleme ve dizgiyi kolaylaştırmak amacıyla **Thermal Relief** kullan. **İstisna:** RF komponent GND pad'leri, yüksek akım pad'leri ve exposed/termal pad'ler Direct Connect olur (bölüm 05 RF-05, LAY-02); bu pad'lerin lehimlenebilirliğini dizgi yöntemine göre ayrıca doğrula.
-- [ ] **GND-07** — GND via'larının polygon ve plane bağlantılarında **Direct Connect** kullan; via'lara Thermal Relief uygulama.
-- [ ] **GND-08** — GND dönüş yollarını kesintiye uğratma. Bağlantısız bakır adalarını (floating copper islands) kaldır.
+- [ ] **GND-01** — Only if CHASSIS_GND ring use was explicitly approved in section 00B, create a CHASSIS_GND copper ring at least **1.50 mm** wide around the board edge on all applicable copper layers. If the user does not want it, this item and GND-02/GND-03 are N/A.
+- [ ] **GND-02** — When the CHASSIS_GND ring is used, connect the rings with stitching vias of **0.80 mm** drill diameter at **3.00 mm** spacing.
+- [ ] **GND-03** — When the CHASSIS_GND ring is used, keep the ring on the top and bottom layers free of solder mask. Preserve PCB edge clearances and a suitable surface finish.
+- [ ] **GND-04** — Treat the CHASSIS_GND and circuit GND nets separately. Apply the connection or isolation architecture approved in section 00. If isolation is required, maintain the project-approved clearance and creepage values on all relevant layers and connections. Do not merge the nets without user approval.
+- [ ] **GND-05** — Fill suitable free copper areas on all layers with the relevant GND polygons. Preserve isolated nets, dedicated power layers and required clearances to other nets. Polygon gap and via fence next to RF or controlled-impedance lines follow section 05; do not leave an uncalculated pour next to the line, and do not pour copper into the antenna keepout area.
+- [ ] **GND-06** — Use **Thermal Relief** on component pads connected to the GND polygon to ease soldering and assembly. **Exception:** RF component GND pads, high-current pads and exposed/thermal pads use Direct Connect (section 05 RF-05, LAY-02); verify the solderability of these pads separately for the assembly method.
+- [ ] **GND-07** — Use **Direct Connect** for GND via connections to polygons and planes; do not apply Thermal Relief to vias.
+- [ ] **GND-08** — Do not interrupt GND return paths. Remove floating copper islands.
 
-### Polygon bağlantı özeti
+### Polygon connection summary
 
-| Eleman | Bağlantı tipi |
+| Element | Connection type |
 | :--- | :--- |
-| Komponent GND pad'i | Thermal Relief |
-| RF / yüksek akım / exposed pad | Direct Connect |
+| Component GND pad | Thermal Relief |
+| RF / high-current / exposed pad | Direct Connect |
 | GND via | Direct Connect |
 | CHASSIS_GND stitching via | Direct Connect |

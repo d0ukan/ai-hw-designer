@@ -4,9 +4,9 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.14 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.15 ([değişiklikler](CHANGELOG.md))
 
-Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları Türkçedir.
+Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
 | Rol | Taşınabilir rol tanımı | Görev |
 | :--- | :--- | :--- |
@@ -20,7 +20,7 @@ En kısa yol: herhangi bir AI asistanına repo linkini verip şunu yaz:
 
 > Bu repoyu incele (önce AGENTS.md ve llms.txt). Bu repoyu kullanarak bir kart tasarlamak istiyorum.
 
-AI şunları yapar ([AGENTS.md](AGENTS.md), "Repo linkiyle başlayan AI"):
+AI şunları yapar ([AGENTS.md](AGENTS.md), "AI started from a repo link" bölümü):
 - Tüm kuralları baştan okumaz; dizini ve aşamaya göre okuma setini kullanır. Bu token ve kredi tasarrufu sağlar.
 - Senden GitHub'da **Use this template** ile kendi kopyanı oluşturmanı ister.
 - Dosya erişimi yoksa (web sohbeti) kararları sohbette tutar, dosyalara yapıştıracağın içerikleri ve çalıştıracağın komutları verir; çalışmamış kontrolü geçmiş göstermez. `projectctl.py next` çıktısını yapıştırırsan oradan devam eder.
@@ -123,7 +123,7 @@ Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK`
 ## Token ve fiyat/performans
 
 - Ana oturum Manager'dır; üçüncü bir alt ajan başlatılmaz.
-- AI her aşamada yalnızca `Hardware-Rules.md` içindeki "Aşamaya göre okuma seti" dosyalarını okur.
+- AI her aşamada yalnızca `Hardware-Rules.md` içindeki "Reading set by stage" (aşamaya göre okuma seti) tablosundaki dosyaları okur.
 - Basit işler önce deterministik araç ve script ile çözülür (`projectctl.py`, `check-bom`).
 - Varsayılan model/efor düşük maliyetlidir; zor teknik işler için uygun model seçilir.
 - Doğrulanmış kütüphane girişleri yeniden kullanılır; kontrol raporları kısa tutulur.

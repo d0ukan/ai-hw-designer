@@ -1,68 +1,68 @@
 # Workflow State
 
-`workflow-state.json` onay ve review durumunun kısa, makine tarafından okunabilir kaydıdır.
+`workflow-state.json` is the short, machine-readable record of approval and review status.
 
-- `project_code`: proje kodu (ör. `DR00627`); çıktı adları bundan türetilir. Export ve release için zorunlu. Eski state dosyalarında alan yoksa null kabul edilir.
-- `requirements_revision`: onaylanan proje girdilerinin revizyonu.
-- `pcb_requirements_revision`: PCB layout girdilerinin ayrı revizyonu. Malzeme, teknoloji, geometri, ring ve diğer PCB kararları değişirse güncelle.
-- `design_revision`: kartın revizyonu (ör. `R01`); çıktı adlarında ve `Manufacturing/<rev>/` klasöründe kullanılır. Yeni revizyon yalnızca REL-01'e göre açılır (`templates` adı kullanılamaz).
-- `input_approval`: G0 kullanıcının gerçek gereksinim onayı, ilgili revizyon ve onay referansı.
-- `pcb_input_approval`: G0.5, kullanıcının PCB girdileri için gerçek onayı, ilgili PCB girdi revizyonu ve onay referansı.
-- `reviews`: bağımsız schematic/PCB/manufacturing inceleme sonucu, ilgili tasarım revizyonu ve `REVIEW_LOG.md` kanıt referansı. Şematik değişmemişse Reviewer final revizyonda bu durumu diff ile doğrulayabilir.
-- `export_approval`: G1 kullanıcının ilgili tasarım revizyonu için açık üretim dosyası hazırlama onayı ve referansı.
-- `blocking_issues`: açık CRITICAL/MAJOR bulgu kimlikleri (`F-001` biçimi) veya ilgili engeller.
-- `deliverables`: release'te bulunması gereken çıktı listesi (INT-25); `projectctl.py deliverables ...` ile yazılır.
+- `project_code`: project code (e.g. `DR00627`); output names are derived from it. Required for export and release. If the field is missing in older state files, it is treated as null.
+- `requirements_revision`: revision of the approved project inputs.
+- `pcb_requirements_revision`: separate revision of the PCB layout inputs. Update it if material, technology, geometry, ring or other PCB decisions change.
+- `design_revision`: the board revision (e.g. `R01`); used in output names and in the `Manufacturing/<rev>/` folder. A new revision is opened only per REL-01 (the name `templates` cannot be used).
+- `input_approval`: G0, the user's real requirements approval, the related revision and approval reference.
+- `pcb_input_approval`: G0.5, the user's real approval of the PCB inputs, the related PCB input revision and approval reference.
+- `reviews`: independent schematic/PCB/manufacturing review result, related design revision and `REVIEW_LOG.md` evidence reference. If the schematic did not change, Reviewer can verify this with a diff at the final revision.
+- `export_approval`: G1, the user's explicit approval to prepare manufacturing files for the related design revision, and its reference.
+- `blocking_issues`: open CRITICAL/MAJOR finding IDs (`F-001` format) or related blockers.
+- `deliverables`: list of outputs required in the release (INT-25); written with `projectctl.py deliverables ...`.
 
-Kayıtlar isteğe bağlı `recorded_on` (UTC tarih), `recorded_by` ve `commit` alanlarını da taşıyabilir; `projectctl.py` komutları bunları otomatik doldurur.
+Records may also carry optional `recorded_on` (UTC date), `recorded_by` and `commit` fields; `projectctl.py` commands fill them automatically.
 
-**Commit bağı:** Proje bir git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Aynı `R01` içinde tasarım değişirse `check-export`/`check-release` bunu yakalar: şematik review'dan sonra şematik dosyaları (`*.kicad_sch`, `*.SchDoc`, `*.sch`), PCB/manufacturing review ve G1'den sonra `Hardware/` altındaki herhangi bir dosya değiştiyse kapı kapanır ve yeniden review gerekir. Git'e eklenmemiş yeni tasarım dosyaları da değişiklik sayılır. Tasarım commit edilmeden `review ... PASS` veya `approve G1` kaydı reddedilir. EDA'nın export sırasında yeniden yazdığı `*.OutJob` dosyaları değişiklik sayılmaz. Git yoksa kontrol atlanır.
+**Commit binding:** If the project is a git repository, `approve` and `review` record the current commit. If the design changes within the same `R01`, `check-export`/`check-release` catches it: if schematic files (`*.kicad_sch`, `*.SchDoc`, `*.sch`) changed after the schematic review, or any file under `Hardware/` changed after the PCB/manufacturing review and G1, the gate closes and a new review is required. New design files not added to Git also count as changes. A `review ... PASS` or `approve G1` record is rejected if the design is not committed. `*.OutJob` files that the EDA tool rewrites during export do not count as changes. Without Git the check is skipped.
 
-**Teslim listesi ve manifest:** `deliverables` alanı (ör. `BOM PnP Gerber SCH ASSY FAB`) release'te zorunludur; her öğe `<kod>-..._<öğe>.*` dosyası veya klasörü olarak bulunmalıdır. `review manufacturing PASS` geçerli bir manifest ister ve onun SHA-256 değerini `manifest_sha256` olarak saklar.
+**Deliverables and manifest:** The `deliverables` field (e.g. `BOM PnP Gerber SCH ASSY FAB`) is required for release; each item must exist as a `<code>-..._<item>.*` file or folder. `review manufacturing PASS` requires a valid manifest and stores its SHA-256 value as `manifest_sha256`.
 
-## Kayıt komutları
+## Record commands
 
-JSON'u elle düzenleme; komutlar dosyayı doğrulayıp güvenli şekilde yazar:
+Do not edit the JSON by hand; the commands validate the file and write it safely:
 
-Tam sıra (örnek revizyon `R01`; `--revision` değeri her zaman `design_revision` ile aynı olmalı). Her an sıradaki eksik adımı ve komutu görmek için `python scripts/projectctl.py next`.
+Full order (example revision `R01`; the `--revision` value must always match `design_revision`). To see the next missing step and its command at any time: `python scripts/projectctl.py next`.
 
 ```bash
-# Başlangıç (Manager)
-python scripts/projectctl.py set project_name "Sensör kartı"
+# Start (Manager)
+python scripts/projectctl.py set project_name "Sensor board"
 python scripts/projectctl.py set project_code DR00627
 python scripts/projectctl.py set design_revision R01
 python scripts/projectctl.py set requirements_revision REQ-1
-python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı, 2026-11-25 sohbet" --by "<isim>"
-# Şematik → review (tasarımı önce commit et)
+python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "User approval, 2026-11-25 chat" --by "<name>"
+# Schematic → review (commit the design first)
 python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md#R01-SCH"
 # G0.5 → layout
 python scripts/projectctl.py set pcb_requirements_revision PCB-1
-python scripts/projectctl.py approve G0.5 --revision PCB-1 --evidence "Kullanıcı PCB onayı"
+python scripts/projectctl.py approve G0.5 --revision PCB-1 --evidence "User PCB approval"
 python scripts/projectctl.py check-layout
 # PCB review → G1
 python scripts/projectctl.py review pcb PASS --revision R01 --evidence "REVIEW_LOG.md#R01-PCB"
-python scripts/projectctl.py approve G1 --revision R01 --evidence "Kullanıcı export onayı"
+python scripts/projectctl.py approve G1 --revision R01 --evidence "User export approval"
 python scripts/projectctl.py check-export
-# Çıktılar (REL-04)
+# Outputs (REL-04)
 python scripts/projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB
 python scripts/projectctl.py check-bom            # Designer
-python scripts/projectctl.py manifest             # Designer, son export adımı
+python scripts/projectctl.py manifest             # Designer, last export step
 python scripts/projectctl.py review manufacturing PASS --revision R01 --evidence "REVIEW_LOG.md#R01-MFG"
 python scripts/projectctl.py check-release
-# Diğer
+# Other
 python scripts/projectctl.py name --variant A     # DR00627-AV-R01
 python scripts/projectctl.py check-bom X_BOM.csv --pnp X_PnP.csv
 python scripts/projectctl.py block F-001
 python scripts/projectctl.py unblock F-001
 ```
 
-`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse, dosyalar değişmişse, bir dosyanın adı proje koduyla başlamıyorsa (önekli klasörlerin içi, ör. `DR00627-R01_Gerber/`, serbesttir) veya `check-bom` hata bulursa başarısız olur. `check-bom` BOM ile PnP designator'larını, Qty sayılarını, DNP parçaların PnP'de olmamasını ve MPN'leri kontrol eder; muadil eksikse uyarı verir.
+`manifest` writes the SHA-256 list of the files in `Manufacturing/<design_revision>/` as `MANIFEST.sha256`. `check-release` fails if this manifest is missing, if files changed, if a file name does not start with the project code (contents of prefixed folders, e.g. `DR00627-R01_Gerber/`, are free) or if `check-bom` finds errors. `check-bom` checks BOM and PnP designators, Qty counts, that DNP parts are absent from PnP, and MPNs; it warns if an alternate part is missing.
 
-Approval durumları: PENDING / APPROVED. Review durumları: PENDING / PASS / REWORK / BLOCKED. Geçerli onay veya PASS için revizyon ve gerçek kanıt gereklidir. Manager review sonucunu Reviewer'ın kaydına göre işler; onayları kendi adına üretmez.
+Approval states: PENDING / APPROVED. Review states: PENDING / PASS / REWORK / BLOCKED. A valid approval or PASS requires a revision and real evidence. Manager records the review result based on the Reviewer's record; it does not produce approvals on its own behalf.
 
-Yerel kontrol aracı dosya durumunu doğrular; gerçek kullanıcı onayının ve mühendislik testinin yerine geçmez. Yeni revizyon öncekine ait onayları otomatik olarak geçerli kılmaz.
+The local check tool verifies file state; it does not replace real user approval or engineering tests. A new revision does not automatically make the previous revision's approvals valid.
 
-`check-layout` G0, G0.5 ve mevcut tasarım revizyonunun şematik review kaydını kontrol eder. Layout başladıktan sonra tasarım revizyonu ilerleyebilir; export öncesi Reviewer geçerli revizyona ait şematik ve PCB sonuçlarını doğrular. Şematik değişmediyse mevcut kanıt ve ilgili diff ile kontrol edilebilir.
+`check-layout` checks G0, G0.5 and the schematic review record of the current design revision. After layout starts, the design revision may advance; before export, Reviewer verifies the schematic and PCB results for the current revision. If the schematic did not change, it can be checked with the existing evidence and the related diff.
 
-Multi-PCB projede `design_revision` tüm onaylı kartların ortak sistem revizyonudur. Manager kart ID'lerini ve kapsamı proje kayıtlarında tutar. Reviewer her kartı ve ilgili arayüzleri kanıtla doğrular; sistem review sonucunu ancak tüm onaylı kapsam tamamlandığında PASS işaretler. Ayrı kart başına gereksiz workflow dosyası oluşturma.
+In a multi-PCB project, `design_revision` is the shared system revision of all approved boards. Manager keeps board IDs and scope in the project records. Reviewer verifies each board and the related interfaces with evidence; it marks the system review result PASS only when the whole approved scope is complete. Do not create unnecessary per-board workflow files.
 
-Şema sürümü 2'dir. Önceki v1 şemasını kullanan projelerde mevcut gereksinim/review kayıtlarını koru; `schema_version` değerini 2 yap, `pcb_requirements_revision` alanını null ve `pcb_input_approval` kaydını PENDING/null/null olarak ekle. Gerçek G0.5 onayı gelmeden APPROVED işaretleme.
+The schema version is 2. In projects using the earlier v1 schema, keep the existing requirement/review records; set `schema_version` to 2, add the `pcb_requirements_revision` field as null and the `pcb_input_approval` record as PENDING/null/null. Do not mark it APPROVED before a real G0.5 approval arrives.

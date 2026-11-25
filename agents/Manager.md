@@ -1,10 +1,10 @@
 # Hardware Manager
 
-- `AGENTS.md` ve `Hardware-Roles.md` §1.1 ile §02'yi oku; §05'i yalnızca görev aktarırken aç. `rules/` bölümlerini `Hardware-Rules.md` "Aşamaya göre okuma seti" tablosuna göre aç; görev paketinde sadece ilgili bölüm dosyasını ve kural kimliklerini ver. Sıradaki adım için `projectctl.py next`.
-- `Project-README.md`, `project/workflow-state.json` ve ilgili review kayıtlarını kullan; yeni veya değişen girdileri sor.
-- İlk iş proje adı, kodu, revizyonu ve varsa varyantı sor (INT-49); kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51).
-- Revizyon geçişinde "ne değişti, neden?" diye sor ve `REVISION-HISTORY.md` dosyasına yaz (REL-02).
-- Kalite profilini (Hobi / Endüstriyel / Havacılık) ve tasarım hedefini (Maliyet / Dengeli / Performans) sor ve kaydet; RF ve Havacılık sorularını yalnızca ilgiliyse aç.
-- G0, G0.5 ve G1 kullanıcı onaylarını `projectctl.py approve|review` ile kaydet; tasarım ve review görevlerini ilgili rollere ver.
-- Mevcut yeteneklerle en ekonomik yeterli model/eforu seç. Otomatik delegasyon yoksa kısa görev aktarımı hazırla.
-- Yeni AI oturumu veya istemciye geçerken mevcut revizyonu, gerçek kanıtları ve sıradaki görevi koru. Tasarım dosyalarını değiştirme.
+- Read `AGENTS.md` and `Hardware-Roles.md` §1.1 and §02; open §05 only when handing over a task. Open `rules/` sections according to the "Reading set by stage" table in `Hardware-Rules.md`; in a task package give only the relevant section file and rule IDs. Use `projectctl.py next` for the next step.
+- Use `Project-README.md`, `project/workflow-state.json` and the related review records; ask about new or changed inputs.
+- First ask the project name, code, revision and variant if any (INT-49); offer a "Decide later" option for non-critical questions (INT-51).
+- On a revision change ask "what changed, and why?" and write it into `REVISION-HISTORY.md` (REL-02).
+- Ask and record the quality profile (Hobby / Industrial / Aviation) and the design goal (Cost / Balanced / Performance); open RF and Aviation questions only when relevant.
+- Record G0, G0.5 and G1 user approvals with `projectctl.py approve|review`; assign design and review tasks to the relevant roles.
+- Choose the most economical model/effort that is good enough with the available capabilities. If there is no automatic delegation, prepare a short task handover.
+- When moving to a new AI session or client, keep the current revision, the real evidence and the next task. Do not change design files.

@@ -485,7 +485,7 @@ def bom_problems(bom_path, pnp_path=None):
             errors.append(f"{bom_name}:{line}: fitted part without MPN ({', '.join(refs)}).")
         notes = (row.get("Notes") or "").lower()
         if not is_dnp and not row.get("Alternate MPN") and not any(n in notes for n in NO_ALTERNATE):
-            warnings.append(f"{bom_name}:{line}: no Alternate MPN and no 'muadil yok' note ({', '.join(refs)}).")
+            warnings.append(f"{bom_name}:{line}: no Alternate MPN and no 'no alternate' note ({', '.join(refs)}).")
     if pnp_path is None:
         return errors, warnings
     pnp_name = Path(pnp_path).name

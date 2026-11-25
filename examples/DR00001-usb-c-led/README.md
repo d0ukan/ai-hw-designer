@@ -1,20 +1,20 @@
-# Örnek proje: DR00001 — USB-C LED kartı
+# Example project: DR00001 — USB-C LED board
 
-> **Bu bir öğretici örnektir, üretime hazır tasarım değildir.** Native EDA dosyası, Gerber ve gerçek review kanıtı yoktur. MPN'ler gerçek parçalardır ama datasheet ve stok kontrolü yapılmamıştır; kullanmadan önce doğrula.
+> **This is a teaching example, not a production-ready design.** There are no native EDA files, Gerbers or real review evidence. The MPNs are real parts, but datasheet and stock checks were not done; verify before use.
 
-Şablonun akışını baştan sona göstermek için küçük bir kart: USB-C'den 5 V alıp bir güç LED'i yakar.
+A small board that shows the template flow from start to finish: it takes 5 V from USB-C and lights a power LED.
 
-| Ne gösterir | Dosya |
+| What it shows | File |
 | :--- | :--- |
-| Doldurulmuş proje bilgileri ve kararlar (kimlik, profil, hedef, silkscreen, açık kararlar) | [Project-README.md](Project-README.md) |
-| Tüm kapıları geçmiş iş akışı kaydı | [workflow-state.json](workflow-state.json) |
-| Revizyon geçmişi | [REVISION-HISTORY.md](REVISION-HISTORY.md) |
-| Örnek review bulguları (F-001 …) | [REVIEW_LOG.md](REVIEW_LOG.md) |
-| Ana ve A varyantı BOM/PnP, fab notu, manifest | [Manufacturing/R01/](Manufacturing/R01/) |
+| Filled project information and decisions (identity, profile, target, silkscreen, open decisions) | [Project-README.md](Project-README.md) |
+| Workflow record with all gates passed | [workflow-state.json](workflow-state.json) |
+| Revision history | [REVISION-HISTORY.md](REVISION-HISTORY.md) |
+| Example review findings (F-001 …) | [REVIEW_LOG.md](REVIEW_LOG.md) |
+| Main and A variant BOM/PnP, fab note, manifest | [Manufacturing/R01/](Manufacturing/R01/) |
 
-Teslim listesi bilerek `BOM PnP FAB` tutuldu. Gerçek bir projede `Gerber SCH ASSY` de olur; örnekte EDA dosyası olmadığı için sahte Gerber veya PDF eklenmedi.
+The deliverables were deliberately kept to `BOM PnP FAB`. A real project also has `Gerber SCH ASSY`; since the example has no EDA files, no fake Gerbers or PDFs were added.
 
-Bu örneği yerelde kontrol et:
+Check this example locally:
 
 ```bash
 python scripts/projectctl.py status        --state examples/DR00001-usb-c-led/workflow-state.json --manufacturing-dir examples/DR00001-usb-c-led/Manufacturing
@@ -24,4 +24,4 @@ python scripts/projectctl.py next          --state examples/DR00001-usb-c-led/wo
 python scripts/projectctl.py name --variant A --state examples/DR00001-usb-c-led/workflow-state.json
 ```
 
-CI her push'ta bu komutları çalıştırır.
+CI runs these commands on every push.

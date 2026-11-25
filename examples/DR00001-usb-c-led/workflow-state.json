@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "project_name": "USB-C LED kartı (örnek)",
+  "project_name": "USB-C LED board (example)",
   "project_code": "DR00001",
   "requirements_revision": "REQ-1",
   "pcb_requirements_revision": "PCB-1",
@@ -8,14 +8,14 @@
   "input_approval": {
     "status": "APPROVED",
     "revision": "REQ-1",
-    "evidence": "Örnek: kullanıcı G0 onayı",
+    "evidence": "Example: user G0 approval",
     "recorded_on": "2026-11-25",
     "recorded_by": "example"
   },
   "pcb_input_approval": {
     "status": "APPROVED",
     "revision": "PCB-1",
-    "evidence": "Örnek: kullanıcı G0.5 onayı",
+    "evidence": "Example: user G0.5 approval",
     "recorded_on": "2026-11-25",
     "recorded_by": "example"
   },
@@ -23,30 +23,30 @@
     "schematic": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md, R01 şematik",
+      "evidence": "Example: REVIEW_LOG.md, R01 schematic",
       "recorded_on": "2026-11-25",
       "recorded_by": "example"
     },
     "pcb": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md, R01 PCB",
+      "evidence": "Example: REVIEW_LOG.md, R01 PCB",
       "recorded_on": "2026-11-25",
       "recorded_by": "example"
     },
     "manufacturing": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md, R01 üretim",
+      "evidence": "Example: REVIEW_LOG.md, R01 manufacturing",
       "recorded_on": "2026-11-25",
       "recorded_by": "example",
-      "manifest_sha256": "3a581fa96529364bfeedc70e20f2ea1a5a37b08d7dcd5754de26d11deb34c183"
+      "manifest_sha256": "4d4e38e016c641e84844cf7cfe54f46e7f095e581b6577718c0259564d052ad6"
     }
   },
   "export_approval": {
     "status": "APPROVED",
     "revision": "R01",
-    "evidence": "Örnek: kullanıcı G1 onayı",
+    "evidence": "Example: user G1 approval",
     "recorded_on": "2026-11-25",
     "recorded_by": "example"
   },
