@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.16 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.17 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -113,11 +113,13 @@ flowchart TD
     G -->|"Approved"| E["Designer: outputs + check-bom + manifest"]
     E --> V["Reviewer: manufacturing check"]
     V -->|"REWORK: output error only"| E
-    V -->|"REWORK: design must change"| P
+    V -->|"REWORK: layout must change"| P
+    R -.->|"REWORK: schematic error (rare)"| D
+    V -.->|"REWORK: schematic error (rare)"| D
     V -->|"PASS"| H["Manager: record review + check-release + deliver"]
 ```
 
-Every Reviewer check ends in `PASS`, `REWORK` or `BLOCKED`. On `REWORK` the Designer fixes and the Reviewer re-checks the affected areas. If only an output is wrong, only outputs are regenerated; if the design must change, work returns to PCB and G1 is approved again. `BLOCKED` stops the flow until the missing information, tool or approval arrives.
+Every Reviewer check ends in `PASS`, `REWORK` or `BLOCKED`. On `REWORK` the Designer fixes and the Reviewer re-checks the affected areas. If only an output is wrong, only outputs are regenerated; if the layout must change, work returns to PCB and G1 is approved again. If the PCB or manufacturing check finds a schematic error (rare, dashed arrows), work returns to the schematic: schematic review, PCB update and review, and G1 are redone (`projectctl` invalidates the old records when schematic files change). `BLOCKED` stops the flow until the missing information, tool or approval arrives.
 
 **Release order (REL-04):** the Manager records the deliverables → the Designer creates the outputs, runs `check-bom` and finally `manifest` → the Reviewer checks them → the Manager records `review manufacturing PASS` (the manifest hash is stored) → `check-release`.
 

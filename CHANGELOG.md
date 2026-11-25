@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.17 — 2026-11-26
+
+- Workflow charts (README.md, README.tr.md, Hardware-Roles.md): added the rare return path from the PCB review and the manufacturing review to the schematic (dashed arrows). The note says what is redone: schematic review, PCB update and review, G1.
+
 ## v1.16 — 2026-11-25
 
 - Review depth (INT-53): the user picks Light, Medium (default) or High at the start; recorded with `projectctl.py set review_depth`. Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.

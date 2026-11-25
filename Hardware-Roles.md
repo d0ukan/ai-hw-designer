@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.16 |
+| **Version** | v1.17 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -122,11 +122,13 @@ flowchart TD
     M -->|"Approved"| E["Designer: outputs + check-bom + manifest"]
     E --> V["Reviewer: manufacturing file review"]
     V -->|"Output error"| E
-    V -->|"Design error"| D
+    V -->|"Layout error"| D
+    R -.->|"Schematic error (rare)"| S
+    V -.->|"Schematic error (rare)"| S
     V -->|"PASS"| H["Manager: review record + check-release + handover"]
 ```
 
-- If an error found in the manufacturing file review comes from the design itself, go back to the relevant design stage.
+- If an error found in the manufacturing file review comes from the design itself, go back to the relevant design stage. A schematic error found in the PCB or manufacturing review (rare) returns to the schematic: schematic review, PCB update and review, and G1 are redone; G0.5 stays valid unless PCB inputs change.
 - If the electrical, mechanical or layout design changes after G1 approval, redo the affected checks for the new revision and get a new approval to prepare manufacturing files.
 - If PCB manufacturing or mechanical inputs change after G0.5, update the related PCB input revision and get approval again. Update G0 only if electrical/functional requirements are affected; do not recreate unchanged schematic and library decisions.
 - If only an export setting is being fixed, regenerate the affected files from the same approved design revision and verify them again.

@@ -4,7 +4,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.16 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.17 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -113,11 +113,13 @@ flowchart TD
     G -->|"Onaylandı"| E["Designer: çıktılar + check-bom + manifest"]
     E --> V["Reviewer: üretim kontrolü"]
     V -->|"REWORK: yalnız çıktı hatası"| E
-    V -->|"REWORK: tasarım değişmeli"| P
+    V -->|"REWORK: yerleşim değişmeli"| P
+    R -.->|"REWORK: şematik hatası (nadir)"| D
+    V -.->|"REWORK: şematik hatası (nadir)"| D
     V -->|"PASS"| H["Manager: review kaydı + check-release + teslim"]
 ```
 
-Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK` çıkarsa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Üretim kontrolünde sorun yalnız çıktıdaysa sadece çıktılar yeniden üretilir; tasarım değişmeliyse PCB aşamasına dönülür ve G1 yeniden alınır. `BLOCKED` durumunda eksik bilgi, araç veya onay gelene kadar akış durur.
+Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK` çıkarsa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Üretim kontrolünde sorun yalnız çıktıdaysa sadece çıktılar yeniden üretilir; yerleşim değişmeliyse PCB aşamasına dönülür ve G1 yeniden alınır. PCB veya üretim kontrolünde şematik hatası bulunursa (nadir, kesikli oklar) şematiğe dönülür: şematik review, PCB güncellemesi ve review, G1 yeniden yapılır (şematik dosyası değişince `projectctl` eski kayıtları geçersiz sayar). `BLOCKED` durumunda eksik bilgi, araç veya onay gelene kadar akış durur.
 
 **Release sırası (REL-04):** Manager teslim listesini kaydeder (`deliverables`) → Designer çıktıları üretir, `check-bom` ve en son `manifest` çalıştırır → Reviewer inceler → Manager `review manufacturing PASS` kaydeder (manifest hash'i saklanır) → `check-release`.
 
