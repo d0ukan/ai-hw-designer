@@ -4,7 +4,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.15 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.16 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -52,6 +52,7 @@ Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve var
 - Bakır, outline veya stack-up değişirse yeni **revizyon**; sadece takılan parçalar değişirse **varyant** (REL-01).
 - Revizyon atlatılırken kullanıcıya "ne değişti, neden?" sorulur ve `REVISION-HISTORY.md` dosyasına yazılır (REL-02).
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
+- **Review yoğunluğu** başta sorulur (INT-53): **Hafif / Light** (kritik kontroller), **Orta / Medium** (tam liste, varsayılan) veya **Yüksek / High** (iki bağımsız Reviewer, ikisi de PASS vermeli). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
 - Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; kart üzerindeki kararlar en geç G0.5'te kesinleşir (INT-51).
 - Silkscreen soruları (PCB-17…21): logo/ikon, kart kodu (silk/bakır, top/bottom), konnektör etiketi (pin no/net adı), designator (açık/gizli, boyut, konum), imza/easter egg. Silkscreen her yüzde çakışmasız olur (LAY-30).
 - Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir; bring-up ve review checklist'leri de var.
@@ -215,6 +216,7 @@ python scripts/projectctl.py set project_name "Sensör kartı"
 python scripts/projectctl.py set project_code DR00627
 python scripts/projectctl.py set design_revision R01
 python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py set review_depth Medium
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı" --by "<isim>"
 python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md, R01 şematik"
 python scripts/projectctl.py set pcb_requirements_revision PCB-1

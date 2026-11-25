@@ -4,8 +4,8 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.15 |
-| **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer |
+| **Version** | v1.16 |
+| **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
 | **Priority** | Design quality · Independent verification · Price/performance · Token/credit efficiency |
@@ -79,6 +79,8 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-14** — Check the output set (section 09): file names match project code/revision/variant, each variant has its own BOM and PnP, DNP parts are absent from PnP, `_ASSY.pdf` marks designators/Pin 1/DNP, alternates (DFM-14) are footprint/pinout compatible, silkscreen has no overlaps (LAY-30).
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
+
+**Review depth (INT-53, VER-13):** Light and Medium use one Reviewer. High uses two independent Reviewers: separate sessions, clean context, preferably different models; neither reads the other's findings before finishing. The Manager does not act as a Reviewer; it only checks that both records exist and merges the findings.
 
 ---
 

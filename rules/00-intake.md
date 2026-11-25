@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 00 · Project Intake — Project start questionnaire
 
-> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions. Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
+> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
 
 ### Start · Communication preference
 
@@ -22,7 +22,7 @@ The communication preference does not reduce engineering verification, critical 
 
 ### Start · "Decide later" option
 
-- [ ] **INT-51** — For non-critical questions (e.g. logo/icon, silkscreen text, designator visibility, signature, color) offer the user a **"Decide later"** option. Write the deferred question as OPEN in the `Project-README.md` "Open decisions" table and ask again at the latest at the related gate: for everything on the board (logo, text, designator, signature; PCB-17…21) that is **G0.5**, i.e. before layout starts. If there is still no answer, use the safe default and record it (no logo, no signature, no copper text; designators visible). Critical questions (power, safety, isolation, connector/pinout, voltage/current, quality profile, project identity) do not have this option.
+- [ ] **INT-51** — For non-critical questions (e.g. logo/icon, silkscreen text, designator visibility, signature, color) offer the user a **"Decide later"** option. Write the deferred question as OPEN in the `Project-README.md` "Open decisions" table and ask again at the latest at the related gate: for everything on the board (logo, text, designator, signature; PCB-17…21) that is **G0.5**, i.e. before layout starts. If there is still no answer, use the safe default and record it (no logo, no signature, no copper text; designators visible). Critical questions (power, safety, isolation, connector/pinout, voltage/current, quality profile, review depth, project identity) do not have this option.
 
 ### Start · Quality profile
 
@@ -35,6 +35,18 @@ The communication preference does not reduce engineering verification, critical 
 | Aerospace | Flight, military or similar high reliability | Section 08 profile mandatory; IPC Class 3, derating policy, traceability, user-specified standards and a suitably certified manufacturer |
 
 Profile choice must not create unnecessary cost: do not apply Aerospace rules to a Hobby project or Hobby defaults to an Aerospace project. The RF and Aerospace sections are enabled only when relevant; otherwise they are left as N/A.
+
+### Start · Review depth
+
+- [ ] **INT-53** — Ask: **How thorough should the review be? Light, Medium or High?** Record the answer with `python scripts/projectctl.py set review_depth <Light|Medium|High>` before G0. Explain the choice in one line each:
+
+| Depth | Reviewers | What is checked |
+| :--- | :--- | :--- |
+| Light | 1 | Critical checks only: power, pin mapping, footprints, manufacturability (VER-13) |
+| Medium (default) | 1 | The full review checklist |
+| High | 2, independent | Two separate Reviewers; both must PASS the schematic and the PCB before G1 (VER-13) |
+
+Minimum depth: if the board is in the Aerospace profile, or has RF, a battery (INT-52), mains or voltage above SELV (AI-09), Light is not allowed; use at least Medium and recommend High. Tell the user why. Without an answer the depth is Medium. This is a critical question; "Decide later" does not apply.
 
 ### Start · Design goal (cost / performance)
 

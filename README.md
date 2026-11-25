@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.15 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.16 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -52,6 +52,7 @@ Right after the answer-style question, the Manager asks for the project name, pr
 - Copper, outline or stack-up changes → new **revision**; only fitted parts change → **variant** (REL-01).
 - On a revision bump the user is asked "what changed, and why?" and the answer goes to `REVISION-HISTORY.md` (REL-02).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
+- **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
 - Non-critical questions (logo, silkscreen text, designators, signature) offer **"decide later"**; anything on the board is settled by G0.5 at the latest (INT-51).
 - Silkscreen questions (PCB-17…21): logo/icon, board code (silk/copper, top/bottom), connector labels (pin number/net name), designators (visible/hidden, size, position), signature/easter egg. Silkscreen never overlaps on either side (LAY-30).
 - Output set (section 09): Gerber, BOM, PnP, schematic PDF, Draftsman-style assembly drawing (`_ASSY.pdf`), fab notes. Empty templates live in `Manufacturing/templates/`, with bring-up and review checklists.
@@ -215,6 +216,7 @@ python scripts/projectctl.py set project_name "Sensor board"
 python scripts/projectctl.py set project_code DR00627
 python scripts/projectctl.py set design_revision R01
 python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py set review_depth Medium
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "User approval" --by "<name>"
 python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md, R01 schematic"
 python scripts/projectctl.py set pcb_requirements_revision PCB-1

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.16 — 2026-11-25
+
+- Review depth (INT-53): the user picks Light, Medium (default) or High at the start; recorded with `projectctl.py set review_depth`. Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
+- High uses two independent Reviewers (VER-13): clean context, preferably different models; `review schematic|pcb ... --second --by <name>` records Reviewer 2. Layout and G1 are blocked until both PASS records exist with different reviewer names.
+- `next` asks for the review depth before G0 and names the second-review steps; `status` shows the depth.
+- Roles, AGENTS.md, project/README.md and both READMEs updated; 4 new tests (58 total).
+
 ## v1.15 — 2026-11-25
 
 - All rule, role, template and example files translated to English for the public repo. `README.tr.md` stays as the Turkish overview.

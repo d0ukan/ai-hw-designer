@@ -232,6 +232,51 @@ class CliAndManifestTests(unittest.TestCase):
         self.review_manufacturing()
         self.assertIn("nothing missing", self.run_cli("next")[1])
 
+    def test_next_asks_review_depth_before_g0(self):
+        for step in (("set", "project_name", "T"), ("set", "project_code", "DR1"),
+                     ("set", "design_revision", "R1"), ("set", "requirements_revision", "REQ-1")):
+            self.run_cli(*step)
+        self.assertIn("set review_depth", self.run_cli("next")[1])
+        self.assertEqual(self.run_cli("set", "review_depth", "high")[0], 0)
+        self.assertEqual(json.loads(self.state_path.read_text(encoding="utf-8"))["review_depth"], "High")
+        self.assertIn("approve G0", self.run_cli("next")[1])
+        self.assertEqual(self.run_cli("set", "review_depth", "Extreme")[0], 2)
+
+    def test_high_depth_needs_two_independent_reviewers(self):
+        self.approve_everything()
+        self.run_cli("set", "review_depth", "High")
+        code, out = self.run_cli("check-export")
+        self.assertEqual(code, 1)
+        self.assertIn("Second schematic review (High depth): requires PASS", out)
+        self.assertIn("review schematic PASS --second", self.run_cli("next")[1])
+        self.run_cli("review", "schematic", "PASS", "--second", "--by", "rev-a", "--revision", "R1", "--evidence", "e")
+        code, out = self.run_cli("check-layout")
+        self.assertEqual(code, 1)
+        self.assertIn("record both reviewers with --by", out)
+        self.run_cli("review", "schematic", "PASS", "--by", "REV-A", "--revision", "R1", "--evidence", "e")
+        self.assertIn("different reviewer", self.run_cli("check-layout")[1])
+        self.run_cli("review", "schematic", "PASS", "--by", "rev-b", "--revision", "R1", "--evidence", "e")
+        self.assertEqual(self.run_cli("check-layout")[0], 0)
+        code, out = self.run_cli("check-export")
+        self.assertEqual(code, 1)
+        self.assertIn("Second PCB review (High depth)", out)
+        self.assertIn("review pcb PASS --second", self.run_cli("next")[1])
+        self.run_cli("review", "pcb", "PASS", "--by", "rev-a", "--revision", "R1", "--evidence", "e")
+        self.run_cli("review", "pcb", "PASS", "--second", "--by", "rev-b", "--revision", "R1", "--evidence", "e")
+        self.assertEqual(self.run_cli("check-export")[0], 0)
+
+    def test_light_and_medium_need_one_reviewer(self):
+        self.approve_everything()
+        for depth in ("Light", "Medium"):
+            self.run_cli("set", "review_depth", depth)
+            self.assertEqual(self.run_cli("check-export")[0], 0)
+
+    def test_second_manufacturing_review_is_rejected(self):
+        self.approve_everything()
+        code, out = self.run_cli("review", "manufacturing", "REWORK", "--second")
+        self.assertEqual(code, 2)
+        self.assertIn("only for schematic and pcb", out)
+
     def test_corrupt_manifest_and_csv_fail_cleanly(self):
         self.approve_everything()
         release = self.release_files()

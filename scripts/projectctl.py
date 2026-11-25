@@ -35,8 +35,11 @@ MANIFEST_NAME = "MANIFEST.sha256"
 APPROVAL_STATES = {"PENDING", "APPROVED"}
 REVIEW_STATES = {"PENDING", "PASS", "REWORK", "BLOCKED"}
 REVIEW_KEYS = ("schematic", "pcb", "manufacturing")
+SECOND_REVIEW_KEYS = {"schematic": "schematic_2", "pcb": "pcb_2"}
+REVIEW_DEPTHS = ("Light", "Medium", "High")
+DEFAULT_REVIEW_DEPTH = "Medium"
 TEXT_FIELDS = ("project_name", "requirements_revision", "pcb_requirements_revision", "design_revision")
-OPTIONAL_TEXT_FIELDS = ("project_code",)
+OPTIONAL_TEXT_FIELDS = ("project_code", "review_depth")
 SETTABLE_FIELDS = TEXT_FIELDS + OPTIONAL_TEXT_FIELDS
 OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by", "commit", "manifest_sha256")
 GATES = {"G0": "input_approval", "G0.5": "pcb_input_approval", "G1": "export_approval"}
@@ -88,6 +91,9 @@ def validate_state(state):
         and len({d.lower() for d in deliverables}) == len(deliverables)
     ):
         raise StateError("deliverables must be a list of unique names like BOM, PnP, Gerber, or null.")
+    depth = state.get("review_depth")
+    if depth is not None and depth not in REVIEW_DEPTHS:
+        raise StateError("review_depth must be Light, Medium, High or null (null means Medium).")
 
     def validate_record(record, name, statuses, accepted):
         if not isinstance(record, dict):
@@ -116,6 +122,9 @@ def validate_state(state):
         raise StateError("reviews must be an object.")
     for key in REVIEW_KEYS:
         validate_record(reviews.get(key), f"reviews.{key}", REVIEW_STATES, "PASS")
+    for key in SECOND_REVIEW_KEYS.values():
+        if key in reviews:
+            validate_record(reviews[key], f"reviews.{key}", REVIEW_STATES, "PASS")
 
     blockers = state.get("blocking_issues")
     if not isinstance(blockers, list) or not all(nonempty_text(x) for x in blockers):
@@ -152,6 +161,32 @@ def save_state(path, state):
 
 
 # --- Gates --------------------------------------------------------------------
+
+def review_depth(state):
+    return state.get("review_depth") or DEFAULT_REVIEW_DEPTH
+
+
+def _pending():
+    return {"status": "PENDING", "revision": None, "evidence": None}
+
+
+def second_review_errors(state, kind, revision, scope, changed=None):
+    """High review depth: a second, independent PASS by a different reviewer."""
+    if review_depth(state) != "High":
+        return []
+    first = state["reviews"][kind]
+    second = state["reviews"].get(SECOND_REVIEW_KEYS[kind]) or _pending()
+    label = "Second schematic review (High depth)" if kind == "schematic" else "Second PCB review (High depth)"
+    problem = record_problem(second, label, "PASS", revision, scope, changed)
+    if problem:
+        return [problem]
+    a, b = first.get("recorded_by"), second.get("recorded_by")
+    if not (nonempty_text(a) and nonempty_text(b)):
+        return [f"{label}: record both reviewers with --by."]
+    if a.strip().lower() == b.strip().lower():
+        return [f"{label}: must be a different reviewer than the first review."]
+    return []
+
 
 def record_problem(record, label, expected_status, revision, scope=None, changed=None):
     """Return the first problem with one approval/review record, or None."""
@@ -211,6 +246,9 @@ def gate_errors(state, *, layout=False, release=False, changed=None):
         problem = record_problem(record, label, status, revision, scope, changed)
         if problem:
             errors.append(problem)
+    errors += second_review_errors(state, "schematic", design, "schematic", changed)
+    if not layout:
+        errors += second_review_errors(state, "pcb", design, "design", changed)
     if state["blocking_issues"]:
         errors.append("Open blocking issues: " + ", ".join(state["blocking_issues"]))
     return errors
@@ -307,6 +345,8 @@ def _set_record(record, status, accepted, revision, evidence, by, commit=None, e
 def set_field(state, field, value):
     if field not in SETTABLE_FIELDS:
         raise StateError(f"Unknown field: {field}")
+    if field == "review_depth" and nonempty_text(value):
+        value = value.strip().capitalize()
     state[field] = value if nonempty_text(value) else None
     return validate_state(state)
 
@@ -326,12 +366,19 @@ def revoke(state, gate):
     return validate_state(state)
 
 
-def record_review(state, kind, status, revision=None, evidence=None, by=None, commit=None, manifest_sha256=None):
+def record_review(state, kind, status, revision=None, evidence=None, by=None, commit=None, manifest_sha256=None,
+                  second=False):
     if kind not in REVIEW_KEYS:
         raise StateError(f"Unknown review: {kind}")
     if status not in REVIEW_STATES:
         raise StateError(f"Unknown review status: {status}")
-    _set_record(state["reviews"][kind], status, "PASS", revision, evidence, by, commit,
+    key = kind
+    if second:
+        if kind not in SECOND_REVIEW_KEYS:
+            raise StateError("A second review exists only for schematic and pcb.")
+        key = SECOND_REVIEW_KEYS[kind]
+        state["reviews"].setdefault(key, _pending())
+    _set_record(state["reviews"][key], status, "PASS", revision, evidence, by, commit,
                 {"manifest_sha256": manifest_sha256})
     return validate_state(state)
 
@@ -637,6 +684,9 @@ def next_step(state, folder, changed=None):
          "python scripts/projectctl.py set design_revision <R01>"),
         (not nonempty_text(state["requirements_revision"]), "Manager", "Record the requirements revision",
          "python scripts/projectctl.py set requirements_revision <REQ-1>"),
+        (not state.get("review_depth") and state["input_approval"]["status"] != "APPROVED", "Manager",
+         "Ask the user for the review depth (INT-53: Light / Medium / High)",
+         "python scripts/projectctl.py set review_depth <Medium>"),
     ]
     for cond, who, what, cmd in steps:
         if cond:
@@ -653,6 +703,9 @@ def next_step(state, folder, changed=None):
     for record, label, status, rev, scope, who, what, cmd in ordered:
         if record_problem(record, label, status, rev, scope, changed):
             return who, what, cmd
+    if second_review_errors(state, "schematic", design, "schematic", changed):
+        return "Reviewer 2", "Independent second schematic review (VER-13, clean context)", \
+            f'python scripts/projectctl.py review schematic PASS --second --by "<reviewer 2>" --revision {design} --evidence "REVIEW_LOG.md#..."'
     if not nonempty_text(pcb):
         return "Manager", "Record the PCB input revision (G0.5 questions)", \
             "python scripts/projectctl.py set pcb_requirements_revision <PCB-1>"
@@ -663,13 +716,17 @@ def next_step(state, folder, changed=None):
         (state["reviews"]["pcb"], "PCB review", "PASS", design, "design",
          "Reviewer", "Review the PCB; commit the design; record the result",
          f'python scripts/projectctl.py review pcb PASS --revision {design} --evidence "REVIEW_LOG.md#..."'),
-        (state["export_approval"], "G1", "APPROVED", design, "design",
-         "Manager", "Record the user's G1 export approval",
-         f'python scripts/projectctl.py approve G1 --revision {design} --evidence "<approval reference>"'),
     ]
     for record, label, status, rev, scope, who, what, cmd in ordered:
         if record_problem(record, label, status, rev, scope, changed):
             return who, what, cmd
+    if second_review_errors(state, "pcb", design, "design", changed):
+        return "Reviewer 2", "Independent second PCB review (VER-13, clean context)", \
+            f'python scripts/projectctl.py review pcb PASS --second --by "<reviewer 2>" --revision {design} --evidence "REVIEW_LOG.md#..."'
+    if record_problem(state["export_approval"], "G1", "APPROVED", design, "design", changed):
+        return ("Manager", "Record the user's G1 export approval",
+                f'python scripts/projectctl.py approve G1 --revision {design} --evidence "<approval reference>"')
+
     if not state.get("deliverables"):
         return "Manager", "Record the deliverables (INT-25)", \
             "python scripts/projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB"
@@ -731,6 +788,8 @@ def build_parser():
     p.add_argument("--revision")
     p.add_argument("--evidence")
     p.add_argument("--by")
+    p.add_argument("--second", action="store_true",
+                   help="Record the independent second review (review_depth High; schematic or pcb)")
 
     p = sub.add_parser("check-bom", parents=[common],
                        help="Check a BOM (and PnP); without arguments, every BOM in Manufacturing/<rev>/")
@@ -777,6 +836,7 @@ def main(argv=None):
             print("PCB requirements revision:", state["pcb_requirements_revision"] or "not set")
             print("Design revision:", state["design_revision"] or "not set")
             print("Deliverables:", " ".join(state.get("deliverables") or []) or "not set")
+            print("Review depth:", state.get("review_depth") or f"not set ({DEFAULT_REVIEW_DEPTH})")
             print("Layout gate:", "BLOCKED" if gate_errors(state, layout=True, changed=changed) else "READY")
             print("Export gate:", "BLOCKED" if gate_errors(state, changed=changed) else "READY")
             print("Release gate:", "BLOCKED" if gate_errors(state, release=True, changed=changed) else "READY")
@@ -826,7 +886,8 @@ def main(argv=None):
                         raise StateError("Write a valid manifest before the manufacturing PASS "
                                          "(projectctl.py manifest), then review those files.")
                     digest = manifest_hash(folder)
-                record_review(state, args.kind, args.status, args.revision, args.evidence, args.by, commit, digest)
+                record_review(state, args.kind, args.status, args.revision, args.evidence, args.by, commit, digest,
+                              args.second)
             elif cmd == "block":
                 block(state, args.issue_id)
             else:

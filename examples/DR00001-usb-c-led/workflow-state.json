@@ -2,6 +2,7 @@
   "schema_version": 2,
   "project_name": "USB-C LED board (example)",
   "project_code": "DR00001",
+  "review_depth": "Medium",
   "requirements_revision": "REQ-1",
   "pcb_requirements_revision": "PCB-1",
   "design_revision": "R01",

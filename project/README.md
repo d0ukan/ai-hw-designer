@@ -12,6 +12,7 @@
 - `export_approval`: G1, the user's explicit approval to prepare manufacturing files for the related design revision, and its reference.
 - `blocking_issues`: open CRITICAL/MAJOR finding IDs (`F-001` format) or related blockers.
 - `deliverables`: list of outputs required in the release (INT-25); written with `projectctl.py deliverables ...`.
+- `review_depth`: `Light`, `Medium` or `High` (INT-53); null means Medium. At High, `reviews.schematic_2` and `reviews.pcb_2` hold the second Reviewer's results (`review ... --second`); layout and G1 need both PASS records with different `--by` names.
 
 Records may also carry optional `recorded_on` (UTC date), `recorded_by` and `commit` fields; `projectctl.py` commands fill them automatically.
 
@@ -31,9 +32,12 @@ python scripts/projectctl.py set project_name "Sensor board"
 python scripts/projectctl.py set project_code DR00627
 python scripts/projectctl.py set design_revision R01
 python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py set review_depth Medium   # Light | Medium | High (INT-53)
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "User approval, 2026-11-25 chat" --by "<name>"
 # Schematic → review (commit the design first)
 python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md#R01-SCH"
+# High only: second, independent Reviewer (also for pcb); use different --by names
+python scripts/projectctl.py review schematic PASS --second --by "<reviewer 2>" --revision R01 --evidence "REVIEW_LOG.md#R01-SCH-2"
 # G0.5 → layout
 python scripts/projectctl.py set pcb_requirements_revision PCB-1
 python scripts/projectctl.py approve G0.5 --revision PCB-1 --evidence "User PCB approval"

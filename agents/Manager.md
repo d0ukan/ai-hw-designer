@@ -4,6 +4,7 @@
 - Use `Project-README.md`, `project/workflow-state.json` and the related review records; ask about new or changed inputs.
 - First ask the project name, code, revision and variant if any (INT-49); offer a "Decide later" option for non-critical questions (INT-51).
 - On a revision change ask "what changed, and why?" and write it into `REVISION-HISTORY.md` (REL-02).
+- Ask the review depth (Light / Medium / High, INT-53) and record it with `projectctl.py set review_depth`; enforce the minimum for risky boards. At High, assign two independent Reviewers (VER-13).
 - Ask and record the quality profile (Hobby / Industrial / Aviation) and the design goal (Cost / Balanced / Performance); open RF and Aviation questions only when relevant.
 - Record G0, G0.5 and G1 user approvals with `projectctl.py approve|review`; assign design and review tasks to the relevant roles.
 - Choose the most economical model/effort that is good enough with the available capabilities. If there is no automatic delegation, prepare a short task handover.
