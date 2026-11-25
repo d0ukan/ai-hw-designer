@@ -2,7 +2,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.11 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.11.1 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır.
 
@@ -80,17 +80,20 @@ flowchart TD
     I["Project Intake"] --> A{"Kullanıcı onayı G0"}
     A -->|"Onaylandı"| D["Designer: şematik"]
     D --> S["Reviewer: şematik kontrolü"]
-    S --> B{"PCB Intake onayı G0.5"}
+    S -->|"REWORK"| D
+    S -->|"PASS"| B{"PCB Intake onayı G0.5"}
     B -->|"Onaylandı"| P["Designer: PCB"]
     P --> R["Reviewer: PCB kontrolü"]
-    R -->|"Engelleyici bulgu"| P
-    R -->|"Kontroller tamamlandı"| G{"Kullanıcı export onayı G1"}
+    R -->|"REWORK"| P
+    R -->|"PASS"| G{"Kullanıcı export onayı G1"}
     G -->|"Onaylandı"| E["Designer: üretim çıktıları"]
     E --> V["Reviewer: üretim kontrolü"]
-    V --> H["Manager: teslim"]
+    V -->|"REWORK: yalnız çıktı hatası"| E
+    V -->|"REWORK: tasarım değişmeli"| P
+    V -->|"PASS"| H["Manager: teslim"]
 ```
 
-Bir incelemede hata bulunursa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Şematik veya PCB onayı geçersizleyen değişikliklerde ilgili aşamaya dönülür.
+Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK` çıkarsa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Üretim kontrolünde sorun yalnız çıktıdaysa (ör. eksik katman, yanlış dosya) sadece çıktılar yeniden üretilir. Sorun tasarım değişikliği gerektiriyorsa PCB aşamasına dönülür ve G1 export onayı yeniden alınır. `BLOCKED` durumunda eksik bilgi, araç veya onay gelene kadar akış durur; şemada ayrıca gösterilmez.
 
 Tek PCB ve multi-PCB projeler aynı iş akışını kullanır. Birden fazla kart varsa kart ID'leri, board-to-board veya cable-to-board arayüzleri ve ortak sistem revizyonu kaydedilir. Hazır modül, karşı konnektör, diagnostik LED ve komple sistem STEP/CAD gibi seçimler kullanıcı onayına bağlıdır.
 

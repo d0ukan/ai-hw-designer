@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.1 — 2026-11-25
+
+- `README.md`: İş akışı şemasına şematik ve üretim kontrolü için REWORK geri dönüşleri eklendi; G1 yeniden onay kuralı açıklandı.
+
 ## v1.11 — 2026-11-25
 
 **Kurallar (`Hardware-Rules.md`)**
