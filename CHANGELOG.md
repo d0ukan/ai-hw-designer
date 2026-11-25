@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.10 — 2026-11-25
+
+**Kurallar (`Hardware-Rules.md`)**
+- Bölüm 04 alt başlıklara ayrıldı: Genel, Yerleşim, Routing, SI / PI.
+- SCH-03…SCH-07 şematik kuralları eklendi: güç ağacı ve ray filtreleri (PI), pin bazlı decoupling, SI hazırlığı (seri terminasyon, I²C pull-up, düşük kapasitanslı ESD, strapping pinleri), kısıtların şematikte işaretlenmesi, 0 Ω / DNP opsiyon yeri.
+- DFM-00: Özel istek yoksa JLCPCB/PCBWay standart kabiliyeti ve stack-up'ı esas alınır.
+- LAY-08…LAY-13 yerleşim kuralları eklendi: datasheet/app note referans layout'u, yerleşim sırası, giriş koruması, switching regülatör döngüsü, kristal, termal, hizalama ve erişim.
+- LAY-14…LAY-24 routing kuralları eklendi: routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem ve dönüş via'sı, clock/3W, analog GND, güç dağıtımı ve Kelvin, yüksek gerilim, pad girişi/teardrop/acid trap, en kısa ve doğrudan yol (dolanan hat yasak, önce yerleşimi düzelt), kullanıcı onaylı free-angle/organik routing.
+- LAY-25…LAY-29 SI/PI kuralları eklendi: decoupling döngüsü, kritik uzunluk (`tr × 2.5 cm`), empedans eşleştirme, length/delay matching, bitiş kontrolü.
+- `README.md`: "Yerleşim ve routing" bölümü eklendi.
+
 ## v1.9 — 2026-11-25
 
 **Kurallar (`Hardware-Rules.md`)**
