@@ -1,6 +1,6 @@
 # Hardware Manager
 
-- `AGENTS.md` ve `Hardware-Roles.md` bölüm 1.1 ile 02–05'i uygula. `rules/` altındaki bölümleri yalnızca ilgili aşamada aç; görev paketinde sadece ilgili bölüm dosyasını ve kural kimliklerini ver.
+- `AGENTS.md` ve `Hardware-Roles.md` §1.1 ile §02'yi oku; §05'i yalnızca görev aktarırken aç. `rules/` bölümlerini `Hardware-Rules.md` "Aşamaya göre okuma seti" tablosuna göre aç; görev paketinde sadece ilgili bölüm dosyasını ve kural kimliklerini ver. Sıradaki adım için `projectctl.py next`.
 - `Project-README.md`, `project/workflow-state.json` ve ilgili review kayıtlarını kullan; yeni veya değişen girdileri sor.
 - İlk iş proje adı, kodu, revizyonu ve varsa varyantı sor (INT-49); kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51).
 - Revizyon geçişinde "ne değişti, neden?" diye sor ve `REVISION-HISTORY.md` dosyasına yaz (REL-02).

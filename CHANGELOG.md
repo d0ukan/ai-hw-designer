@@ -1,5 +1,41 @@
 # Changelog
 
+## v1.14 — 2026-11-25
+
+Bağımsız iki inceleme ve harici bir AI incelemesinin bulguları düzeltildi.
+
+**projectctl (güvenlik ve doğruluk)**
+- Git'e eklenmemiş yeni tasarım dosyaları da değişiklik sayılır.
+- `commit` alanı hex olmak zorunda (git'e seçenek olarak geçemez).
+- Varsayılan git kökü artık state dosyasının projesi (başka klasördeki proje doğru repoya bakar).
+- Tasarım commit edilmeden `review ... PASS` ve `approve G1` reddedilir.
+- `review manufacturing PASS` geçerli manifest ister ve hash'ini saklar; manifest sonradan değişirse `check-release` yeniden review ister.
+- Teslim listesi: `deliverables` komutu ve alanı; release'te her çıktı bulunmalı. `check-bom` release'te BOM yoksa hata verir.
+- `next` komutu: sıradaki eksik adım, kim yapacak ve tam komut.
+- BOM/PnP: başlık boşlukları, boş satırlar, gerçek satır numaraları, `R1-R3` aralıkları, `nan`/`inf` reddi, noktalı virgül ve UTF-8 olmayan CSV için açık hata, büyük/küçük harften bağımsız dosya bulma.
+- Manifest: bozuk dosya ve `../` girişleri temiz hata verir; `Thumbs.db`, `desktop.ini`, `.DS_Store` yok sayılır.
+- `*.OutJob` değişikliği tasarım değişikliği sayılmaz. `--state` gibi seçenekler alt komuttan önce de yazılabilir. Giriş dosyası hataları `INPUT ERROR` olarak ayrılır.
+- 13 yeni test (toplam 54).
+
+**check_repo**
+- Dizindeki kural aralıkları gerçek kurallarla karşılaştırılır; `[x]` işaretli kurallar sayılır; önekler tanımlı kurallardan türetilir; link kontrolü kod bloklarını, `%20` ve kökten linkleri doğru işler; UTF-8 olmayan CSV temiz hata verir; iki README'nin sürüm satırı kontrol edilir.
+
+**Kurallar ve dokümanlar**
+- Belgelerdeki komutlar düzeltildi (`--revision R01`); `project/README.md` içinde G0'dan release'e tam komut sırası.
+- Release sırası netleşti (REL-04): manifesti Designer yazar, PASS'ı Manager kaydeder, sonra `check-release`.
+- Bulgu kimlikleri `F-001` (kural kimliği `REV-01` ile karışmasın).
+- Dizin: INT-52, batarya tetik ifadesi, "Aşamaya göre okuma seti" tablosu; bölüm 07 ilk oturumda bir kez.
+- AI-09: dur koşulları (şebeke/SELV üstü gerilim, çok hücreli lityum, medikal, DAL A/B) için insan mühendis onayı.
+- Soru sırası tek yerde; INT-49 `project_name` da kaydeder; ertelenen kart kararları en geç G0.5.
+- 3W kuralı netleşti (merkezden 3W, kenardan ≥ 2W). Roles iş akışı şemasına G0.5 eklendi. REL-02: yeni revizyonda hangi onayların geçerli kaldığı.
+- `rules/01` limitlerine son kontrol tarihi; Manager okuma seti küçüldü; web sohbeti akışı ve `next` AGENTS'ta.
+
+**Örnek proje**
+- R4 artık takılı seri köprü (DNP iken LED yanmıyordu); R3 = 1.5 kΩ (~2 mA); yeşil LED'in yanlış muadili kaldırıldı ("muadil yok"); gerçek bir DNP opsiyonu (C1) eklendi; `REVIEW_LOG.md` ve teslim listesi eklendi.
+
+**README**
+- Ana `README.md` artık İngilizce; Türkçesi `README.tr.md`. Repo adı `hardware-for-anything` olarak güncellendi.
+
 ## v1.13 — 2026-11-25
 
 **AI ile kullanım ve token**

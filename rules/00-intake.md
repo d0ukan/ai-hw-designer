@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 00 · Project Intake — Proje başlangıç anketi
 
-> **ZORUNLU — TASARIMA BAŞLAMADAN ÖNCE:** İlk görüşmede anlatım tercihini, ardından projenin amacını öğren. Aşağıdaki soruları projenin kapsamına göre kullanıcıya yönelt. Daha önce verilen bilgileri tekrar sorma. Kritik gereksinimler ve tasarım tercihleri netleşmeden komponent seçimine, şematiğe veya PCB layout'a başlama.
+> **ZORUNLU — TASARIMA BAŞLAMADAN ÖNCE:** Soru sırası: anlatım tercihi (INT-46) → proje kimliği (INT-49) → projenin amacı (INT-01) → kalite profili (INT-47) → tasarım hedefi (INT-48) → ilgili teknik sorular. Aşağıdaki soruları projenin kapsamına göre kullanıcıya yönelt. Daha önce verilen bilgileri tekrar sorma. Kritik gereksinimler ve tasarım tercihleri netleşmeden komponent seçimine, şematiğe veya PCB layout'a başlama.
 
 ### Başlangıç · İletişim tercihi
 
@@ -17,12 +17,12 @@ Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kan�
 
 ### Başlangıç · Proje kimliği
 
-- [ ] **INT-49** — Her yeni projede ilk iş sor: **proje adı, proje kodu ve revizyon** (ör. ad "Sensör kartı", kod `DR00627`, revizyon `R01`). Kod biçimini kullanıcı belirler; örnek biçimi dayatma. Varyant varsa harfini sor (A, B, …). Kodu `projectctl.py set project_code`, revizyonu `set design_revision` ile kaydet. Bu soru ertelenemez; kod olmadan export yapılmaz.
+- [ ] **INT-49** — Anlatım tercihinden hemen sonra sor: **proje adı, proje kodu ve revizyon** (ör. ad "Sensör kartı", kod `DR00627`, revizyon `R01`). Kod biçimini kullanıcı belirler; örnek biçimi dayatma. Varyant varsa harfini sor (A, B, …). Adı `projectctl.py set project_name`, kodu `set project_code`, revizyonu `set design_revision` ile kaydet. Bu soru ertelenemez; kod olmadan export yapılmaz.
 - [ ] **INT-50** — Tüm çıktılar bu kimlikle adlandırılır (bölüm 09): `<kod>-<rev>` → `DR00627-R01`, varyant için `<kod>-<harf>V-<rev>` → `DR00627-AV-R01`. Öneki `python scripts/projectctl.py name [--variant A]` verir.
 
 ### Başlangıç · "Sonra karar ver" seçeneği
 
-- [ ] **INT-51** — Kritik olmayan sorularda (ör. logo/ikon, silkscreen yazıları, designator görünümü, imza, renk) kullanıcıya **"Sonra karar ver"** seçeneği sun. Ertelenen soruyu `Project-README.md` "Açık kararlar" tablosuna AÇIK olarak yaz ve en geç ilgili kapıda (G0.5 veya G1) tekrar sor. Hâlâ yanıt yoksa güvenli varsayılanı kullan ve kaydet (logo, imza, bakır yazı yok; designator açık). Kritik sorularda (besleme, güvenlik, izolasyon, konnektör/pinout, gerilim/akım, kalite profili, proje kimliği) bu seçenek yoktur.
+- [ ] **INT-51** — Kritik olmayan sorularda (ör. logo/ikon, silkscreen yazıları, designator görünümü, imza, renk) kullanıcıya **"Sonra karar ver"** seçeneği sun. Ertelenen soruyu `Project-README.md` "Açık kararlar" tablosuna AÇIK olarak yaz ve en geç ilgili kapıda tekrar sor: kart üzerindeki her şey (logo, yazılar, designator, imza; PCB-17…21) için **G0.5**, yani layout başlamadan önce. Hâlâ yanıt yoksa güvenli varsayılanı kullan ve kaydet (logo, imza, bakır yazı yok; designator açık). Kritik sorularda (besleme, güvenlik, izolasyon, konnektör/pinout, gerilim/akım, kalite profili, proje kimliği) bu seçenek yoktur.
 
 ### Başlangıç · Kalite profili
 

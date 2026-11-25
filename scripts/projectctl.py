@@ -1,15 +1,16 @@
 """Dependency-free workflow checks and record keeping.
 
-Checks never export or change design files. Record commands (set, approve,
-revoke, review, block, unblock) only update project/workflow-state.json after
-validating it. The manifest command only writes Manufacturing/<rev>/MANIFEST.sha256.
+Checks never export or change design files. Record commands (set, deliverables,
+approve, revoke, review, block, unblock) only update project/workflow-state.json
+after validating it. The manifest command only writes Manufacturing/<rev>/MANIFEST.sha256.
 The name command prints the output file prefix, e.g. DR00627-R01 or DR00627-AV-R01.
-check-bom checks BOM/PnP files without changing them.
+check-bom checks BOM/PnP files; next prints the next missing step and its command.
 
 When the project is a git repository, approvals and reviews also store the git
-commit they were recorded at. Export and release checks then fail if the design
-files under Hardware/ changed after that commit, so a review cannot silently
-cover a later design change.
+commit they were recorded at, and the manufacturing review stores the manifest
+hash. Export and release checks then fail if design files under Hardware/
+(tracked or new) changed after that commit, or if the release files changed
+after the manufacturing review, so a review cannot silently cover a later change.
 """
 
 import argparse
@@ -17,6 +18,7 @@ import csv
 import datetime
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -34,24 +36,37 @@ APPROVAL_STATES = {"PENDING", "APPROVED"}
 REVIEW_STATES = {"PENDING", "PASS", "REWORK", "BLOCKED"}
 REVIEW_KEYS = ("schematic", "pcb", "manufacturing")
 TEXT_FIELDS = ("project_name", "requirements_revision", "pcb_requirements_revision", "design_revision")
-OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by", "commit")
-RESERVED_RELEASE_NAMES = {"templates"}
-DESIGN_DIR = "Hardware"
-SCHEMATIC_GLOBS = ("*.kicad_sch", "*.SchDoc", "*.sch")
 OPTIONAL_TEXT_FIELDS = ("project_code",)
 SETTABLE_FIELDS = TEXT_FIELDS + OPTIONAL_TEXT_FIELDS
+OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by", "commit", "manifest_sha256")
+GATES = {"G0": "input_approval", "G0.5": "pcb_input_approval", "G1": "export_approval"}
+RESERVED_RELEASE_NAMES = {"templates"}
+JUNK_FILES = {"thumbs.db", "desktop.ini", ".ds_store"}
+
+DESIGN_DIR = "Hardware"
+SCHEMATIC_GLOBS = ("*.kicad_sch", "*.SchDoc", "*.sch")
+# Output-job files that EDA tools rewrite during export; not design changes.
+DESIGN_EXCLUDE_GLOBS = ("*.OutJob",)
+
 NAME_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.]*$")
 VARIANT = re.compile(r"^[A-Z]$")
-GATES = {"G0": "input_approval", "G0.5": "pcb_input_approval", "G1": "export_approval"}
+COMMIT = re.compile(r"^[0-9a-f]{7,64}$")
+SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 class StateError(ValueError):
     """Invalid or unreadable workflow-state file."""
 
 
+class InputError(StateError):
+    """Unreadable or malformed input file other than the state (BOM, PnP, manifest)."""
+
+
 def nonempty_text(value):
     return isinstance(value, str) and bool(value.strip())
 
+
+# --- State schema -------------------------------------------------------------
 
 def validate_state(state):
     """Validate the schema without treating a new, pending project as invalid."""
@@ -61,13 +76,18 @@ def validate_state(state):
         raise StateError("Unsupported or missing schema_version (expected 2; see project/README.md).")
 
     for key in TEXT_FIELDS:
-        if key not in state or (
-            state[key] is not None and not nonempty_text(state[key])
-        ):
+        if key not in state or (state[key] is not None and not nonempty_text(state[key])):
             raise StateError(f"{key} must be a nonempty string or null.")
     code = state.get("project_code")
     if code is not None and not (isinstance(code, str) and NAME_PART.match(code)):
         raise StateError("project_code must use letters, digits, '_' or '.' (e.g. DR00627) or be null.")
+    deliverables = state.get("deliverables")
+    if deliverables is not None and not (
+        isinstance(deliverables, list)
+        and all(isinstance(d, str) and NAME_PART.match(d) for d in deliverables)
+        and len({d.lower() for d in deliverables}) == len(deliverables)
+    ):
+        raise StateError("deliverables must be a list of unique names like BOM, PnP, Gerber, or null.")
 
     def validate_record(record, name, statuses, accepted):
         if not isinstance(record, dict):
@@ -76,16 +96,16 @@ def validate_state(state):
         if not isinstance(status, str) or status not in statuses:
             raise StateError(f"{name}.status is invalid.")
         for field in ("revision", "evidence"):
-            if field not in record or (
-                record[field] is not None and not nonempty_text(record[field])
-            ):
+            if field not in record or (record[field] is not None and not nonempty_text(record[field])):
                 raise StateError(f"{name}.{field} must be a nonempty string or null.")
         for field in OPTIONAL_RECORD_FIELDS:
             if field in record and record[field] is not None and not nonempty_text(record[field]):
                 raise StateError(f"{name}.{field} must be a nonempty string or null.")
-        if status == accepted and not (
-            nonempty_text(record["revision"]) and nonempty_text(record["evidence"])
-        ):
+        if record.get("commit") is not None and not COMMIT.match(record["commit"]):
+            raise StateError(f"{name}.commit must be a hexadecimal git commit id.")
+        if record.get("manifest_sha256") is not None and not SHA256.match(record["manifest_sha256"]):
+            raise StateError(f"{name}.manifest_sha256 must be a SHA-256 hex digest.")
+        if status == accepted and not (nonempty_text(record["revision"]) and nonempty_text(record["evidence"])):
             raise StateError(f"{name} {accepted} requires a revision and evidence.")
 
     validate_record(state.get("input_approval"), "input_approval", APPROVAL_STATES, "APPROVED")
@@ -131,6 +151,23 @@ def save_state(path, state):
         raise
 
 
+# --- Gates --------------------------------------------------------------------
+
+def record_problem(record, label, expected_status, revision, scope=None, changed=None):
+    """Return the first problem with one approval/review record, or None."""
+    if record["status"] != expected_status:
+        return f"{label}: requires {expected_status}."
+    if not nonempty_text(revision) or record["revision"] != revision:
+        return f"{label}: revision does not match the current revision."
+    if scope and changed and nonempty_text(record.get("commit")):
+        result = changed(record["commit"], scope)
+        if result is None:
+            return f"{label}: cannot verify design files against commit {record['commit'][:12]}."
+        if result:
+            return f"{label}: design files changed after commit {record['commit'][:12]}; review again."
+    return None
+
+
 def gate_errors(state, *, layout=False, release=False, changed=None):
     """Return unmet conditions for layout, export or final manufacturing release.
 
@@ -156,44 +193,65 @@ def gate_errors(state, *, layout=False, release=False, changed=None):
     if not layout and not nonempty_text(state.get("project_code")):
         errors.append("Project code is missing (needed to name outputs).")
 
-    def check_record(record, label, expected_status, revision, scope=None):
-        if record["status"] != expected_status:
-            errors.append(f"{label}: requires {expected_status}.")
-        elif not nonempty_text(revision) or record["revision"] != revision:
-            errors.append(f"{label}: revision does not match the current revision.")
-        elif scope and changed and nonempty_text(record.get("commit")):
-            result = changed(record["commit"], scope)
-            if result is None:
-                errors.append(f"{label}: cannot verify design files against commit {record['commit'][:12]}.")
-            elif result:
-                errors.append(f"{label}: design files changed after commit {record['commit'][:12]}; review again.")
-
-    check_record(state["input_approval"], "G0 input approval", "APPROVED", requirements)
-    check_record(state["pcb_input_approval"], "G0.5 PCB input approval", "APPROVED", pcb_requirements)
-    check_record(state["reviews"]["schematic"], "Schematic review", "PASS", design, "schematic")
+    checks = [
+        (state["input_approval"], "G0 input approval", "APPROVED", requirements, None),
+        (state["pcb_input_approval"], "G0.5 PCB input approval", "APPROVED", pcb_requirements, None),
+        (state["reviews"]["schematic"], "Schematic review", "PASS", design, "schematic"),
+    ]
     if not layout:
-        check_record(state["reviews"]["pcb"], "PCB review", "PASS", design, "design")
-        check_record(state["export_approval"], "G1 export approval", "APPROVED", design, "design")
+        checks += [
+            (state["reviews"]["pcb"], "PCB review", "PASS", design, "design"),
+            (state["export_approval"], "G1 export approval", "APPROVED", design, "design"),
+        ]
+    if release:
+        checks.append((state["reviews"]["manufacturing"], "Manufacturing review", "PASS", design, "design"))
+        if not state.get("deliverables"):
+            errors.append("Deliverables are not set (e.g. projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB).")
+    for record, label, status, revision, scope in checks:
+        problem = record_problem(record, label, status, revision, scope, changed)
+        if problem:
+            errors.append(problem)
     if state["blocking_issues"]:
         errors.append("Open blocking issues: " + ", ".join(state["blocking_issues"]))
-    if release:
-        check_record(state["reviews"]["manufacturing"], "Manufacturing review", "PASS", design, "design")
     return errors
 
 
 # --- Git helpers (optional; everything works without git) --------------------
 
-def git_head(repo_root):
-    """Return the current commit hash, or None when git or the repo is missing."""
+def _git(repo_root, *args, timeout=60):
     try:
-        out = subprocess.run(
-            ["git", "-C", str(repo_root), "rev-parse", "HEAD"],
-            capture_output=True, text=True, timeout=20,
-        )
+        return subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=timeout)
     except (OSError, subprocess.SubprocessError):
         return None
-    head = out.stdout.strip()
-    return head if out.returncode == 0 and head else None
+
+
+def default_repo_root(state_path):
+    """Project root for a state file: the parent of project/, else its own folder."""
+    folder = Path(state_path).resolve().parent
+    return folder.parent if folder.name == "project" else folder
+
+
+def git_head(repo_root):
+    """Return the current commit hash, or None when git or the repo is missing."""
+    out = _git(repo_root, "rev-parse", "HEAD", timeout=20)
+    head = out.stdout.decode().strip() if out else ""
+    return head if out and out.returncode == 0 and COMMIT.match(head) else None
+
+
+def _design_paths(scope):
+    if scope == "schematic":
+        return [f":(glob){DESIGN_DIR}/**/{g}" for g in SCHEMATIC_GLOBS]
+    return [DESIGN_DIR] + [f":(exclude,glob){DESIGN_DIR}/**/{g}" for g in DESIGN_EXCLUDE_GLOBS]
+
+
+def design_dirty(repo_root):
+    """True when Hardware/ has uncommitted or untracked changes; None without git."""
+    if git_head(repo_root) is None:
+        return None
+    out = _git(repo_root, "status", "--porcelain", "--untracked-files=all", "--", *_design_paths("design"))
+    if out is None or out.returncode != 0:
+        return None
+    return bool(out.stdout.strip())
 
 
 def git_change_detector(repo_root):
@@ -202,18 +260,18 @@ def git_change_detector(repo_root):
         return None
 
     def changed(commit, scope):
-        if scope == "schematic":
-            paths = [f":(glob){DESIGN_DIR}/**/{g}" for g in SCHEMATIC_GLOBS]
-        else:
-            paths = [DESIGN_DIR]
-        try:
-            out = subprocess.run(
-                ["git", "-C", str(repo_root), "diff", "--quiet", commit, "--", *paths],
-                capture_output=True, timeout=60,
-            )
-        except (OSError, subprocess.SubprocessError):
+        if not COMMIT.match(commit or ""):
             return None
-        return {0: False, 1: True}.get(out.returncode)
+        paths = _design_paths(scope)
+        diff = _git(repo_root, "diff", "--quiet", commit, "--", *paths)
+        if diff is None or diff.returncode not in (0, 1):
+            return None
+        if diff.returncode == 1:
+            return True
+        new = _git(repo_root, "ls-files", "--others", "--exclude-standard", "--", *paths)
+        if new is None or new.returncode != 0:
+            return None
+        return bool(new.stdout.strip())
 
     return changed
 
@@ -224,11 +282,11 @@ def _today():
     return datetime.datetime.now(datetime.timezone.utc).date().isoformat()
 
 
-def _set_record(record, status, accepted, revision, evidence, by, commit=None):
+def _set_record(record, status, accepted, revision, evidence, by, commit=None, extra=None):
+    for field in OPTIONAL_RECORD_FIELDS:
+        record.pop(field, None)
     if status == "PENDING":
         record.update(status="PENDING", revision=None, evidence=None)
-        for field in OPTIONAL_RECORD_FIELDS:
-            record.pop(field, None)
         return
     if status == accepted and not (nonempty_text(revision) and nonempty_text(evidence)):
         raise StateError(f"{status} requires --revision and --evidence.")
@@ -241,14 +299,20 @@ def _set_record(record, status, accepted, revision, evidence, by, commit=None):
     )
     if nonempty_text(commit):
         record["commit"] = commit
-    else:
-        record.pop("commit", None)
+    for key, value in (extra or {}).items():
+        if value is not None:
+            record[key] = value
 
 
 def set_field(state, field, value):
     if field not in SETTABLE_FIELDS:
         raise StateError(f"Unknown field: {field}")
     state[field] = value if nonempty_text(value) else None
+    return validate_state(state)
+
+
+def set_deliverables(state, names):
+    state["deliverables"] = list(names) or None
     return validate_state(state)
 
 
@@ -262,12 +326,13 @@ def revoke(state, gate):
     return validate_state(state)
 
 
-def record_review(state, kind, status, revision=None, evidence=None, by=None, commit=None):
+def record_review(state, kind, status, revision=None, evidence=None, by=None, commit=None, manifest_sha256=None):
     if kind not in REVIEW_KEYS:
         raise StateError(f"Unknown review: {kind}")
     if status not in REVIEW_STATES:
         raise StateError(f"Unknown review status: {status}")
-    _set_record(state["reviews"][kind], status, "PASS", revision, evidence, by, commit)
+    _set_record(state["reviews"][kind], status, "PASS", revision, evidence, by, commit,
+                {"manifest_sha256": manifest_sha256})
     return validate_state(state)
 
 
@@ -314,12 +379,31 @@ def naming_errors(folder, state):
     if not nonempty_text(code) or not folder.is_dir():
         return []
     prefix = code + "-"
+    return [
+        f"File name does not start with project code {code}: {rel}"
+        for rel in _release_files(folder)
+        if not any(part.startswith(prefix) for part in rel.split("/"))
+    ]
+
+
+def deliverable_errors(folder, state):
+    """Every deliverable (e.g. BOM, Gerber) must exist as <code>-..._<name>.* in the release."""
+    names = state.get("deliverables") or []
+    code = state.get("project_code")
+    folder = Path(folder)
+    if not names or not nonempty_text(code):
+        return []
+    files = [rel.split("/")[-1].lower() for rel in _release_files(folder)] if folder.is_dir() else []
+    folders = [p.name.lower() for p in folder.rglob("*") if p.is_dir()] if folder.is_dir() else []
     errors = []
-    for rel in _release_files(folder):
-        parts = rel.split("/")
-        if any(part.startswith(prefix) for part in parts):
-            continue
-        errors.append(f"File name does not start with project code {code}: {rel}")
+    for name in names:
+        tag = f"_{name.lower()}"
+        found = any(
+            entry.startswith(code.lower() + "-") and (entry.split(".")[0].endswith(tag))
+            for entry in files + folders
+        )
+        if not found:
+            errors.append(f"Deliverable missing: {code}-..._{name}.* (see deliverables in workflow-state.json)")
     return errors
 
 
@@ -329,24 +413,47 @@ BOM_REQUIRED = ("Designator", "Qty", "MPN", "DNP", "Alternate MPN")
 PNP_REQUIRED = ("Designator", "Mid X", "Mid Y", "Layer", "Rotation")
 DNP_TRUE = {"yes", "y", "true", "1", "dnp", "x"}
 NO_ALTERNATE = ("muadil yok", "no alternate")
+RANGE = re.compile(r"^([A-Za-z]+)(\d+)-(?:\1)?(\d+)$")
 
 
 def _read_csv(path):
+    """Return (header, [(line_number, row_dict)]) with stripped names; skip blank rows."""
+    name = Path(path).name
     try:
         with Path(path).open(encoding="utf-8-sig", newline="") as handle:
-            return list(csv.DictReader(handle))
-    except (OSError, UnicodeError, csv.Error) as exc:
-        raise StateError(f"Cannot read {path}: {exc}") from exc
+            reader = csv.reader(handle)
+            header = [h.strip() for h in next(reader, [])]
+            rows = []
+            for raw in reader:
+                if not any(cell.strip() for cell in raw):
+                    continue
+                rows.append((reader.line_num, dict(zip(header, (c.strip() for c in raw)))))
+    except UnicodeError as exc:
+        raise InputError(f"{name}: not UTF-8 text; save the CSV as UTF-8 ({exc.reason}).") from exc
+    except (OSError, csv.Error) as exc:
+        raise InputError(f"Cannot read {name}: {exc}") from exc
+    if len(header) == 1 and ";" in header[0]:
+        raise InputError(f"{name}: columns are separated by ';'; save the CSV with ',' separators.")
+    return header, rows
 
 
 def _designators(text):
-    return [d for d in re.split(r"[,;\s]+", text or "") if d]
+    refs = []
+    for token in (t for t in re.split(r"[,;\s]+", text or "") if t):
+        match = RANGE.match(token)
+        if match and int(match.group(2)) <= int(match.group(3)) and int(match.group(3)) - int(match.group(2)) < 1000:
+            refs += [f"{match.group(1)}{n}" for n in range(int(match.group(2)), int(match.group(3)) + 1)]
+        else:
+            refs.append(token)
+    return refs
 
 
 def _number(text):
+    value = (text or "").strip().lower()
+    if value.endswith("mm"):
+        value = value[:-2].strip()
     try:
-        float((text or "").strip().lower().removesuffix("mm").strip())
-        return True
+        return math.isfinite(float(value))
     except ValueError:
         return False
 
@@ -355,14 +462,13 @@ def bom_problems(bom_path, pnp_path=None):
     """Return (errors, warnings) for a BOM and its optional PnP file."""
     errors, warnings = [], []
     bom_name = Path(bom_path).name
-    rows = _read_csv(bom_path)
-    header = rows[0].keys() if rows else _csv_header(bom_path)
+    header, rows = _read_csv(bom_path)
     missing = [c for c in BOM_REQUIRED if c not in header]
     if missing:
         return [f"{bom_name}: missing columns: {', '.join(missing)}"], warnings
     seen, fitted, dnp = set(), set(), set()
-    for line, row in enumerate(rows, start=2):
-        refs = _designators(row["Designator"])
+    for line, row in rows:
+        refs = _designators(row.get("Designator"))
         if not refs:
             errors.append(f"{bom_name}:{line}: empty Designator.")
             continue
@@ -370,35 +476,37 @@ def bom_problems(bom_path, pnp_path=None):
             if ref in seen:
                 errors.append(f"{bom_name}:{line}: duplicate designator {ref}.")
             seen.add(ref)
-        qty = (row["Qty"] or "").strip()
+        qty = row.get("Qty") or ""
         if not qty.isdigit() or int(qty) != len(refs):
             errors.append(f"{bom_name}:{line}: Qty {qty or '(empty)'} does not match {len(refs)} designators.")
-        is_dnp = (row["DNP"] or "").strip().lower() in DNP_TRUE
+        is_dnp = (row.get("DNP") or "").lower() in DNP_TRUE
         (dnp if is_dnp else fitted).update(refs)
-        if not is_dnp and not (row["MPN"] or "").strip():
+        if not is_dnp and not row.get("MPN"):
             errors.append(f"{bom_name}:{line}: fitted part without MPN ({', '.join(refs)}).")
         notes = (row.get("Notes") or "").lower()
-        if not is_dnp and not (row["Alternate MPN"] or "").strip() and not any(n in notes for n in NO_ALTERNATE):
+        if not is_dnp and not row.get("Alternate MPN") and not any(n in notes for n in NO_ALTERNATE):
             warnings.append(f"{bom_name}:{line}: no Alternate MPN and no 'muadil yok' note ({', '.join(refs)}).")
     if pnp_path is None:
         return errors, warnings
     pnp_name = Path(pnp_path).name
-    prow = _read_csv(pnp_path)
-    pheader = prow[0].keys() if prow else _csv_header(pnp_path)
+    pheader, prow = _read_csv(pnp_path)
     missing = [c for c in PNP_REQUIRED if c not in pheader]
     if missing:
         return errors + [f"{pnp_name}: missing columns: {', '.join(missing)}"], warnings
     placed = set()
-    for line, row in enumerate(prow, start=2):
-        ref = (row["Designator"] or "").strip()
+    for line, row in prow:
+        ref = row.get("Designator") or ""
+        if not ref:
+            errors.append(f"{pnp_name}:{line}: empty Designator.")
+            continue
         if ref in placed:
             errors.append(f"{pnp_name}:{line}: duplicate designator {ref}.")
         placed.add(ref)
-        if (row["Layer"] or "").strip().lower() not in ("top", "bottom"):
+        if (row.get("Layer") or "").lower() not in ("top", "bottom"):
             errors.append(f"{pnp_name}:{line}: Layer must be Top or Bottom.")
         for col in ("Mid X", "Mid Y", "Rotation"):
-            if not _number(row[col]):
-                errors.append(f"{pnp_name}:{line}: {col} is not a number.")
+            if not _number(row.get(col)):
+                errors.append(f"{pnp_name}:{line}: {col} is not a finite number.")
     for ref in sorted(placed & dnp):
         errors.append(f"{pnp_name}: DNP part {ref} must not be in PnP.")
     for ref in sorted(fitted - placed):
@@ -408,20 +516,19 @@ def bom_problems(bom_path, pnp_path=None):
     return errors, warnings
 
 
-def _csv_header(path):
-    with Path(path).open(encoding="utf-8-sig", newline="") as handle:
-        return next(csv.reader(handle), [])
-
-
-def release_bom_problems(folder):
+def release_bom_problems(folder, require=False):
     """Check every *_BOM.csv in a release folder with its matching *_PnP.csv."""
     errors, warnings = [], []
     folder = Path(folder)
-    if not folder.is_dir():
-        return errors, warnings
-    for bom in sorted(folder.rglob("*_BOM.csv")):
-        pnp = bom.with_name(bom.name[: -len("_BOM.csv")] + "_PnP.csv")
-        e, w = bom_problems(bom, pnp if pnp.is_file() else None)
+    boms = sorted(p for p in folder.rglob("*") if p.is_file() and p.name.lower().endswith("_bom.csv")) \
+        if folder.is_dir() else []
+    if require and not boms:
+        return [f"No *_BOM.csv found in {folder}"], warnings
+    for bom in boms:
+        stem = bom.name[: -len("_BOM.csv")].lower()
+        pnp = next((p for p in bom.parent.iterdir()
+                    if p.is_file() and p.name.lower() == f"{stem}_pnp.csv"), None)
+        e, w = bom_problems(bom, pnp)
         errors += e
         warnings += w
     return errors, warnings
@@ -450,8 +557,8 @@ def _sha256(path):
 def _release_files(folder):
     return sorted(
         p.relative_to(folder).as_posix()
-        for p in folder.rglob("*")
-        if p.is_file() and p.name != MANIFEST_NAME
+        for p in Path(folder).rglob("*")
+        if p.is_file() and p.name != MANIFEST_NAME and p.name.lower() not in JUNK_FILES
     )
 
 
@@ -469,18 +576,28 @@ def write_manifest(folder):
     return len(files)
 
 
+def manifest_hash(folder):
+    manifest = Path(folder) / MANIFEST_NAME
+    return _sha256(manifest) if manifest.is_file() else None
+
+
 def manifest_errors(folder):
     """Return problems with the release folder's manifest; empty list means OK."""
     folder = Path(folder)
     manifest = folder / MANIFEST_NAME
     if not manifest.is_file():
         return [f"Manifest missing: {manifest}"]
+    try:
+        text = manifest.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        return [f"Manifest unreadable: {exc}"]
     listed = {}
-    for line in manifest.read_text(encoding="utf-8").splitlines():
+    for line in text.splitlines():
         if not line.strip():
             continue
         digest, sep, rel = line.partition("  ")
-        if not sep:
+        parts = rel.replace("\\", "/").split("/")
+        if not sep or not SHA256.match(digest) or rel.startswith(("/", "\\")) or ".." in parts or ":" in rel:
             return [f"Malformed manifest line: {line}"]
         listed[rel] = digest
     errors = []
@@ -496,24 +613,108 @@ def manifest_errors(folder):
     return errors
 
 
+def manufacturing_review_errors(folder, state):
+    """The manufacturing PASS must cover the current manifest."""
+    record = state["reviews"]["manufacturing"]
+    if record["status"] != "PASS" or not record.get("manifest_sha256"):
+        return []
+    if manifest_hash(folder) != record["manifest_sha256"]:
+        return ["Manufacturing review: release files or manifest changed after the review; review again."]
+    return []
+
+
+# --- Next step ----------------------------------------------------------------
+
+def next_step(state, folder, changed=None):
+    """Return (who, what, command) for the first missing workflow step, or None."""
+    design = state["design_revision"] or "<R01>"
+    steps = [
+        (not nonempty_text(state["project_name"]), "Manager", "Record the project name",
+         'python scripts/projectctl.py set project_name "<name>"'),
+        (not nonempty_text(state.get("project_code")), "Manager", "Record the project code",
+         "python scripts/projectctl.py set project_code <DR00627>"),
+        (not nonempty_text(state["design_revision"]), "Manager", "Record the design revision",
+         "python scripts/projectctl.py set design_revision <R01>"),
+        (not nonempty_text(state["requirements_revision"]), "Manager", "Record the requirements revision",
+         "python scripts/projectctl.py set requirements_revision <REQ-1>"),
+    ]
+    for cond, who, what, cmd in steps:
+        if cond:
+            return who, what, cmd
+    req, pcb = state["requirements_revision"], state["pcb_requirements_revision"]
+    ordered = [
+        (state["input_approval"], "G0 input approval", "APPROVED", req, None,
+         "Manager", "Record the user's G0 approval",
+         f'python scripts/projectctl.py approve G0 --revision {req} --evidence "<approval reference>"'),
+        (state["reviews"]["schematic"], "Schematic review", "PASS", design, "schematic",
+         "Reviewer", "Review the schematic; commit the design; record the result",
+         f'python scripts/projectctl.py review schematic PASS --revision {design} --evidence "REVIEW_LOG.md#..."'),
+    ]
+    for record, label, status, rev, scope, who, what, cmd in ordered:
+        if record_problem(record, label, status, rev, scope, changed):
+            return who, what, cmd
+    if not nonempty_text(pcb):
+        return "Manager", "Record the PCB input revision (G0.5 questions)", \
+            "python scripts/projectctl.py set pcb_requirements_revision <PCB-1>"
+    ordered = [
+        (state["pcb_input_approval"], "G0.5", "APPROVED", pcb, None,
+         "Manager", "Record the user's G0.5 approval; then layout",
+         f'python scripts/projectctl.py approve G0.5 --revision {pcb} --evidence "<approval reference>"'),
+        (state["reviews"]["pcb"], "PCB review", "PASS", design, "design",
+         "Reviewer", "Review the PCB; commit the design; record the result",
+         f'python scripts/projectctl.py review pcb PASS --revision {design} --evidence "REVIEW_LOG.md#..."'),
+        (state["export_approval"], "G1", "APPROVED", design, "design",
+         "Manager", "Record the user's G1 export approval",
+         f'python scripts/projectctl.py approve G1 --revision {design} --evidence "<approval reference>"'),
+    ]
+    for record, label, status, rev, scope, who, what, cmd in ordered:
+        if record_problem(record, label, status, rev, scope, changed):
+            return who, what, cmd
+    if not state.get("deliverables"):
+        return "Manager", "Record the deliverables (INT-25)", \
+            "python scripts/projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB"
+    if deliverable_errors(folder, state) or not Path(folder).is_dir():
+        return "Designer", "Create the outputs in Manufacturing/<rev>/ with the prefix; then check-bom", \
+            "python scripts/projectctl.py check-bom"
+    if manifest_errors(folder):
+        return "Designer", "Write the manifest (last export step)", "python scripts/projectctl.py manifest"
+    if record_problem(state["reviews"]["manufacturing"], "Manufacturing review", "PASS", design, "design", changed) \
+            or manufacturing_review_errors(folder, state):
+        return "Reviewer", "Review the manufacturing files; the Manager records the result", \
+            f'python scripts/projectctl.py review manufacturing PASS --revision {design} --evidence "REVIEW_LOG.md#..."'
+    if state["blocking_issues"]:
+        return "Designer", "Close the open blocking findings", "python scripts/projectctl.py unblock <F-001>"
+    return None
+
+
 # --- CLI ---------------------------------------------------------------------
+
+def _add_common(parser, suppress=False):
+    default = (lambda value: argparse.SUPPRESS) if suppress else (lambda value: value)
+    parser.add_argument("--state", type=Path, default=default(DEFAULT_STATE), help="Path to workflow-state.json")
+    parser.add_argument("--manufacturing-dir", type=Path, default=default(None),
+                        help="Path to the Manufacturing folder (default: next to the project)")
+    parser.add_argument("--repo-root", type=Path, default=default(None),
+                        help="Git repository root used to bind records to commits (default: the project root)")
+
 
 def build_parser():
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--state", type=Path, default=DEFAULT_STATE, help="Path to workflow-state.json")
-    common.add_argument("--manufacturing-dir", type=Path, default=DEFAULT_MANUFACTURING,
-                        help="Path to the Manufacturing folder")
-    common.add_argument("--repo-root", type=Path, default=ROOT,
-                        help="Git repository used to bind approvals to commits")
+    _add_common(common, suppress=True)
 
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    _add_common(parser)
     sub = parser.add_subparsers(dest="command", required=True)
-    for name in ("status", "validate", "check-layout", "check-export", "check-release", "manifest"):
+    for name in ("status", "validate", "check-layout", "check-export", "check-release", "manifest", "next"):
         sub.add_parser(name, parents=[common])
 
-    p = sub.add_parser("set", parents=[common], help="Set a revision or project name (omit value to clear)")
+    p = sub.add_parser("set", parents=[common], help="Set a revision, project name or code (omit value to clear)")
     p.add_argument("field", choices=SETTABLE_FIELDS)
     p.add_argument("value", nargs="?")
+
+    p = sub.add_parser("deliverables", parents=[common],
+                       help="Set the required outputs, e.g. BOM PnP Gerber SCH ASSY FAB (none clears)")
+    p.add_argument("names", nargs="*")
 
     p = sub.add_parser("approve", parents=[common], help="Record a real user approval")
     p.add_argument("gate", choices=tuple(GATES))
@@ -545,11 +746,26 @@ def build_parser():
     return parser
 
 
+def _print_problems(label, errors, warnings=()):
+    for warning in warnings:
+        print(f"WARNING: {warning}")
+    if errors:
+        print(f"{label} BLOCKED:", file=sys.stderr)
+        for error in errors:
+            print(f"- {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
+    project_root = default_repo_root(args.state)
+    repo_root = args.repo_root or project_root
+    manufacturing = args.manufacturing_dir or (project_root / "Manufacturing")
     try:
         state = load_state(args.state)
         cmd = args.command
+        changed = git_change_detector(repo_root)
 
         if cmd == "validate":
             print("VALID: workflow state schema.")
@@ -560,11 +776,22 @@ def main(argv=None):
             print("Requirements revision:", state["requirements_revision"] or "not set")
             print("PCB requirements revision:", state["pcb_requirements_revision"] or "not set")
             print("Design revision:", state["design_revision"] or "not set")
-            changed = git_change_detector(args.repo_root)
+            print("Deliverables:", " ".join(state.get("deliverables") or []) or "not set")
             print("Layout gate:", "BLOCKED" if gate_errors(state, layout=True, changed=changed) else "READY")
             print("Export gate:", "BLOCKED" if gate_errors(state, changed=changed) else "READY")
             print("Release gate:", "BLOCKED" if gate_errors(state, release=True, changed=changed) else "READY")
             print("Blocking issues:", ", ".join(state["blocking_issues"]) or "none")
+            return 0
+
+        if cmd == "next":
+            folder = (manufacturing / state["design_revision"]) if nonempty_text(state["design_revision"]) \
+                else manufacturing / "_"
+            step = next_step(state, folder, changed)
+            if step is None:
+                print("NEXT: nothing missing; run check-release to confirm.")
+            else:
+                who, what, command = step
+                print(f"NEXT ({who}): {what}\n  {command}")
             return 0
 
         if cmd == "check-bom":
@@ -572,27 +799,34 @@ def main(argv=None):
                 errors, warnings = bom_problems(args.bom, args.pnp)
             else:
                 errors, warnings = release_bom_problems(
-                    release_dir(args.manufacturing_dir, state["design_revision"]))
-            for warning in warnings:
-                print(f"WARNING: {warning}")
-            if errors:
-                print("BOM BLOCKED:", file=sys.stderr)
-                for error in errors:
-                    print(f"- {error}", file=sys.stderr)
+                    release_dir(manufacturing, state["design_revision"]), require=True)
+            if _print_problems("BOM", errors, warnings):
                 return 1
             print("BOM OK.")
             return 0
 
-        if cmd in ("set", "approve", "revoke", "review", "block", "unblock"):
-            commit = git_head(args.repo_root)
+        if cmd in ("set", "deliverables", "approve", "revoke", "review", "block", "unblock"):
+            commit = git_head(repo_root)
+            design_record = (cmd == "review" and args.status == "PASS") or (cmd == "approve" and args.gate == "G1")
+            if design_record and design_dirty(repo_root):
+                raise StateError(f"Uncommitted changes under {DESIGN_DIR}/; commit the reviewed design first.")
             if cmd == "set":
                 set_field(state, args.field, args.value)
+            elif cmd == "deliverables":
+                set_deliverables(state, args.names)
             elif cmd == "approve":
                 approve(state, args.gate, args.revision, args.evidence, args.by, commit)
             elif cmd == "revoke":
                 revoke(state, args.gate)
             elif cmd == "review":
-                record_review(state, args.kind, args.status, args.revision, args.evidence, args.by, commit)
+                digest = None
+                if args.kind == "manufacturing" and args.status == "PASS":
+                    folder = release_dir(manufacturing, state["design_revision"])
+                    if manifest_errors(folder):
+                        raise StateError("Write a valid manifest before the manufacturing PASS "
+                                         "(projectctl.py manifest), then review those files.")
+                    digest = manifest_hash(folder)
+                record_review(state, args.kind, args.status, args.revision, args.evidence, args.by, commit, digest)
             elif cmd == "block":
                 block(state, args.issue_id)
             else:
@@ -606,29 +840,28 @@ def main(argv=None):
             return 0
 
         if cmd == "manifest":
-            folder = release_dir(args.manufacturing_dir, state["design_revision"])
+            folder = release_dir(manufacturing, state["design_revision"])
             count = write_manifest(folder)
             print(f"MANIFEST: {count} files hashed in {folder / MANIFEST_NAME}.")
             return 0
 
         layout = cmd == "check-layout"
         release = cmd == "check-release"
-        errors = gate_errors(state, layout=layout, release=release,
-                             changed=git_change_detector(args.repo_root))
+        errors = gate_errors(state, layout=layout, release=release, changed=changed)
+        warnings = []
         if release and nonempty_text(state["design_revision"]):
-            folder = release_dir(args.manufacturing_dir, state["design_revision"])
-            bom_errors, bom_warnings = release_bom_problems(folder)
-            for warning in bom_warnings:
-                print(f"WARNING: {warning}")
-            errors += naming_errors(folder, state) + bom_errors + manifest_errors(folder)
+            folder = release_dir(manufacturing, state["design_revision"])
+            bom_errors, warnings = release_bom_problems(folder)
+            errors += (naming_errors(folder, state) + deliverable_errors(folder, state) + bom_errors
+                       + manifest_errors(folder) + manufacturing_review_errors(folder, state))
         label = "LAYOUT" if layout else ("RELEASE" if release else "EXPORT")
-        if errors:
-            print(f"{label} BLOCKED:", file=sys.stderr)
-            for error in errors:
-                print(f"- {error}", file=sys.stderr)
+        if _print_problems(label, errors, warnings):
             return 1
         print(f"{label} READY: recorded approvals and review revisions are consistent.")
         return 0
+    except InputError as exc:
+        print(f"INPUT ERROR: {exc}", file=sys.stderr)
+        return 2
     except StateError as exc:
         print(f"INVALID STATE: {exc}", file=sys.stderr)
         return 2

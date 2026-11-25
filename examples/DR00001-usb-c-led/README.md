@@ -9,7 +9,10 @@
 | Doldurulmuş proje bilgileri ve kararlar (kimlik, profil, hedef, silkscreen, açık kararlar) | [Project-README.md](Project-README.md) |
 | Tüm kapıları geçmiş iş akışı kaydı | [workflow-state.json](workflow-state.json) |
 | Revizyon geçmişi | [REVISION-HISTORY.md](REVISION-HISTORY.md) |
+| Örnek review bulguları (F-001 …) | [REVIEW_LOG.md](REVIEW_LOG.md) |
 | Ana ve A varyantı BOM/PnP, fab notu, manifest | [Manufacturing/R01/](Manufacturing/R01/) |
+
+Teslim listesi bilerek `BOM PnP FAB` tutuldu. Gerçek bir projede `Gerber SCH ASSY` de olur; örnekte EDA dosyası olmadığı için sahte Gerber veya PDF eklenmedi.
 
 Bu örneği yerelde kontrol et:
 
@@ -17,6 +20,7 @@ Bu örneği yerelde kontrol et:
 python scripts/projectctl.py status        --state examples/DR00001-usb-c-led/workflow-state.json --manufacturing-dir examples/DR00001-usb-c-led/Manufacturing
 python scripts/projectctl.py check-bom     --state examples/DR00001-usb-c-led/workflow-state.json --manufacturing-dir examples/DR00001-usb-c-led/Manufacturing
 python scripts/projectctl.py check-release --state examples/DR00001-usb-c-led/workflow-state.json --manufacturing-dir examples/DR00001-usb-c-led/Manufacturing
+python scripts/projectctl.py next          --state examples/DR00001-usb-c-led/workflow-state.json --manufacturing-dir examples/DR00001-usb-c-led/Manufacturing
 python scripts/projectctl.py name --variant A --state examples/DR00001-usb-c-led/workflow-state.json
 ```
 

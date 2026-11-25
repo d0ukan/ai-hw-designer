@@ -1,6 +1,7 @@
 Designator,Qty,Comment,Description,Footprint,MPN,Manufacturer,Alternate MPN,Alternate Manufacturer,LCSC Part #,Supplier,Supplier PN,DNP,Notes
 J1,1,USB-C 2.0 receptacle,USB-C güç girişi (yalnız VBUS/GND/CC),USB-C 16P SMD,USB4105-GF-A,GCT,,,,,,,"muadil yok: footprint üreticiye özel"
 R1 R2,2,5.1k,CC1/CC2 pull-down (sink),0402,RC0402FR-075K1L,Yageo,CRCW04025K10FKED,Vishay,,,,,
-R3,1,1k,LED akım sınırlama,0402,RC0402FR-071KL,Yageo,CRCW04021K00FKED,Vishay,,,,,
-R4,1,0R,LED yolunu ölçüm için ayırma seçeneği (SCH-07),0402,RC0402JR-070RL,Yageo,,,,,,Yes,opsiyon yeri
-D1,1,Green,Güç LED'i (yeşil) — A varyantı,0603,LTST-C191KGKT,Lite-On,150060GS75000,Würth Elektronik,,,,,
+R3,1,1.5k,LED akım sınırlama (~2 mA),0402,RC0402FR-071K5L,Yageo,CRCW04021K50FKED,Vishay,,,,,
+R4,1,0R,LED seri köprüsü; akım ölçmek için sökülür (takılı),0402,RC0402JR-070RL,Yageo,CRCW04020000Z0ED,Vishay,,,,,
+C1,1,10uF,VBUS bulk opsiyonu (SCH-07); uzun kabloda takılır,0805,GRM21BR61A106KE19L,Murata,CL21A106KPFNNNE,Samsung,,,,Yes,opsiyon yeri
+D1,1,Green,Güç LED'i (yeşil) — A varyantı,0603,LTST-C191KGKT,Lite-On,,,,,,,"muadil yok: yaygın yeşil 0603 LED'ler InGaN (Vf ~3 V), R3 değişmeli"

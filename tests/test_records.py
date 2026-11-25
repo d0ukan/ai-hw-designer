@@ -68,13 +68,13 @@ class RecordFunctionTests(unittest.TestCase):
             projectctl.record_review(pending_state(), "pcb", "PASS", "R1")
 
     def test_block_and_unblock(self):
-        state = projectctl.block(pending_state(), "REV-001")
-        projectctl.block(state, "REV-001")  # no duplicate
-        self.assertEqual(state["blocking_issues"], ["REV-001"])
-        projectctl.unblock(state, "REV-001")
+        state = projectctl.block(pending_state(), "F-001")
+        projectctl.block(state, "F-001")  # no duplicate
+        self.assertEqual(state["blocking_issues"], ["F-001"])
+        projectctl.unblock(state, "F-001")
         self.assertEqual(state["blocking_issues"], [])
         with self.assertRaises(StateError):
-            projectctl.unblock(state, "REV-404")
+            projectctl.unblock(state, "F-404")
 
     def test_set_field_and_clear(self):
         state = projectctl.set_field(pending_state(), "design_revision", "R1")
@@ -141,11 +141,22 @@ class CliAndManifestTests(unittest.TestCase):
             ("approve", "G1", "--revision", "R1", "--evidence", "e"),
             ("review", "schematic", "PASS", "--revision", "R1", "--evidence", "e"),
             ("review", "pcb", "PASS", "--revision", "R1", "--evidence", "e"),
-            ("review", "manufacturing", "PASS", "--revision", "R1", "--evidence", "e"),
+            ("deliverables", "BOM", "PnP"),
         ]
         for step in steps:
             code, out = self.run_cli(*step)
             self.assertEqual(code, 0, out)
+
+    def release_files(self, folder=None):
+        release = folder or self.mfg / "R1"
+        release.mkdir(parents=True, exist_ok=True)
+        (release / "DR00627-R1_BOM.csv").write_text(BOM, encoding="utf-8")
+        (release / "DR00627-R1_PnP.csv").write_text(PNP, encoding="utf-8")
+        return release
+
+    def review_manufacturing(self):
+        code, out = self.run_cli("review", "manufacturing", "PASS", "--revision", "R1", "--evidence", "e")
+        self.assertEqual(code, 0, out)
 
     def test_cli_writes_valid_lf_json(self):
         code, _ = self.run_cli("set", "project_name", "Sensör kartı")
@@ -158,17 +169,19 @@ class CliAndManifestTests(unittest.TestCase):
         self.approve_everything()
         self.assertEqual(self.run_cli("check-export")[0], 0)
 
-        release = self.mfg / "R1"
-        (release / "DR00627-R1_Gerber").mkdir(parents=True)
+        release = self.release_files()
+        (release / "DR00627-R1_Gerber").mkdir()
         (release / "DR00627-R1_Gerber" / "top.gbr").write_bytes(b"G04 test*\n")
-        (release / "DR00627-R1_BOM.csv").write_text(BOM, encoding="utf-8")
-        (release / "DR00627-R1_PnP.csv").write_text(PNP, encoding="utf-8")
 
+        code, out = self.run_cli("review", "manufacturing", "PASS", "--revision", "R1", "--evidence", "e")
+        self.assertEqual(code, 2)
+        self.assertIn("Write a valid manifest", out)
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
         self.assertIn("Manifest missing", out)
 
         self.assertEqual(self.run_cli("manifest")[0], 0)
+        self.review_manufacturing()
         self.assertEqual(self.run_cli("check-release")[0], 0)
 
         (release / "DR00627-R1_BOM.csv").write_text(BOM + "C9,1,,,,X,,,,,,,,\n", encoding="utf-8")
@@ -179,16 +192,102 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertIn("File not in manifest: extra.txt", out)
         self.assertIn("fitted part C9 missing from PnP", out)
 
+    def test_regenerated_manifest_needs_new_review(self):
+        self.approve_everything()
+        release = self.release_files()
+        self.run_cli("manifest")
+        self.review_manufacturing()
+        self.assertEqual(self.run_cli("check-release")[0], 0)
+        (release / "DR00627-R1_PnP.csv").write_text(PNP + "\n", encoding="utf-8")
+        self.run_cli("manifest")
+        code, out = self.run_cli("check-release")
+        self.assertEqual(code, 1)
+        self.assertIn("changed after the review", out)
+
+    def test_missing_deliverable_blocks_release(self):
+        self.approve_everything()
+        self.run_cli("deliverables", "BOM", "PnP", "Gerber")
+        self.release_files()
+        self.run_cli("manifest")
+        self.review_manufacturing()
+        code, out = self.run_cli("check-release")
+        self.assertEqual(code, 1)
+        self.assertIn("Deliverable missing: DR00627-..._Gerber", out)
+
+    def test_check_bom_requires_a_bom_in_release(self):
+        self.approve_everything()
+        (self.mfg / "R1").mkdir(parents=True)
+        code, out = self.run_cli("check-bom")
+        self.assertEqual(code, 1)
+        self.assertIn("No *_BOM.csv found", out)
+
+    def test_next_command_walks_the_workflow(self):
+        self.assertIn("set project_name", self.run_cli("next")[1])
+        self.approve_everything()
+        self.assertIn("check-bom", self.run_cli("next")[1])
+        self.release_files()
+        self.assertIn("manifest", self.run_cli("next")[1])
+        self.run_cli("manifest")
+        self.assertIn("review manufacturing PASS", self.run_cli("next")[1])
+        self.review_manufacturing()
+        self.assertIn("nothing missing", self.run_cli("next")[1])
+
+    def test_corrupt_manifest_and_csv_fail_cleanly(self):
+        self.approve_everything()
+        release = self.release_files()
+        (release / "MANIFEST.sha256").write_bytes(b"\xff\xfe")
+        code, out = self.run_cli("check-release")
+        self.assertEqual(code, 1)
+        self.assertIn("Manifest unreadable", out)
+        (release / "MANIFEST.sha256").write_text("0" * 64 + "  ../../x.json\n", encoding="utf-8")
+        self.assertIn("Malformed manifest line", self.run_cli("check-release")[1])
+        bad = self.root / "bad.csv"
+        bad.write_bytes(b"Designator,Qty\n\xfe\xfc,1\n")
+        code, out = self.run_cli("check-bom", str(bad))
+        self.assertEqual(code, 2)
+        self.assertIn("not UTF-8", out)
+        bad.write_text("Designator;Qty;MPN\nR1;1;X\n", encoding="utf-8")
+        self.assertIn("separated by ';'", self.run_cli("check-bom", str(bad))[1])
+
+    def test_bom_parsing_details(self):
+        bom = self.root / "b.csv"
+        pnp = self.root / "p.csv"
+        bom.write_text(BOM.replace("Designator,", "Designator ,").replace("C1 C2,2", "C1-C2,2") + ",,,,\n",
+                       encoding="utf-8")
+        pnp.write_text(PNP + "\n,,,,\n", encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom), "--pnp", str(pnp))
+        self.assertEqual(code, 0, out)
+        pnp.write_text(PNP.replace("1.0,2.0", "nan,inf") + ",1,1,Top,0\n", encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom), "--pnp", str(pnp))
+        self.assertIn("not a finite number", out)
+        self.assertIn("p.csv:5: empty Designator", out)
+
+    def test_lowercase_bom_file_is_found(self):
+        self.approve_everything()
+        release = self.mfg / "R1"
+        release.mkdir(parents=True)
+        (release / "DR00627-R1_bom.csv").write_text("Designator,Qty\nR1,1\n", encoding="utf-8")
+        code, out = self.run_cli("check-bom")
+        self.assertIn("missing columns", out)
+
+    def test_state_option_before_subcommand(self):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = projectctl.main(["--state", str(self.state_path), "--repo-root", str(self.root), "validate"])
+        self.assertEqual(code, 0, err.getvalue())
+
     def test_nested_release_files_need_prefix(self):
         self.approve_everything()
         board = self.mfg / "R1" / "MAIN"
         board.mkdir(parents=True)
         (board / "DR00627-R1_BOM.csv").write_text(BOM, encoding="utf-8")
         (board / "notes.txt").write_text("x", encoding="utf-8")
+        (board / "Thumbs.db").write_text("x", encoding="utf-8")
         self.run_cli("manifest")
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
         self.assertIn("project code DR00627: MAIN/notes.txt", out)
+        self.assertNotIn("Thumbs.db", out)
         self.assertNotIn("MAIN/DR00627-R1_BOM.csv", out.split("Manifest")[0])
 
     def test_reserved_revision_name_rejected(self):
@@ -241,6 +340,7 @@ class CliAndManifestTests(unittest.TestCase):
         release.mkdir(parents=True)
         (release / "bom.csv").write_text("x", encoding="utf-8")
         self.run_cli("manifest")
+        self.review_manufacturing()
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
         self.assertIn("does not start with project code DR00627: bom.csv", out)
@@ -315,6 +415,42 @@ class GitBindingTests(unittest.TestCase):
         self.assertIn("PCB review: design files changed", out)
         self.assertIn("G1 export approval: design files changed", out)
         self.assertNotIn("Schematic review: design files changed", out)
+
+    def test_untracked_design_file_blocks_layout(self):
+        self.approve()
+        (self.root / "Hardware" / "sub").mkdir()
+        (self.root / "Hardware" / "sub" / "extra.kicad_sch").write_text("x\n", encoding="utf-8")
+        code, out = self.run_cli("check-layout")
+        self.assertEqual(code, 1)
+        self.assertIn("Schematic review: design files changed", out)
+
+    def test_outjob_change_is_not_a_design_change(self):
+        self.approve()
+        (self.root / "Hardware" / "out.OutJob").write_text("x\n", encoding="utf-8")
+        self.assertEqual(self.run_cli("check-export")[0], 0)
+
+    def test_review_refused_with_uncommitted_design(self):
+        self.approve()
+        (self.root / "Hardware" / "board.kicad_pcb").write_text("v3\n", encoding="utf-8")
+        code, out = self.run_cli("review", "pcb", "PASS", "--revision", "R1", "--evidence", "e")
+        self.assertEqual(code, 2)
+        self.assertIn("commit the reviewed design first", out)
+
+    def test_invalid_commit_value_rejected(self):
+        self.approve()
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        state["reviews"]["schematic"]["commit"] = "--output=PWNED.txt"
+        self.state_path.write_text(json.dumps(state), encoding="utf-8")
+        code, out = self.run_cli("check-layout")
+        self.assertEqual(code, 2)
+        self.assertIn("hexadecimal git commit", out)
+        self.assertFalse((self.root / "PWNED.txt").exists())
+
+    def test_default_repo_root_is_the_project(self):
+        (self.root / "project").mkdir()
+        state_path = self.root / "project" / "workflow-state.json"
+        state_path.write_text(json.dumps(pending_state()), encoding="utf-8")
+        self.assertEqual(projectctl.default_repo_root(state_path), self.root.resolve())
 
     def test_schematic_change_blocks_layout(self):
         self.approve()

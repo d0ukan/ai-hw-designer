@@ -7,7 +7,9 @@ Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**
 1. **Hepsini okuma.** Bu dosyayı, `Hardware-Rules.md` dizinini ve yalnızca `rules/00-intake.md` dosyasını oku. Diğer `rules/` bölümlerini ilgili aşamaya gelince aç; koşullu bölümler (05 RF/high-speed, 08 Havacılık, 10 Batarya) ilgisizse hiç açma. Dolu bir örnek için `examples/DR00001-usb-c-led/` yeterlidir.
 2. **Kullanıcının kendi kopyası.** Kullanıcıya GitHub'da **Use this template** (veya ZIP indirip yeni repo) ile kendi kopyasını oluşturmasını öner. Bu şablon repoya proje dosyası yazma veya push etme.
 3. **Dosya/araç erişimi yoksa (web sohbeti).** Manager olarak çalış: soruları sor, kararları sohbet içinde `Project-README.md` tablo biçiminde tut ve kullanıcının kopyasına yapıştıracağı içerikleri ver. `projectctl.py` komutlarını kullanıcının çalıştırması için yaz ve çıktısını iste; çalışmamış bir kontrolü geçmiş gösterme. EDA erişimi yoksa şematik blokları, net listesi, BOM ve yerleşim talimatlarını ver; çizimi kullanıcı EDA'da yapar.
-4. **İlk sorular (tek mesajda, kısa).** Anlatım tercihi (INT-46) → proje adı, kodu, revizyonu, varyant (INT-49) → kartın amacı → kalite profili (INT-47) → tasarım hedefi (INT-48) → ilgili teknik sorular. Kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51).
+4. **Web sohbeti akışı.** Her aşamada kullanıcıdan yalnızca o aşamanın dosyasını iste (bkz. `Hardware-Rules.md` "Aşamaya göre okuma seti"). Kullanıcıya geri vereceklerin: güncellenmiş `Project-README.md` tabloları, çalıştıracağı `projectctl.py` komutları ve EDA'da yapacağı işler. Kullanıcı `projectctl.py next` ve `status` çıktısını yapıştırırsa oradan devam et.
+5. **Dur koşulları (AI-09).** Şebeke/yüksek gerilim, çok hücreli lityum batarya, hastaya bağlı medikal cihaz veya Havacılık DAL A/B gibi durumlarda tasarıma devam edebilirsin ama ilgili kapılarda yetkin bir insan mühendisin onayını zorunlu iste ve bunu açıkça yaz.
+6. **İlk sorular (tek mesajda, kısa).** Anlatım tercihi (INT-46) → proje adı, kodu, revizyonu, varyant (INT-49) → kartın amacı → kalite profili (INT-47) → tasarım hedefi (INT-48) → ilgili teknik sorular. Kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51).
 
 ## Önce mevcut durum
 
@@ -45,11 +47,11 @@ Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**
 - G1: Üretim dosyalarını oluşturmak için geçerli tasarım revizyonuna ait açık kullanıcı onayı gereklidir.
 - G1 olmadan `Manufacturing/` içinde Gerber, drill, BOM, PnP veya diğer release çıktısı oluşturma.
 - Export öncesinde `python scripts/projectctl.py check-export` çalıştır; başarısızsa dur ve eksik bilgiyi bildir.
-- Üretim dosyalarını Reviewer doğruladıktan sonra `check-release` çalıştır.
+- Release sırası (REL-04): Manager `deliverables` kaydeder → Designer çıktıları üretir, `check-bom` ve en son `manifest` çalıştırır → Reviewer inceler → Manager `review manufacturing PASS` kaydeder → `check-release`.
 - Onay ve review kayıtlarını `python scripts/projectctl.py approve|review|set|block|unblock` komutlarıyla yaz; `workflow-state.json` dosyasını elle düzenleme.
 - Review veya onay kaydetmeden önce `Hardware/` tasarım dosyalarını commit et. Kayıt o anın git commit'ini saklar; sonra tasarım değişirse `check-export`/`check-release` durur ve yeniden review ister.
 - Release öncesinde `python scripts/projectctl.py check-bom` ile BOM/PnP tutarlılığını kontrol et.
-- Release öncesinde `python scripts/projectctl.py manifest` ile `Manufacturing/<design_revision>/MANIFEST.sha256` oluştur; `check-release` bu manifesti doğrular.
+- `MANIFEST.sha256` dosyasını Designer yazar; manufacturing PASS kaydı onun hash'ini saklar. Manifest sonradan değişirse `check-release` yeniden review ister. Sıradaki adım ve komut: `python scripts/projectctl.py next`.
 - Onayları yalnızca gerçek kullanıcı kararına dayanarak kaydet. Reviewer PASS durumunu ve revizyonunu gerçek incelemeye dayanarak doğrular. Önceki onay veya review yeni revizyonu otomatik olarak kapsamaz.
 - Sipariş, yayınlama ve harici üretim işlemleri ayrı kullanıcı yetkisi gerektirir.
 

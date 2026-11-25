@@ -63,6 +63,8 @@ class ProjectGateTests(unittest.TestCase):
         state["reviews"]["manufacturing"] = {
             "status": "PASS", "revision": "R1", "evidence": "test fixture manufacturing review"
         }
+        self.assertIn("Deliverables are not set", " ".join(gate_errors(state, release=True)))
+        state["deliverables"] = ["BOM", "PnP"]
         self.assertEqual(gate_errors(state, release=True), [])
 
     def test_layout_can_start_without_pcb_review_or_export_approval(self):

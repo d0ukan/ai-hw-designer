@@ -10,30 +10,49 @@
 - `pcb_input_approval`: G0.5, kullanıcının PCB girdileri için gerçek onayı, ilgili PCB girdi revizyonu ve onay referansı.
 - `reviews`: bağımsız schematic/PCB/manufacturing inceleme sonucu, ilgili tasarım revizyonu ve `REVIEW_LOG.md` kanıt referansı. Şematik değişmemişse Reviewer final revizyonda bu durumu diff ile doğrulayabilir.
 - `export_approval`: G1 kullanıcının ilgili tasarım revizyonu için açık üretim dosyası hazırlama onayı ve referansı.
-- `blocking_issues`: açık CRITICAL/MAJOR bulgu kimlikleri veya ilgili engeller.
+- `blocking_issues`: açık CRITICAL/MAJOR bulgu kimlikleri (`F-001` biçimi) veya ilgili engeller.
+- `deliverables`: release'te bulunması gereken çıktı listesi (INT-25); `projectctl.py deliverables ...` ile yazılır.
 
 Kayıtlar isteğe bağlı `recorded_on` (UTC tarih), `recorded_by` ve `commit` alanlarını da taşıyabilir; `projectctl.py` komutları bunları otomatik doldurur.
 
-**Commit bağı:** Proje bir git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Aynı `R01` içinde tasarım değişirse `check-export`/`check-release` bunu yakalar: şematik review'dan sonra şematik dosyaları (`*.kicad_sch`, `*.SchDoc`, `*.sch`), PCB/manufacturing review ve G1'den sonra `Hardware/` altındaki herhangi bir dosya değiştiyse kapı kapanır ve yeniden review gerekir. Bu yüzden review/onay kaydından önce tasarım dosyalarını commit et. Git yoksa kontrol atlanır.
+**Commit bağı:** Proje bir git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Aynı `R01` içinde tasarım değişirse `check-export`/`check-release` bunu yakalar: şematik review'dan sonra şematik dosyaları (`*.kicad_sch`, `*.SchDoc`, `*.sch`), PCB/manufacturing review ve G1'den sonra `Hardware/` altındaki herhangi bir dosya değiştiyse kapı kapanır ve yeniden review gerekir. Git'e eklenmemiş yeni tasarım dosyaları da değişiklik sayılır. Tasarım commit edilmeden `review ... PASS` veya `approve G1` kaydı reddedilir. EDA'nın export sırasında yeniden yazdığı `*.OutJob` dosyaları değişiklik sayılmaz. Git yoksa kontrol atlanır.
+
+**Teslim listesi ve manifest:** `deliverables` alanı (ör. `BOM PnP Gerber SCH ASSY FAB`) release'te zorunludur; her öğe `<kod>-..._<öğe>.*` dosyası veya klasörü olarak bulunmalıdır. `review manufacturing PASS` geçerli bir manifest ister ve onun SHA-256 değerini `manifest_sha256` olarak saklar.
 
 ## Kayıt komutları
 
 JSON'u elle düzenleme; komutlar dosyayı doğrulayıp güvenli şekilde yazar:
 
+Tam sıra (örnek revizyon `R01`; `--revision` değeri her zaman `design_revision` ile aynı olmalı). Her an sıradaki eksik adımı ve komutu görmek için `python scripts/projectctl.py next`.
+
 ```bash
+# Başlangıç (Manager)
 python scripts/projectctl.py set project_name "Sensör kartı"
 python scripts/projectctl.py set project_code DR00627
 python scripts/projectctl.py set design_revision R01
-python scripts/projectctl.py name               # DR00627-R01
-python scripts/projectctl.py name --variant A   # DR00627-AV-R01
 python scripts/projectctl.py set requirements_revision REQ-1
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı, 2026-11-25 sohbet" --by "<isim>"
-python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
-python scripts/projectctl.py block REV-001
-python scripts/projectctl.py unblock REV-001
-python scripts/projectctl.py check-bom          # Manufacturing/<rev>/ içindeki tüm BOM/PnP
+# Şematik → review (tasarımı önce commit et)
+python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md#R01-SCH"
+# G0.5 → layout
+python scripts/projectctl.py set pcb_requirements_revision PCB-1
+python scripts/projectctl.py approve G0.5 --revision PCB-1 --evidence "Kullanıcı PCB onayı"
+python scripts/projectctl.py check-layout
+# PCB review → G1
+python scripts/projectctl.py review pcb PASS --revision R01 --evidence "REVIEW_LOG.md#R01-PCB"
+python scripts/projectctl.py approve G1 --revision R01 --evidence "Kullanıcı export onayı"
+python scripts/projectctl.py check-export
+# Çıktılar (REL-04)
+python scripts/projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB
+python scripts/projectctl.py check-bom            # Designer
+python scripts/projectctl.py manifest             # Designer, son export adımı
+python scripts/projectctl.py review manufacturing PASS --revision R01 --evidence "REVIEW_LOG.md#R01-MFG"
+python scripts/projectctl.py check-release
+# Diğer
+python scripts/projectctl.py name --variant A     # DR00627-AV-R01
 python scripts/projectctl.py check-bom X_BOM.csv --pnp X_PnP.csv
-python scripts/projectctl.py manifest
+python scripts/projectctl.py block F-001
+python scripts/projectctl.py unblock F-001
 ```
 
 `manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse, dosyalar değişmişse, bir dosyanın adı proje koduyla başlamıyorsa (önekli klasörlerin içi, ör. `DR00627-R01_Gerber/`, serbesttir) veya `check-bom` hata bulursa başarısız olur. `check-bom` BOM ile PnP designator'larını, Qty sayılarını, DNP parçaların PnP'de olmamasını ve MPN'leri kontrol eder; muadil eksikse uyarı verir.

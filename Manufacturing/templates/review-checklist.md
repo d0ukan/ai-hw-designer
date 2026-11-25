@@ -20,4 +20,4 @@ Kısa kontrol listesi; ayrıntı ilgili `rules/` bölümündedir. Bulguları `RE
 - [ ] Dosya adları önekle uyumlu, her varyantın BOM/PnP'si ayrı (REL-03)
 - [ ] `projectctl.py check-bom` temiz; muadiller kontrol edildi (DFM-14)
 - [ ] Gerber/drill katmanları ve kart sınırı doğru (VER-04); `_ASSY.pdf` ve fab notu var
-- [ ] `projectctl.py manifest` ve `check-release` başarılı (REL-04)
+- [ ] Designer'ın yazdığı `MANIFEST.sha256` incelenen dosyalarla aynı; PASS'ı Manager kaydeder, sonra `check-release` çalışır (REL-04)

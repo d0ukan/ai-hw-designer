@@ -1,0 +1,246 @@
+# Hardware for Anything · AI'dan Bağımsız Donanım Tasarım Şablonu
+
+[English](README.md) · **Türkçe**
+
+**Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
+
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.14 ([değişiklikler](CHANGELOG.md))
+
+Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları Türkçedir.
+
+| Rol | Taşınabilir rol tanımı | Görev |
+| :--- | :--- | :--- |
+| Hardware Manager | `agents/Manager.md` | Gereksinimler, kararlar, görevler ve onaylar |
+| Hardware Designer | `agents/Designer.md` | Şematik, footprint, 3D model, PCB ve düzeltmeler |
+| Hardware Reviewer | `agents/Reviewer.md` | Bağımsız tasarım ve üretim dosyası doğrulaması |
+
+## AI sohbetinde repo linkiyle başlamak
+
+En kısa yol: herhangi bir AI asistanına repo linkini verip şunu yaz:
+
+> Bu repoyu incele (önce AGENTS.md ve llms.txt). Bu repoyu kullanarak bir kart tasarlamak istiyorum.
+
+AI şunları yapar ([AGENTS.md](AGENTS.md), "Repo linkiyle başlayan AI"):
+- Tüm kuralları baştan okumaz; dizini ve aşamaya göre okuma setini kullanır. Bu token ve kredi tasarrufu sağlar.
+- Senden GitHub'da **Use this template** ile kendi kopyanı oluşturmanı ister.
+- Dosya erişimi yoksa (web sohbeti) kararları sohbette tutar, dosyalara yapıştıracağın içerikleri ve çalıştıracağın komutları verir; çalışmamış kontrolü geçmiş göstermez. `projectctl.py next` çıktısını yapıştırırsan oradan devam eder.
+- İlk soruları tek mesajda sorar: anlatım tercihi → proje adı/kodu/revizyonu → amaç → kalite profili → tasarım hedefi.
+- Şebeke/yüksek gerilim, çok hücreli lityum, medikal veya Havacılık DAL A/B gibi durumlarda insan mühendis onayını zorunlu tutar (AI-09).
+
+Dosya ve EDA erişimi olan bir araçta (Claude Code, Codex, Gemini CLI vb.) kendi kopyanı açıp aşağıdaki hızlı başlangıçla devam et.
+
+## Hızlı başlangıç
+
+1. Bu repoyu GitHub'da **Use this template** ile kopyala (veya ZIP'i aç). Repo sahibi bu düğmeyi **Settings → General → Template repository** ile açar.
+2. Proje klasörünü kullandığın AI geliştirme aracında aç. Dosya ve EDA erişimini, yetkileri ve ajan desteğini kontrol et.
+3. Kullandığın AI'a şu talimatı ver:
+
+   > AGENTS.md ve agents/Manager.md talimatlarını uygula. Project-README.md ve project/workflow-state.json dosyalarındaki mevcut durumu kontrol et. Yeni projeyse Project Intake sorularını sor; mevcut projeyse kaldığımız yerden devam et. Onayım gelmeden ilgili tasarım aşamasına başlama.
+
+4. Manager kararları `Project-README.md` dosyasına, onay/review durumunu `project/workflow-state.json` dosyasına kaydeder. G0 öncesinde gereksinimleri, layout öncesinde G0.5 ile PCB girdilerini onaylatır.
+5. Aktif görev gerektiğinde Designer veya Reviewer'a verilir. Sıradaki adım ve komutu: `python scripts/projectctl.py next`.
+
+## Proje kimliği ve çıktı isimleri
+
+Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-49). Kod biçimini kullanıcı belirler. Tüm çıktılar bu kimlikle adlandırılır:
+
+| Durum | Önek | Örnek dosyalar |
+| :--- | :--- | :--- |
+| Revizyon | `DR00627-R01` | `DR00627-R01_BOM.csv`, `_PnP.csv`, `_SCH.pdf`, `_ASSY.pdf`, `_Gerber.zip` |
+| Varyant A | `DR00627-AV-R01` | `DR00627-AV-R01_BOM.csv`, `DR00627-AV-R01_PnP.csv` |
+
+- Bakır, outline veya stack-up değişirse yeni **revizyon**; sadece takılan parçalar değişirse **varyant** (REL-01).
+- Revizyon atlatılırken kullanıcıya "ne değişti, neden?" sorulur ve `REVISION-HISTORY.md` dosyasına yazılır (REL-02).
+- Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
+- Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; kart üzerindeki kararlar en geç G0.5'te kesinleşir (INT-51).
+- Silkscreen soruları (PCB-17…21): logo/ikon, kart kodu (silk/bakır, top/bottom), konnektör etiketi (pin no/net adı), designator (açık/gizli, boyut, konum), imza/easter egg. Silkscreen her yüzde çakışmasız olur (LAY-30).
+- Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir; bring-up ve review checklist'leri de var.
+
+## Kalite profilleri
+
+Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini belirler; kullanıcı her varsayılanı değiştirebilir.
+
+| Profil | Ne için | Ne değişir |
+| :--- | :--- | :--- |
+| **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
+| **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
+| **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
+
+**Tasarım hedefi de seçilir (INT-48):** Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli. Varsayılan öneri: Hobi → Maliyet, Endüstriyel → Dengeli, Havacılık/askeri → Performans (kullanıcı maliyet hedefi vermediyse). Hiçbir hedefte güvenilirlik ve doğrulama maliyet için kısılmaz.
+
+**RF, batarya ve Havacılık isteğe bağlıdır.** İlgisizse kuralları ve soruları tamamen atlanır. RF varsa band sorulur: RF-A (< 1 GHz), RF-B (1–6 GHz), RF-C (> 6 GHz).
+
+## Proje yapısı
+
+| Dosya / klasör | Amaç |
+| :--- | :--- |
+| `README.md`, `README.tr.md` | İngilizce ve Türkçe genel bakış |
+| `AGENTS.md` | Tüm AI sistemleri için ortak çalışma talimatları; repo linkiyle başlayan AI bölümü |
+| `llms.txt` | AI araçları için giriş dosyaları listesi |
+| `agents/` | Platformdan bağımsız rol ve handoff talimatları |
+| `.codex/`, `CLAUDE.md`, `.claude/agents/`, `GEMINI.md` | İsteğe bağlı Codex, Claude Code ve Gemini CLI adaptörleri |
+| `Hardware-Rules.md` | Kural dizini ve aşamaya göre okuma seti |
+| `rules/` | Bölüm bölüm teknik kurallar (00 intake … 10 batarya) |
+| `Hardware-Roles.md` | Roller, iş akışı, review ve token politikası |
+| `examples/` | Dolu örnek proje (`DR00001` USB-C LED kartı); CI her push'ta kontrol eder |
+| `Hardware-Library/` | Doğrulanmış symbol, footprint, 3D model ve devre blokları |
+| `Hardware/` | Native EDA projesi (KiCad, Altium vb.) |
+| `Mechanical/` | Projeye özel mekanik kaynaklar ve isteğe bağlı komple CAD assembly |
+| `Manufacturing/` | Onay sonrası üretilen dosyalar; `templates/` içinde boş BOM, PnP, şematik çıktı, montaj çizimi, fab notu ve checklist'ler |
+| `Project-README.md` | Proje bilgi/ister/karar şablonu; Manager güncel tutar |
+| `REVIEW_LOG.md` | Bağımsız review bulguları (`F-001` …) |
+| `REVISION-HISTORY.md` | Revizyon geçmişi: ne değişti, neden, errata |
+| `project/workflow-state.json` | Makine tarafından kontrol edilebilir iş akışı durumu |
+| `scripts/projectctl.py` | Modelsiz onay, commit bağı, BOM/PnP, teslim listesi ve release kontrolü; `next` |
+| `scripts/check_repo.py` | Şablon tutarlılık kontrolü: kural kimlikleri, dizin aralıkları, linkler, sürümler, CSV |
+| `tests/`, `.github/workflows/` | Otomatik testler ve CI |
+| `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md` | Sürüm geçmişi, MIT lisansı, katkı kuralları |
+
+## İş akışı
+
+```mermaid
+flowchart TD
+    I["Project Intake"] --> A{"Kullanıcı onayı G0"}
+    A -->|"Onaylandı"| D["Designer: şematik"]
+    D --> S["Reviewer: şematik kontrolü"]
+    S -->|"REWORK"| D
+    S -->|"PASS"| B{"PCB Intake onayı G0.5"}
+    B -->|"Onaylandı"| P["Designer: PCB"]
+    P --> R["Reviewer: PCB kontrolü"]
+    R -->|"REWORK"| P
+    R -->|"PASS"| G{"Kullanıcı export onayı G1"}
+    G -->|"Onaylandı"| E["Designer: çıktılar + check-bom + manifest"]
+    E --> V["Reviewer: üretim kontrolü"]
+    V -->|"REWORK: yalnız çıktı hatası"| E
+    V -->|"REWORK: tasarım değişmeli"| P
+    V -->|"PASS"| H["Manager: review kaydı + check-release + teslim"]
+```
+
+Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK` çıkarsa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Üretim kontrolünde sorun yalnız çıktıdaysa sadece çıktılar yeniden üretilir; tasarım değişmeliyse PCB aşamasına dönülür ve G1 yeniden alınır. `BLOCKED` durumunda eksik bilgi, araç veya onay gelene kadar akış durur.
+
+**Release sırası (REL-04):** Manager teslim listesini kaydeder (`deliverables`) → Designer çıktıları üretir, `check-bom` ve en son `manifest` çalıştırır → Reviewer inceler → Manager `review manufacturing PASS` kaydeder (manifest hash'i saklanır) → `check-release`.
+
+## Token ve fiyat/performans
+
+- Ana oturum Manager'dır; üçüncü bir alt ajan başlatılmaz.
+- AI her aşamada yalnızca `Hardware-Rules.md` içindeki "Aşamaya göre okuma seti" dosyalarını okur.
+- Basit işler önce deterministik araç ve script ile çözülür (`projectctl.py`, `check-bom`).
+- Varsayılan model/efor düşük maliyetlidir; zor teknik işler için uygun model seçilir.
+- Doğrulanmış kütüphane girişleri yeniden kullanılır; kontrol raporları kısa tutulur.
+
+### Model seçimi ve platform adaptörleri
+
+Model adları ve sağlayıcı sabitlenmemiştir. Economy, Standard ve Advanced seviyelerini mevcut istemcideki seçeneklere göre eşleştir.
+
+| Ortam | Kullanım |
+| :--- | :--- |
+| Codex | İsteğe bağlı `.codex/` ayarları; Manager ana oturum, Designer/Reviewer custom agents. |
+| Claude Code | `CLAUDE.md` ortak kuralları içe aktarır; `.claude/agents/` aynı uzman rollerine yönlendirir. |
+| Gemini CLI | `GEMINI.md` ortak kuralları içe aktarır. |
+| DeepSeek ve diğerleri | İstemci ajan/araç desteği sağlıyorsa aynı rol tanımlarını kullan; aksi halde [agents/README.md](agents/README.md) içindeki manuel görev aktarımı. |
+
+Reviewer'ın yazmaması bir rol kuralıdır, ayrı bir işletim sistemi sandbox'ı değildir. Resmi adaptör referansları: [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), [Claude Code project instructions](https://code.claude.com/docs/en/memory), [Gemini CLI context files](https://geminicli.com/docs/cli/gemini-md/).
+
+### AI değiştirirken kaldığın yerden devam et
+
+Yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/workflow-state.json`, `REVIEW_LOG.md` üzerinden ilerle; `projectctl.py next` sıradaki adımı söyler. Bir modeli Designer, başka bir modeli Reviewer olarak kullanabilirsin; önceki onaylar ve gerçek review kayıtları korunur.
+
+## EDA & MCP entegrasyonu
+
+Şablon belirli bir EDA veya MCP sunucusuna bağımlı değildir. MCP, native CLI, scripting/API veya GUI kullanılabilir. Şablon hiçbir MCP eklentisini otomatik kurmaz.
+
+| EDA | Entegrasyon seçenekleri ve kaynaklar |
+| :--- | :--- |
+| KiCad | [Native CLI](https://docs.kicad.org/10.0/en/cli/cli.html), [IPC API](https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/index.html), [KiCAD-MCP-Server](https://github.com/mixelpixx/KiCAD-MCP-Server), [Seeed kicad-mcp-server](https://github.com/Seeed-Studio/kicad-mcp-server) |
+| Altium Designer | [Resmi MCP Server](https://docs.developer.altium.com/ad-mcp-docs/), [altium-mcp](https://github.com/coffeenmusic/altium-mcp), [scripting](https://www.altium.com/documentation/altium-designer/scripting) |
+| EasyEDA Pro | [Resmi Extension API](https://prodocs.easyeda.com/en/api/guide/) ve [üçüncü taraf MCP örneği](https://github.com/vlab-software/easyeda_mcp) |
+| Autodesk EAGLE (eski) | Autodesk, EAGLE'ı Haziran 2026'da sonlandırdı. Yalnızca mevcut projeleri okumak veya KiCad/Fusion'a taşımak için kullan. |
+
+MCP sürümü, EDA uyumu ve gerçek araç fonksiyonları proje başında doğrulanır. Reviewer MCP kullanırken yalnızca okuma araçlarıyla çalışır (REV-13).
+
+**[KiCAD-MCP-Server](https://github.com/mixelpixx/KiCAD-MCP-Server) kullanırken:**
+- `stable` dalı, v2.9 veya üstü kullan.
+- Token tasarrufu için `KICAD_MCP_TOOLBOXES=core` ile başla.
+- Reviewer için `KICAD_MCP_OPERATING_MODE=readonly`, yalnız export için `manufacturing`.
+- Autorouter (Freerouting) yalnızca kritik olmayan netlerde `routeNets`/`excludeNets` ile (LAY-14).
+- Şematik düzenlerken dosya KiCad'de açık olmasın.
+- `KICAD_MCP_DEV=1` logu `logs/` klasörüne yazar; klasör `.gitignore` içindedir.
+
+**[altium-mcp](https://github.com/coffeenmusic/altium-mcp) kullanırken:**
+- Readonly modu yoktur; Reviewer yalnız `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist` kullanır.
+- Stack-up, empedans, diff pair ve length matching kuralları Altium'da elle girilir.
+- `route_connections` autorouter'dır; kritik hatlarda kullanılmaz (LAY-14). `run_altium_script` her kullanımda kullanıcı onayı ister.
+- `git pull`/`checkout` öncesi dokümanları kaydet ve kapat. OutJob çıktı yolunu `Manufacturing/<rev>/` yap; `*.OutJob` değişikliği tasarım değişikliği sayılmaz.
+- Altium tasarım dosyaları binary'dir; aynı dosyayı aynı anda tek kişi düzenler.
+
+## Yerleşim ve routing
+
+`Hardware-Rules.md` bölüm 04 (`rules/04-schematic-layout.md`):
+
+| Grup | Kurallar | Kısaca |
+| :--- | :--- | :--- |
+| Şematik | SCH-01…SCH-07 | Bloklar, datasheet, güç ağacı (PI), pin bazlı decoupling, SI hazırlığı, kısıt işaretleme, 0 Ω / DNP opsiyon yeri |
+| Genel | LAY-01…LAY-07 | Decoupling, güç hattı, bölgeleme, referans düzlemi, 45°, test point, silkscreen |
+| Yerleşim | LAY-08…LAY-13 | Referans layout, yerleşim sırası, giriş koruması, switching döngüsü, kristal, termal, hizalama |
+| Routing | LAY-14…LAY-24 | Routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem, clock aralığı (3W merkezden), analog GND, güç dağıtımı, yüksek gerilim, pad girişi/teardrop, en kısa doğrudan yol, onaylı free-angle |
+| SI / PI | LAY-25…LAY-29 | Decoupling döngüsü, kritik uzunluk, empedans eşleştirme, length/delay matching, bitiş kontrolü |
+| Silkscreen | LAY-30…LAY-31 | Her yüzde çakışmasız silkscreen; işaretleme kararlarının uygulanması |
+
+Özel üretim istenmediyse JLCPCB ve/veya PCBWay standart kabiliyetleri esas alınır (DFM-00).
+
+## Batarya, RF ve High-Speed
+
+- **Batarya (bölüm 10, BAT-01…08):** Kart pille çalışıyor veya batarya şarj ediyorsa açılır: koruma, şarj IC, NTC, layout, uyku akımı, testler.
+- **RF ve high-speed (bölüm 05):** Kontrollü empedans, SI/PI profili ve banda göre RF kuralları (RF-01…RF-09). Düşük hızlı kartlarda N/A. Şablon tek başına RF performansını garanti etmez.
+
+## Yerel kontrol komutları
+
+Python 3.10+ yeterlidir; ek paket, API anahtarı veya LLM çağrısı gerekmez.
+
+```bash
+python scripts/projectctl.py next            # sıradaki eksik adım ve komutu
+python scripts/projectctl.py status
+python scripts/projectctl.py check-layout
+python scripts/projectctl.py check-export
+python scripts/projectctl.py check-bom
+python scripts/projectctl.py check-release
+python -m unittest discover -s tests -v
+python scripts/check_repo.py
+```
+
+Kayıtlar için JSON'u elle düzenleme; komutları kullan. `--revision` değeri her zaman `design_revision` ile aynıdır (ör. `R01`). Tam sıra [project/README.md](project/README.md) içindedir; kısa hali:
+
+```bash
+python scripts/projectctl.py set project_name "Sensör kartı"
+python scripts/projectctl.py set project_code DR00627
+python scripts/projectctl.py set design_revision R01
+python scripts/projectctl.py set requirements_revision REQ-1
+python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı" --by "<isim>"
+python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md, R01 şematik"
+python scripts/projectctl.py set pcb_requirements_revision PCB-1
+python scripts/projectctl.py approve G0.5 --revision PCB-1 --evidence "Kullanıcı PCB onayı"
+python scripts/projectctl.py review pcb PASS --revision R01 --evidence "REVIEW_LOG.md, R01 PCB"
+python scripts/projectctl.py approve G1 --revision R01 --evidence "Kullanıcı export onayı"
+python scripts/projectctl.py deliverables BOM PnP Gerber SCH ASSY FAB
+python scripts/projectctl.py manifest
+python scripts/projectctl.py review manufacturing PASS --revision R01 --evidence "REVIEW_LOG.md, R01 üretim"
+python scripts/projectctl.py check-release
+python scripts/projectctl.py block F-001
+```
+
+- **Commit bağı:** Proje git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Review'dan sonra `Hardware/` altında değişiklik veya git'e eklenmemiş yeni dosya olursa kapı kapanır. Tasarım commit edilmeden `review ... PASS` veya `approve G1` kaydedilmez.
+- **Manifest bağı:** `review manufacturing PASS` manifestin hash'ini saklar; manifest sonradan yeniden üretilirse `check-release` yeniden review ister.
+- **Teslim listesi:** `deliverables` içindeki her çıktı (`<kod>-..._BOM.csv`, `_Gerber.zip` …) release'te bulunmalıdır.
+- **`check-bom`:** BOM ile PnP eşleşmesi, Qty, DNP, MPN, `R1-R3` aralıkları, sayısal koordinatlar; muadil eksikse uyarır. Noktalı virgüllü veya UTF-8 olmayan CSV'de açık hata verir.
+
+Yeni projede `check-layout`, `check-export` ve `check-release` komutlarının başarısız olması normaldir. Araç kayıtların tutarlılığını doğrular; onayın gerçekliğini veya kartın elektriksel doğruluğunu kanıtlamaz ve Gerber/BOM/PnP üretmez.
+
+## Büyük dosyalar
+
+STEP modelleri ve zip çıktıları büyüdükçe kendi proje kopyanda Git LFS kullanmayı düşün: `git lfs install` ve `git lfs track "*.step" "*.zip"`. Şablon LFS'i varsayılan olarak açmaz.
+
+## Donanım kütüphanesini büyütme
+
+[Hardware-Library/README.md](Hardware-Library/README.md) dosyasındaki kayıt yöntemine ve ortak footprint katman haritasına (DFM-15) göre yalnızca doğrulanmış, lisansı uygun ve tekrar kullanılabilir varlıkları ekle.
+
+> Bu şablon hazır bir PCB tasarımı değildir. EDA yazılımı, üretici, bileşen seçimleri, elektriksel tasarım ve gerçek doğrulamalar her proje için ayrıca belirlenir. AI aracının izinleri mevcut oturum ve kullanıcı kararlarıyla sınırlıdır.

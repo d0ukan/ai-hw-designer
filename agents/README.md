@@ -8,7 +8,7 @@ Manager ana oturumda kalır; gerektiğinde Designer ve Reviewer rollerini ilgili
 
 ## Otomatik ajan desteği yoksa / AI değiştiriliyorsa
 
-1. Manager mevcut proje kayıtlarından kısa bir görev paketi hazırlar (Hardware-Roles.md, bölüm 05).
+1. Manager mevcut proje kayıtlarından kısa bir görev paketi hazırlar (`Hardware-Roles.md` §05).
 2. Kullanıcı ilgili rol dosyasını ve gerekli proje dosyalarını seçtiği AI oturumuna verir.
 3. Görev sonucunu, gerçek dosya değişikliklerini ve review kanıtını Manager'a geri iletir.
 4. Manager mevcut revizyon ve onayları koruyarak sıradaki aşamayı yönetir.

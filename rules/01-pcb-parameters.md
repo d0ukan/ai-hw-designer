@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 01 · PCB üretim parametreleri
 
-Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standart üretim için tercih edilen **varsayılan tasarım limitleridir**.
+Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standart üretim için tercih edilen **varsayılan tasarım limitleridir**. Son kontrol: 2026-11 (JLCPCB/PCBWay standart kabiliyetleri). Sipariş öncesinde üreticinin güncel sayfasıyla karşılaştır; tarih eskidiyse yeniden kontrol et.
 
 | Parametre | Değer | Koşul |
 | :--- | :---: | :--- |

@@ -4,7 +4,7 @@
 
 | Doküman | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Versiyon** | v1.13 |
+| **Versiyon** | v1.14 |
 | **Ekip yapısı** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer |
 | **AI / Model** | Sağlayıcıdan ve istemciden bağımsız |
 | **Ortak tasarım kuralları** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -110,16 +110,18 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 
 ```mermaid
 flowchart TD
-    D["Designer: tasarım"] --> R["Reviewer: bağımsız inceleme"]
-    R --> X{"Engelleyici hata var mı?"}
-    X -->|"Evet"| F["Designer: düzeltme"]
-    F --> R
-    X -->|"Hayır"| M["Manager: kullanıcı onayı"]
-    M -->|"Export onaylandı"| E["Designer: üretim dosyaları"]
+    S["Designer: şematik"] --> SR["Reviewer: şematik incelemesi"]
+    SR -->|"REWORK"| S
+    SR -->|"PASS"| G05{"Manager: G0.5 PCB girdi onayı"}
+    G05 -->|"Onaylandı"| D["Designer: PCB layout"]
+    D --> R["Reviewer: PCB incelemesi"]
+    R -->|"REWORK"| D
+    R -->|"PASS"| M{"Manager: G1 export onayı"}
+    M -->|"Onaylandı"| E["Designer: çıktılar + check-bom + manifest"]
     E --> V["Reviewer: üretim dosyası incelemesi"]
-    V --> Y{"Çıktılar uygun mu?"}
-    Y -->|"Hayır"| E
-    Y -->|"Evet"| H["Manager: teslim"]
+    V -->|"Çıktı hatası"| E
+    V -->|"Tasarım hatası"| D
+    V -->|"PASS"| H["Manager: review kaydı + check-release + teslim"]
 ```
 
 - Üretim dosyası incelemesinde tespit edilen hata tasarımın kendisinden kaynaklanıyorsa ilgili tasarım aşamasına dön.
@@ -190,7 +192,7 @@ Bu kayıtları kısa tut. Proje dosyalarını her ajan için ayrı kopyalarda ç
 ### Çapraz platform handoff
 
 - [ ] **CTX-14** — AI/istemci değiştirirken mevcut proje revizyonunu, onayları, inceleme kanıtlarını, açık bulguları ve sıradaki görevi `Project-README.md`, `REVIEW_LOG.md` ve workflow state üzerinden aktar. Tüm sohbeti veya büyük logları yeniden okutma.
-- [ ] **CTX-15** — Otomatik delegasyon yoksa Manager, bölüm 05'teki kısa görev paketini kullanıcıya verir. Kullanıcı ayrı bir oturumda Designer veya Reviewer rolüyle devam edebilir. Bağımsız review ancak gerçekten ayrı bir inceleme yapıldığında ve kanıt kaydedildiğinde PASS olabilir.
+- [ ] **CTX-15** — Otomatik delegasyon yoksa Manager, `Hardware-Roles.md` §05'teki kısa görev paketini kullanıcıya verir. Kullanıcı ayrı bir oturumda Designer veya Reviewer rolüyle devam edebilir. Bağımsız review ancak gerçekten ayrı bir inceleme yapıldığında ve kanıt kaydedildiğinde PASS olabilir.
 - [ ] **CTX-16** — Dosya okuma/yazma, EDA, terminal, subagent ve web erişimi gibi yetenekleri istemciye göre doğrula. Eksik yetenek nedeniyle tamamlanamayan işi BLOCKED olarak bildir. Başka bir AI servisine dosya veya özel bilgi gönderme yetkisini varsayma.
 
 ---
@@ -237,7 +239,9 @@ Her bulgu için tek satırlık özet yeterlidir; gerektiğinde kanıt ve ayrınt
 
 | Bulgu ID | Önem | Revizyon / Konum | Kanıt ve sorun | Beklenen düzeltme | Durum |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| REV-001 | MAJOR | Tasarım revizyonu / RefDes / net | Tespit edilen hata | Gerekli düzeltme | OPEN |
+| F-001 | MAJOR | Tasarım revizyonu / RefDes / net | Tespit edilen hata | Gerekli düzeltme | OPEN |
+
+Bulgu kimlikleri `F-001`, `F-002` … biçimindedir; kural kimlikleriyle (ör. `REV-01`) karışmasın diye `REV-` kullanılmaz.
 
 **Review sonucu:** `PASS` yalnızca gerekli kontroller gerçekten tamamlandığında; `REWORK` düzeltme gerektiğinde; `BLOCKED` ise eksik bilgi, araç veya onay nedeniyle doğrulama yapılamadığında kullanılır.
 

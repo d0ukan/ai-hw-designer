@@ -23,23 +23,24 @@
     "schematic": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md#R01-SCH",
+      "evidence": "Örnek: REVIEW_LOG.md, R01 şematik",
       "recorded_on": "2026-11-25",
       "recorded_by": "example"
     },
     "pcb": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md#R01-PCB",
+      "evidence": "Örnek: REVIEW_LOG.md, R01 PCB",
       "recorded_on": "2026-11-25",
       "recorded_by": "example"
     },
     "manufacturing": {
       "status": "PASS",
       "revision": "R01",
-      "evidence": "Örnek: REVIEW_LOG.md#R01-MFG",
+      "evidence": "Örnek: REVIEW_LOG.md, R01 üretim",
       "recorded_on": "2026-11-25",
-      "recorded_by": "example"
+      "recorded_by": "example",
+      "manifest_sha256": "3a581fa96529364bfeedc70e20f2ea1a5a37b08d7dcd5754de26d11deb34c183"
     }
   },
   "export_approval": {
@@ -49,5 +50,10 @@
     "recorded_on": "2026-11-25",
     "recorded_by": "example"
   },
-  "blocking_issues": []
+  "blocking_issues": [],
+  "deliverables": [
+    "BOM",
+    "PnP",
+    "FAB"
+  ]
 }

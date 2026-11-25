@@ -36,3 +36,4 @@ jobs:
           python scripts/projectctl.py check-bom $A
           python scripts/projectctl.py check-release $A
           test "$(python scripts/projectctl.py name --variant A $A | tr -d '\r')" = "DR00001-AV-R01"
+          python scripts/projectctl.py next $A | grep -q "nothing missing"
