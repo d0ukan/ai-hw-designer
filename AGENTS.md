@@ -1,6 +1,13 @@
 # Hardware project instructions
 
-Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**. Ana oturum varsayılan olarak Hardware Manager rolündedir. Açık görev atamasıyla başlatılan oturum yalnızca kendisine verilen Designer veya Reviewer rolünü yürütür. Teknik kaynaklar: `Hardware-Rules.md` ve `Hardware-Roles.md`; taşınabilir rol talimatları: `agents/Manager.md`, `agents/Designer.md`, `agents/Reviewer.md`.
+Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**. Ana oturum varsayılan olarak Hardware Manager rolündedir. Açık görev atamasıyla başlatılan oturum yalnızca kendisine verilen Designer veya Reviewer rolünü yürütür. Teknik kaynaklar: `Hardware-Rules.md` (dizin; kurallar `rules/` altında bölüm bölüm) ve `Hardware-Roles.md`; taşınabilir rol talimatları: `agents/Manager.md`, `agents/Designer.md`, `agents/Reviewer.md`.
+
+## Repo linkiyle başlayan AI (ör. "bu repoyu incele, bununla kart tasarlayalım")
+
+1. **Hepsini okuma.** Bu dosyayı, `Hardware-Rules.md` dizinini ve yalnızca `rules/00-intake.md` dosyasını oku. Diğer `rules/` bölümlerini ilgili aşamaya gelince aç; koşullu bölümler (05 RF/high-speed, 08 Havacılık, 10 Batarya) ilgisizse hiç açma. Dolu bir örnek için `examples/DR00001-usb-c-led/` yeterlidir.
+2. **Kullanıcının kendi kopyası.** Kullanıcıya GitHub'da **Use this template** (veya ZIP indirip yeni repo) ile kendi kopyasını oluşturmasını öner. Bu şablon repoya proje dosyası yazma veya push etme.
+3. **Dosya/araç erişimi yoksa (web sohbeti).** Manager olarak çalış: soruları sor, kararları sohbet içinde `Project-README.md` tablo biçiminde tut ve kullanıcının kopyasına yapıştıracağı içerikleri ver. `projectctl.py` komutlarını kullanıcının çalıştırması için yaz ve çıktısını iste; çalışmamış bir kontrolü geçmiş gösterme. EDA erişimi yoksa şematik blokları, net listesi, BOM ve yerleşim talimatlarını ver; çizimi kullanıcı EDA'da yapar.
+4. **İlk sorular (tek mesajda, kısa).** Anlatım tercihi (INT-46) → proje adı, kodu, revizyonu, varyant (INT-49) → kartın amacı → kalite profili (INT-47) → tasarım hedefi (INT-48) → ilgili teknik sorular. Kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51).
 
 ## Önce mevcut durum
 
@@ -40,6 +47,8 @@ Bu repository **AI sağlayıcısından, modelden ve istemciden bağımsızdır**
 - Export öncesinde `python scripts/projectctl.py check-export` çalıştır; başarısızsa dur ve eksik bilgiyi bildir.
 - Üretim dosyalarını Reviewer doğruladıktan sonra `check-release` çalıştır.
 - Onay ve review kayıtlarını `python scripts/projectctl.py approve|review|set|block|unblock` komutlarıyla yaz; `workflow-state.json` dosyasını elle düzenleme.
+- Review veya onay kaydetmeden önce `Hardware/` tasarım dosyalarını commit et. Kayıt o anın git commit'ini saklar; sonra tasarım değişirse `check-export`/`check-release` durur ve yeniden review ister.
+- Release öncesinde `python scripts/projectctl.py check-bom` ile BOM/PnP tutarlılığını kontrol et.
 - Release öncesinde `python scripts/projectctl.py manifest` ile `Manufacturing/<design_revision>/MANIFEST.sha256` oluştur; `check-release` bu manifesti doğrular.
 - Onayları yalnızca gerçek kullanıcı kararına dayanarak kaydet. Reviewer PASS durumunu ve revizyonunu gerçek incelemeye dayanarak doğrular. Önceki onay veya review yeni revizyonu otomatik olarak kapsamaz.
 - Sipariş, yayınlama ve harici üretim işlemleri ayrı kullanıcı yetkisi gerektirir.

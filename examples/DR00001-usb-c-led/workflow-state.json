@@ -1,0 +1,53 @@
+{
+  "schema_version": 2,
+  "project_name": "USB-C LED kartı (örnek)",
+  "project_code": "DR00001",
+  "requirements_revision": "REQ-1",
+  "pcb_requirements_revision": "PCB-1",
+  "design_revision": "R01",
+  "input_approval": {
+    "status": "APPROVED",
+    "revision": "REQ-1",
+    "evidence": "Örnek: kullanıcı G0 onayı",
+    "recorded_on": "2026-11-25",
+    "recorded_by": "example"
+  },
+  "pcb_input_approval": {
+    "status": "APPROVED",
+    "revision": "PCB-1",
+    "evidence": "Örnek: kullanıcı G0.5 onayı",
+    "recorded_on": "2026-11-25",
+    "recorded_by": "example"
+  },
+  "reviews": {
+    "schematic": {
+      "status": "PASS",
+      "revision": "R01",
+      "evidence": "Örnek: REVIEW_LOG.md#R01-SCH",
+      "recorded_on": "2026-11-25",
+      "recorded_by": "example"
+    },
+    "pcb": {
+      "status": "PASS",
+      "revision": "R01",
+      "evidence": "Örnek: REVIEW_LOG.md#R01-PCB",
+      "recorded_on": "2026-11-25",
+      "recorded_by": "example"
+    },
+    "manufacturing": {
+      "status": "PASS",
+      "revision": "R01",
+      "evidence": "Örnek: REVIEW_LOG.md#R01-MFG",
+      "recorded_on": "2026-11-25",
+      "recorded_by": "example"
+    }
+  },
+  "export_approval": {
+    "status": "APPROVED",
+    "revision": "R01",
+    "evidence": "Örnek: kullanıcı G1 onayı",
+    "recorded_on": "2026-11-25",
+    "recorded_by": "example"
+  },
+  "blocking_issues": []
+}

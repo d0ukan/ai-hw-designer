@@ -52,6 +52,11 @@ sym-lib-table text
 *.ipc  -text
 *.net  -text
 
+# Large files: when STEP models or zipped outputs grow (tens of MB), consider
+# Git LFS in your project copy, e.g.:
+#   git lfs install && git lfs track "*.step" "*.zip"
+# This template does not enable LFS by default.
+
 # Binary files: no line-ending conversion, no text diff
 *.pdf   binary
 *.png   binary

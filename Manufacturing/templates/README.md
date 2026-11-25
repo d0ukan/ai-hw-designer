@@ -9,5 +9,9 @@ Boş başlangıç dosyaları. Projede `Manufacturing/<rev>/` içine kopyala, `<�
 | `schematic-outputs.md` | `<önek>_SCH.pdf` ve ekleri | Şematik çıktı listesi |
 | `assembly-drawing.md` | `<önek>_ASSY.pdf` | Draftsman tarzı montaj çizimi |
 | `fab-notes.md` | `<önek>_FAB.md` veya `.pdf` | Üreticiye fab notu |
+| `bring-up-checklist.md` | Proje kaydı (release dışı) | İlk enerji verme ve test sırası (VER-09) |
+| `review-checklist.md` | Proje kaydı (release dışı) | Reviewer için aşama aşama kısa kontrol listesi |
+
+Release klasörünü kontrol etmek için: `python scripts/projectctl.py check-bom` (BOM/PnP tutarlılığı) ve `check-release`. Dolu bir örnek için `examples/DR00001-usb-c-led/` klasörüne bak.
 
 Revizyon geçmişi kökteki `REVISION-HISTORY.md` dosyasında tutulur. Bu klasördeki template'ler release değildir; `manifest` ve `check-release` yalnızca `Manufacturing/<rev>/` klasörünü kontrol eder.

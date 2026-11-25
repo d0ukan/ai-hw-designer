@@ -1,0 +1,22 @@
+# ai-hw-designer
+
+> AI-agnostic, reusable hardware (PCB) design template in Turkish: Manager / Designer / Reviewer roles, user approval gates (G0, G0.5, G1), quality profiles (Hobby / Industrial / Aerospace), optional RF, battery and avionics rules, output naming like DR00627-R01, and a dependency-free Python checker. Start with AGENTS.md; do not read every rule file.
+
+## Start here
+- [AGENTS.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/AGENTS.md): How an AI should work with this repo; section "Repo linkiyle başlayan AI" is for chats that only got the link.
+- [Hardware-Rules.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/Hardware-Rules.md): Index of rule sections and when to read each.
+- [rules/00-intake.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/00-intake.md): First questions to ask the user (read at project start).
+
+## Rules (open only the section you need)
+- [rules/00b-pcb-intake.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/00b-pcb-intake.md): PCB decisions before layout (G0.5), silkscreen questions.
+- [rules/03-dfm-cost.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/03-dfm-cost.md): Manufacturer, cost, component and alternates.
+- [rules/04-schematic-layout.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/04-schematic-layout.md): Schematic, placement, routing, SI/PI, silkscreen.
+- [rules/09-release.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/09-release.md): Revisions, variants, output files.
+- [Hardware-Roles.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/Hardware-Roles.md): Roles, workflow, review format.
+
+## Optional
+- [rules/05-diff-rf-hs.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/05-diff-rf-hs.md): Only with differential, high-speed or RF.
+- [rules/08-aviation.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/08-aviation.md): Only in the Aerospace profile.
+- [rules/10-battery.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/rules/10-battery.md): Only with batteries.
+- [examples/DR00001-usb-c-led/README.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/examples/DR00001-usb-c-led/README.md): Small filled example project.
+- [README.md](https://raw.githubusercontent.com/d0ukan/ai-hw-designer/main/README.md): Full human-oriented overview.

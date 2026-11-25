@@ -10,6 +10,7 @@
 | Kalite profili (Hobi / Endüstriyel / Havacılık) | Belirlenecek |
 | Tasarım hedefi (Maliyet / Dengeli / Performans, INT-48) | Belirlenecek |
 | RF var mı / band / kademe (RF-A, RF-B, RF-C) | Belirlenecek / N/A |
+| Batarya / kimya / hücre (INT-52, bölüm 10) | Belirlenecek / N/A |
 | Kart tipi / yazılı isterler | Belirlenecek |
 | Tek PCB / multi-PCB ve kart ID'leri | Belirlenecek |
 | Kartlar arası bağlantı yöntemi | Belirlenecek / N/A |

@@ -25,15 +25,14 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Validate workflow state
         run: python scripts/projectctl.py validate
-      - name: Validate catalog headers
-        shell: python
+      - name: Repository consistency (rules, links, versions, CSV)
+        run: python scripts/check_repo.py
+      - name: Example project end-to-end
+        shell: bash
         run: |
-          import csv, sys
-          for path in ("Hardware-Library/catalog/components.csv", "Hardware-Library/catalog/blocks.csv"):
-              with open(path, encoding="utf-8", newline="") as f:
-                  rows = list(csv.reader(f))
-              width = len(rows[0])
-              bad = [i + 1 for i, r in enumerate(rows) if r and len(r) != width]
-              if bad:
-                  sys.exit(f"{path}: wrong column count on lines {bad}")
-              print(f"{path}: OK ({len(rows) - 1} rows)")
+          E=examples/DR00001-usb-c-led
+          A="--state $E/workflow-state.json --manufacturing-dir $E/Manufacturing"
+          python scripts/projectctl.py validate $A
+          python scripts/projectctl.py check-bom $A
+          python scripts/projectctl.py check-release $A
+          test "$(python scripts/projectctl.py name --variant A $A | tr -d '\r')" = "DR00001-AV-R01"

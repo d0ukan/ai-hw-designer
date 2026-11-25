@@ -1,6 +1,8 @@
 import contextlib
 import io
 import json
+import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -25,6 +27,16 @@ def pending_state():
         "export_approval": rec(),
         "blocking_issues": [],
     }
+
+
+BOM = (
+    "Designator,Qty,Comment,Description,Footprint,MPN,Manufacturer,Alternate MPN,"
+    "Alternate Manufacturer,LCSC Part #,Supplier,Supplier PN,DNP,Notes\n"
+    "C1 C2,2,100nF,,0402,CL05B104KO5NNNC,Samsung,GRM155R71C104KA88D,Murata,,,,,\n"
+    "R1,1,10k,,0402,RC0402FR-0710KL,Yageo,,,,,,,\n"
+    "R2,1,0R,,0402,RC0402JR-070RL,Yageo,,,,,,Yes,option\n"
+)
+PNP = "Designator,Mid X,Mid Y,Layer,Rotation\nC1,1.0,2.0,Top,0\nC2,3.0,2.0,Top,90\nR1,5mm,2,Bottom,180\n"
 
 
 class RecordFunctionTests(unittest.TestCase):
@@ -112,7 +124,8 @@ class CliAndManifestTests(unittest.TestCase):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             code = projectctl.main(
-                [*args, "--state", str(self.state_path), "--manufacturing-dir", str(self.mfg)]
+                [*args, "--state", str(self.state_path), "--manufacturing-dir", str(self.mfg),
+                 "--repo-root", str(self.root)]
             )
         return code, out.getvalue() + err.getvalue()
 
@@ -146,9 +159,10 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertEqual(self.run_cli("check-export")[0], 0)
 
         release = self.mfg / "R1"
-        (release / "gerber").mkdir(parents=True)
-        (release / "gerber" / "top.gbr").write_bytes(b"G04 test*\n")
-        (release / "DR00627-R1_BOM.csv").write_text("ref,mpn\n", encoding="utf-8")
+        (release / "DR00627-R1_Gerber").mkdir(parents=True)
+        (release / "DR00627-R1_Gerber" / "top.gbr").write_bytes(b"G04 test*\n")
+        (release / "DR00627-R1_BOM.csv").write_text(BOM, encoding="utf-8")
+        (release / "DR00627-R1_PnP.csv").write_text(PNP, encoding="utf-8")
 
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
@@ -157,12 +171,57 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertEqual(self.run_cli("manifest")[0], 0)
         self.assertEqual(self.run_cli("check-release")[0], 0)
 
-        (release / "DR00627-R1_BOM.csv").write_text("ref,mpn\nR1,X\n", encoding="utf-8")
+        (release / "DR00627-R1_BOM.csv").write_text(BOM + "C9,1,,,,X,,,,,,,,\n", encoding="utf-8")
         (release / "extra.txt").write_text("x", encoding="utf-8")
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
         self.assertIn("Checksum mismatch: DR00627-R1_BOM.csv", out)
         self.assertIn("File not in manifest: extra.txt", out)
+        self.assertIn("fitted part C9 missing from PnP", out)
+
+    def test_nested_release_files_need_prefix(self):
+        self.approve_everything()
+        board = self.mfg / "R1" / "MAIN"
+        board.mkdir(parents=True)
+        (board / "DR00627-R1_BOM.csv").write_text(BOM, encoding="utf-8")
+        (board / "notes.txt").write_text("x", encoding="utf-8")
+        self.run_cli("manifest")
+        code, out = self.run_cli("check-release")
+        self.assertEqual(code, 1)
+        self.assertIn("project code DR00627: MAIN/notes.txt", out)
+        self.assertNotIn("MAIN/DR00627-R1_BOM.csv", out.split("Manifest")[0])
+
+    def test_reserved_revision_name_rejected(self):
+        self.run_cli("set", "design_revision", "templates")
+        code, out = self.run_cli("manifest")
+        self.assertEqual(code, 2)
+        self.assertIn("reserved", out)
+
+    def test_check_bom_command(self):
+        bom = self.root / "b.csv"
+        pnp = self.root / "p.csv"
+        bom.write_text(BOM, encoding="utf-8")
+        pnp.write_text(PNP, encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom), "--pnp", str(pnp))
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARNING", out)  # R1 has no alternate and no note
+
+        pnp.write_text(PNP + "R2,1,1,Top,0\n", encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom), "--pnp", str(pnp))
+        self.assertEqual(code, 1)
+        self.assertIn("DNP part R2 must not be in PnP", out)
+
+    def test_check_bom_qty_and_columns(self):
+        bom = self.root / "b.csv"
+        bom.write_text(BOM.replace("C1 C2,2", "C1 C2,3"), encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom))
+        self.assertEqual(code, 1)
+        self.assertIn("Qty 3 does not match 2 designators", out)
+        bom.write_text("Designator,Qty\nR1,1\n", encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom))
+        self.assertIn("missing columns", out)
+
+
 
     def test_export_requires_project_code(self):
         self.approve_everything()
@@ -197,6 +256,72 @@ class CliAndManifestTests(unittest.TestCase):
         code, out = self.run_cli("manifest")
         self.assertEqual(code, 2)
         self.assertIn("folder name", out)
+
+
+@unittest.skipUnless(shutil.which("git"), "git not installed")
+class GitBindingTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.git("init", "-q")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        (self.root / "Hardware").mkdir()
+        (self.root / "Hardware" / "board.kicad_pcb").write_text("v1\n", encoding="utf-8")
+        (self.root / "Hardware" / "board.kicad_sch").write_text("v1\n", encoding="utf-8")
+        self.git("add", ".")
+        self.git("commit", "-q", "-m", "init")
+        self.state_path = self.root / "workflow-state.json"
+        self.state_path.write_text(json.dumps(pending_state()), encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def git(self, *args):
+        subprocess.run(["git", "-C", str(self.root), *args], check=True, capture_output=True)
+
+    def run_cli(self, *args):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = projectctl.main([*args, "--state", str(self.state_path),
+                                    "--manufacturing-dir", str(self.root / "Manufacturing"),
+                                    "--repo-root", str(self.root)])
+        return code, out.getvalue() + err.getvalue()
+
+    def approve(self):
+        for step in [
+            ("set", "project_name", "T"), ("set", "project_code", "DR00627"),
+            ("set", "requirements_revision", "REQ-1"), ("set", "pcb_requirements_revision", "PCB-1"),
+            ("set", "design_revision", "R1"),
+            ("approve", "G0", "--revision", "REQ-1", "--evidence", "e"),
+            ("approve", "G0.5", "--revision", "PCB-1", "--evidence", "e"),
+            ("review", "schematic", "PASS", "--revision", "R1", "--evidence", "e"),
+            ("review", "pcb", "PASS", "--revision", "R1", "--evidence", "e"),
+            ("approve", "G1", "--revision", "R1", "--evidence", "e"),
+        ]:
+            self.assertEqual(self.run_cli(*step)[0], 0)
+
+    def test_commit_is_recorded(self):
+        self.approve()
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        self.assertRegex(state["export_approval"]["commit"], r"^[0-9a-f]{40}$")
+
+    def test_pcb_change_after_review_blocks_export(self):
+        self.approve()
+        self.assertEqual(self.run_cli("check-export")[0], 0)
+        (self.root / "Hardware" / "board.kicad_pcb").write_text("v2\n", encoding="utf-8")
+        code, out = self.run_cli("check-export")
+        self.assertEqual(code, 1)
+        self.assertIn("PCB review: design files changed", out)
+        self.assertIn("G1 export approval: design files changed", out)
+        self.assertNotIn("Schematic review: design files changed", out)
+
+    def test_schematic_change_blocks_layout(self):
+        self.approve()
+        (self.root / "Hardware" / "board.kicad_sch").write_text("v2\n", encoding="utf-8")
+        code, out = self.run_cli("check-layout")
+        self.assertEqual(code, 1)
+        self.assertIn("Schematic review: design files changed", out)
 
 
 if __name__ == "__main__":

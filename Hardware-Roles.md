@@ -4,7 +4,7 @@
 
 | Doküman | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Versiyon** | v1.12 |
+| **Versiyon** | v1.13 |
 | **Ekip yapısı** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer |
 | **AI / Model** | Sağlayıcıdan ve istemciden bağımsız |
 | **Ortak tasarım kuralları** | [Hardware-Rules.md](Hardware-Rules.md) |

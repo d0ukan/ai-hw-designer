@@ -2,7 +2,9 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.12 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.13 ([değişiklikler](CHANGELOG.md))
+
+> **English summary:** An AI-agnostic hardware (PCB) design template. Give the repo link to any AI assistant and say "use this repo to design a board": it reads [AGENTS.md](AGENTS.md), asks structured intake questions, and works through Manager / Designer / Reviewer roles with user approval gates (G0, G0.5, G1). Rules are split by stage in [rules/](rules/) (read only what you need), with quality profiles (Hobby / Industrial / Aerospace) and optional RF, battery and avionics sections. Outputs are named like `DR00627-R01_BOM.csv`; a dependency-free Python tool ([scripts/projectctl.py](scripts/projectctl.py)) checks approvals, commit binding, BOM/PnP consistency and release manifests. A filled example lives in [examples/DR00001-usb-c-led/](examples/DR00001-usb-c-led/). Documentation is in Turkish; [llms.txt](llms.txt) lists the entry files for AI tools.
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır.
 
@@ -11,6 +13,20 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 | Hardware Manager | `agents/Manager.md` | Gereksinimler, kararlar, görevler ve onaylar |
 | Hardware Designer | `agents/Designer.md` | Şematik, footprint, 3D model, PCB ve düzeltmeler |
 | Hardware Reviewer | `agents/Reviewer.md` | Bağımsız tasarım ve üretim dosyası doğrulaması |
+
+## AI sohbetinde repo linkiyle başlamak
+
+En kısa yol: herhangi bir AI asistanına repo linkini verip şunu yaz:
+
+> Bu repoyu incele (önce AGENTS.md ve llms.txt). Bu repoyu kullanarak bir kart tasarlamak istiyorum.
+
+AI şunları yapar ([AGENTS.md](AGENTS.md), "Repo linkiyle başlayan AI"):
+- Tüm kuralları baştan okumaz; dizini ve ilk soruları okur, diğer bölümleri sırası gelince açar. Bu token ve kredi tasarrufu sağlar.
+- Senden GitHub'da **Use this template** ile kendi kopyanı oluşturmanı ister.
+- Dosya erişimi yoksa (web sohbeti) kararları sohbette tutar, dosyalara yapıştıracağın içerikleri ve çalıştıracağın komutları verir; çalışmamış kontrolü geçmiş göstermez.
+- İlk soruları tek mesajda sorar: anlatım tercihi, proje adı/kodu/revizyonu, amaç, kalite profili, tasarım hedefi.
+
+Dosya ve EDA erişimi olan bir araçta (Claude Code, Codex, Gemini CLI vb.) kendi kopyanı açıp aşağıdaki hızlı başlangıçla devam et.
 
 ## Hızlı başlangıç
 
@@ -37,7 +53,7 @@ Manager ilk iş proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-4
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
 - Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; ertelenen karar en geç ilgili kapıda tekrar sorulur (INT-51).
 - Silkscreen soruları (PCB-17…21): logo/ikon, kart kodu (silk/bakır, top/bottom), konnektör etiketi (pin no/net adı), designator (açık/gizli, boyut, konum), imza/easter egg. Silkscreen her yüzde çakışmasız olur (LAY-30).
-- Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir.
+- Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir; ayrıca bring-up ve review checklist'leri var.
 
 ## Kalite profilleri
 
@@ -74,7 +90,10 @@ Daha sonra kendi boş, tercihen private GitHub repository'ne yükleyip ayarları
 | `.codex/` | İsteğe bağlı Codex adaptörü |
 | `CLAUDE.md`, `.claude/agents/` | İsteğe bağlı Claude Code adaptörü |
 | `GEMINI.md` | İsteğe bağlı Gemini CLI giriş dosyası; ortak AGENTS.md'ye yönlendirir |
-| `Hardware-Rules.md` | Teknik tasarım, DFM, üretim ve doğrulama kuralları |
+| `llms.txt` | AI araçları için giriş dosyaları listesi |
+| `Hardware-Rules.md` | Kural dizini: hangi bölüm ne zaman okunur |
+| `rules/` | Bölüm bölüm teknik kurallar (00 intake … 10 batarya) |
+| `examples/` | Dolu örnek proje (`DR00001` USB-C LED kartı); CI her push'ta kontrol eder |
 | `Hardware-Roles.md` | Roller, iş akışı, review ve token politikası |
 | `Hardware-Library/` | Doğrulanmış symbol, footprint, 3D model ve devre blokları |
 | `Hardware/` | Native EDA projesi (KiCad, Altium vb.) |
@@ -84,11 +103,13 @@ Daha sonra kendi boş, tercihen private GitHub repository'ne yükleyip ayarları
 | `REVIEW_LOG.md` | Bağımsız review bulguları |
 | `REVISION-HISTORY.md` | Revizyon geçmişi: ne değişti, neden, errata |
 | `project/workflow-state.json` | Makine tarafından kontrol edilebilir iş akışı durumu |
-| `scripts/projectctl.py` | Modelsiz, yerel onay ve durum kontrolü |
+| `scripts/projectctl.py` | Modelsiz, yerel onay, commit bağı, BOM/PnP ve release kontrolü |
+| `scripts/check_repo.py` | Şablon tutarlılık kontrolü: kural kimlikleri, linkler, sürümler, CSV |
 | `tests/` | Onay kontrol aracının otomatik testleri |
 | `.github/workflows/` | GitHub Actions: her push'ta testler ve şema/katalog kontrolü |
 | `CHANGELOG.md` | Kural ve araç sürüm geçmişi |
 | `LICENSE` | MIT lisansı |
+| `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/` | Katkı kuralları, issue ve PR şablonları |
 
 ## İş akışı
 
@@ -178,7 +199,7 @@ Reviewer MCP kullanırken yalnızca okuma araçlarıyla çalışır, tasarımı 
 
 ## Yerleşim ve routing
 
-`Hardware-Rules.md` bölüm 04, tüm kartlar için şematik, yerleşim ve routing kurallarını içerir:
+`Hardware-Rules.md` bölüm 04 (`rules/04-schematic-layout.md`), tüm kartlar için şematik, yerleşim ve routing kurallarını içerir:
 
 | Grup | Kurallar | Kısaca |
 | :--- | :--- | :--- |
@@ -191,9 +212,13 @@ Reviewer MCP kullanırken yalnızca okuma araçlarıyla çalışır, tasarımı 
 
 Özel üretim (medikal, askeri/havacılık, HDI, özel stack-up) istenmediyse JLCPCB ve/veya PCBWay standart kabiliyetleri esas alınır (DFM-00).
 
+## Batarya ve şarj
+
+Kartta batarya varsa `rules/10-battery.md` (BAT-01…08) açılır: kimya ve sertifika bilgisi, koruma (aşırı şarj/deşarj, kısa devre, ters polarite, sigorta), şarj IC ve akım sınırı, NTC ile sıcaklık penceresi, layout, uyku akımı ve doğrulama testleri. Batarya yoksa bölüm N/A'dır.
+
 ## RF ve High-Speed
 
-`Hardware-Rules.md` bölüm 05, ilgili projelerde kontrollü empedans, RF/high-speed SI/PI profili ve banda göre kademeli RF kuralları (RF-01…RF-09: GCPW, via fence, konnektör launch, anten keepout, izolasyon, kanıt) sağlar. Onaylı arayüz isterleri, üretici stack-up'ı, malzeme, EDA kısıtları ve gerekli gerçek analiz/ölçüm kanıtları `Project-README.md` içinden takip edilir. Sıradan düşük hızlı kartlarda bu profil N/A bırakılır. Şablon tek başına RF performansı veya high-speed doğrulamasını garanti etmez.
+`Hardware-Rules.md` bölüm 05 (`rules/05-diff-rf-hs.md`), ilgili projelerde kontrollü empedans, RF/high-speed SI/PI profili ve banda göre kademeli RF kuralları (RF-01…RF-09: GCPW, via fence, konnektör launch, anten keepout, izolasyon, kanıt) sağlar. Onaylı arayüz isterleri, üretici stack-up'ı, malzeme, EDA kısıtları ve gerekli gerçek analiz/ölçüm kanıtları `Project-README.md` içinden takip edilir. Sıradan düşük hızlı kartlarda bu profil N/A bırakılır. Şablon tek başına RF performansı veya high-speed doğrulamasını garanti etmez.
 
 ## Yerel kontrol komutları
 
@@ -204,8 +229,10 @@ python scripts/projectctl.py status
 python scripts/projectctl.py validate
 python scripts/projectctl.py check-layout
 python scripts/projectctl.py check-export
+python scripts/projectctl.py check-bom
 python scripts/projectctl.py check-release
 python -m unittest discover -s tests -v
+python scripts/check_repo.py
 ```
 
 Onay ve review kayıtları için JSON'u elle düzenleme; komutları kullan. Komutlar kaydı doğrular, tarih ve kişi bilgisini ekler:
@@ -223,9 +250,17 @@ python scripts/projectctl.py revoke G1
 python scripts/projectctl.py manifest
 ```
 
-`manifest`, `Manufacturing/<design_revision>/` içindeki üretim dosyalarının SHA-256 listesini (`MANIFEST.sha256`) yazar. `check-release` manifest eksikse, dosyalar sonradan değişmişse veya kök klasördeki bir dosyanın adı proje koduyla başlamıyorsa başarısız olur. `check-export` proje kodu yoksa başarısız olur. Ayrıntılar: [project/README.md](project/README.md).
+`manifest`, `Manufacturing/<design_revision>/` içindeki üretim dosyalarının SHA-256 listesini (`MANIFEST.sha256`) yazar. `check-release` manifest eksikse, dosyalar sonradan değişmişse, bir dosyanın adı proje koduyla başlamıyorsa veya `check-bom` hata bulursa başarısız olur. `check-export` proje kodu yoksa başarısız olur.
+
+- **Commit bağı:** Proje git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Aynı `R01` içinde review'dan sonra tasarım dosyaları değişirse `check-export`/`check-release` durur ve yeniden review ister. Bu yüzden review/onaydan önce tasarım dosyalarını commit et.
+- **`check-bom`:** BOM ve PnP designator'larının eşleşmesini, Qty sayılarını, DNP parçaların PnP'de olmamasını ve MPN'leri kontrol eder; muadil (`Alternate MPN`) eksikse uyarır. Yapay zekâ gerektirmez, token harcamaz.
+- **`check_repo.py`:** Şablonu geliştirirken kural kimliği çakışmasını, tanımsız referansları, bozuk linkleri, sürüm satırlarını ve CSV kolonlarını kontrol eder. Ayrıntılar: [project/README.md](project/README.md).
 
 Yeni projede `check-layout`, `check-export` ve `check-release` komutlarının başarısız olması normal ve istenen davranıştır. Manager gerçek kullanıcı onaylarını kaydetmeli, Reviewer ilgili revizyonun bağımsız kontrollerini yapmalı ve Designer layout öncesinde `check-layout`, export öncesinde `check-export` çalıştırmalıdır. Araç kayıtların tutarlılığını doğrular; onayın gerçekliğini veya kartın elektriksel doğruluğunu kendi başına kanıtlamaz ve Gerber/BOM/PnP üretmez.
+
+## Büyük dosyalar
+
+STEP modelleri ve zip çıktıları büyüdükçe (onlarca MB) kendi proje kopyanda Git LFS kullanmayı düşün: `git lfs install` ve `git lfs track "*.step" "*.zip"`. Şablon LFS'i varsayılan olarak açmaz.
 
 ## Donanım kütüphanesini büyütme
 

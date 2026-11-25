@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.13 — 2026-11-25
+
+**AI ile kullanım ve token**
+- `Hardware-Rules.md` artık bir dizin; kurallar `rules/` altında 11 bölüm dosyasına ayrıldı (içerik ve kural kimlikleri aynı). AI yalnızca ilgili bölümü okur.
+- `AGENTS.md`: "Repo linkiyle başlayan AI" bölümü (neyi okuyacağı, kendi kopya, dosya erişimi olmayan web sohbeti, ilk sorular).
+- `llms.txt` eklendi; README başına İngilizce özet ve "AI sohbetinde repo linkiyle başlamak" bölümü.
+
+**projectctl**
+- Commit bağı: `approve`/`review` git commit'ini kaydeder; review'dan sonra tasarım dosyaları değişirse `check-export`/`check-release` durur (şematik review yalnız şematik dosyalarına bakar).
+- `check-bom`: BOM/PnP designator eşleşmesi, Qty, DNP, MPN; muadil eksikse uyarı. `check-release` bunu da çalıştırır.
+- Dosya adı kontrolü alt klasörlere genişledi (önekli klasörlerin içi serbest); `templates` revizyon adı olarak yasak. 7 yeni test (toplam 41).
+- `scripts/check_repo.py`: kural kimliği çakışması, tanımsız referans, bozuk link, sürüm satırları, CSV kolonları.
+
+**Kurallar ve şablonlar**
+- Bölüm 10 (BAT-01…08): batarya ve şarj, koşullu; INT-52 tetikler.
+- `Manufacturing/templates/`: `bring-up-checklist.md`, `review-checklist.md`.
+- `examples/DR00001-usb-c-led/`: dolu örnek proje (iki varyant, BOM/PnP, manifest); CI uçtan uca kontrol eder.
+
+**Repo**
+- CI: `check_repo.py` ve örnek proje adımları.
+- `CONTRIBUTING.md`, issue ve PR şablonları; `.gitattributes` ve README'de Git LFS notu.
+
 ## v1.12 — 2026-11-25
 
 **Proje kimliği ve çıktılar**

@@ -5,14 +5,16 @@
 - `project_code`: proje kodu (ör. `DR00627`); çıktı adları bundan türetilir. Export ve release için zorunlu. Eski state dosyalarında alan yoksa null kabul edilir.
 - `requirements_revision`: onaylanan proje girdilerinin revizyonu.
 - `pcb_requirements_revision`: PCB layout girdilerinin ayrı revizyonu. Malzeme, teknoloji, geometri, ring ve diğer PCB kararları değişirse güncelle.
-- `design_revision`: mevcut native tasarımın revizyonu veya commit kimliği. Tasarım değiştiğinde güncelle.
+- `design_revision`: kartın revizyonu (ör. `R01`); çıktı adlarında ve `Manufacturing/<rev>/` klasöründe kullanılır. Yeni revizyon yalnızca REL-01'e göre açılır (`templates` adı kullanılamaz).
 - `input_approval`: G0 kullanıcının gerçek gereksinim onayı, ilgili revizyon ve onay referansı.
 - `pcb_input_approval`: G0.5, kullanıcının PCB girdileri için gerçek onayı, ilgili PCB girdi revizyonu ve onay referansı.
 - `reviews`: bağımsız schematic/PCB/manufacturing inceleme sonucu, ilgili tasarım revizyonu ve `REVIEW_LOG.md` kanıt referansı. Şematik değişmemişse Reviewer final revizyonda bu durumu diff ile doğrulayabilir.
 - `export_approval`: G1 kullanıcının ilgili tasarım revizyonu için açık üretim dosyası hazırlama onayı ve referansı.
 - `blocking_issues`: açık CRITICAL/MAJOR bulgu kimlikleri veya ilgili engeller.
 
-Kayıtlar isteğe bağlı `recorded_on` (UTC tarih) ve `recorded_by` alanlarını da taşıyabilir; `projectctl.py` komutları bunları otomatik doldurur.
+Kayıtlar isteğe bağlı `recorded_on` (UTC tarih), `recorded_by` ve `commit` alanlarını da taşıyabilir; `projectctl.py` komutları bunları otomatik doldurur.
+
+**Commit bağı:** Proje bir git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Aynı `R01` içinde tasarım değişirse `check-export`/`check-release` bunu yakalar: şematik review'dan sonra şematik dosyaları (`*.kicad_sch`, `*.SchDoc`, `*.sch`), PCB/manufacturing review ve G1'den sonra `Hardware/` altındaki herhangi bir dosya değiştiyse kapı kapanır ve yeniden review gerekir. Bu yüzden review/onay kaydından önce tasarım dosyalarını commit et. Git yoksa kontrol atlanır.
 
 ## Kayıt komutları
 
@@ -29,10 +31,12 @@ python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı
 python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
 python scripts/projectctl.py block REV-001
 python scripts/projectctl.py unblock REV-001
+python scripts/projectctl.py check-bom          # Manufacturing/<rev>/ içindeki tüm BOM/PnP
+python scripts/projectctl.py check-bom X_BOM.csv --pnp X_PnP.csv
 python scripts/projectctl.py manifest
 ```
 
-`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse, dosyalar değişmişse veya kök klasördeki bir dosyanın adı proje koduyla başlamıyorsa başarısız olur.
+`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse, dosyalar değişmişse, bir dosyanın adı proje koduyla başlamıyorsa (önekli klasörlerin içi, ör. `DR00627-R01_Gerber/`, serbesttir) veya `check-bom` hata bulursa başarısız olur. `check-bom` BOM ile PnP designator'larını, Qty sayılarını, DNP parçaların PnP'de olmamasını ve MPN'leri kontrol eder; muadil eksikse uyarı verir.
 
 Approval durumları: PENDING / APPROVED. Review durumları: PENDING / PASS / REWORK / BLOCKED. Geçerli onay veya PASS için revizyon ve gerçek kanıt gereklidir. Manager review sonucunu Reviewer'ın kaydına göre işler; onayları kendi adına üretmez.
 
