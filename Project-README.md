@@ -5,6 +5,8 @@
 | Alan | Proje bilgisi |
 | :--- | :--- |
 | Proje adı / amaç | Belirlenecek |
+| Proje kodu / revizyon / varyantlar (INT-49) | Belirlenecek — ör. `DR00627` / `R01` / A, B |
+| Çıktı öneki (`projectctl.py name`) | Belirlenecek — ör. `DR00627-R01`, `DR00627-AV-R01` |
 | Kalite profili (Hobi / Endüstriyel / Havacılık) | Belirlenecek |
 | Tasarım hedefi (Maliyet / Dengeli / Performans, INT-48) | Belirlenecek |
 | RF var mı / band / kademe (RF-A, RF-B, RF-C) | Belirlenecek / N/A |
@@ -89,6 +91,11 @@ Flash, debug ve saha güncellemesi gereksinimlerini ayrı değerlendir. Standart
 | Üretici / stack-up / copper weight / kaplama | Belirlenecek |
 | CHASSIS_GND çevre halkası (Evet / Hayır) | Belirlenecek — açık onay olmadan oluşturulmaz |
 | GND bağlantısı / izolasyon | Bölüm 00'daki onaylı karara referans ver |
+| Logo / ikon (yüz) — PCB-17 | Belirlenecek / Sonra karar ver / Yok |
+| Kart kodu yazısı: silk/bakır, yüz, tarih — PCB-18 | Belirlenecek / Sonra karar ver |
+| Konnektör etiketi: pin no / net adı / ikisi, yüz — PCB-19 | Belirlenecek / Sonra karar ver |
+| Designator: açık/gizli, boyut, iç/kenar — PCB-20 | Belirlenecek / Sonra karar ver |
+| İmza / easter egg — PCB-21 | Belirlenecek / Sonra karar ver / Yok |
 
 Varsa ilgili mekanik dosyalar ve doğrulanmış üretici parametrelerine referans ekle. Değişmeyen girdileri yeniden yazma.
 
@@ -132,6 +139,16 @@ Başka AI veya istemciye geçerken mevcut revizyon, yalnızca ilgili dosyalar, a
 ## Doğrulanmış teknik kaynaklar
 
 Ortak komponent/kütüphane kayıtlarına referans ver. Yeni kaynakları MPN, revizyon, ilgili sayfa ve geçerlilik koşuluyla özetle.
+
+## Açık kararlar ("Sonra karar ver", INT-51)
+
+| ID | Ertelenen karar | En geç sorulacağı kapı | Yanıt yoksa güvenli varsayılan |
+| :--- | :--- | :--- | :--- |
+
+## Varyantlar — yalnızca varsa
+
+| Varyant | Önek | Fark (takılan/takılmayan parçalar, değerler) | BOM / PnP |
+| :--- | :--- | :--- | :--- |
 
 ## Açık konular
 

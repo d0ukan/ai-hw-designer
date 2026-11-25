@@ -4,8 +4,8 @@
 
 | Doküman | HW AI Design Rules |
 | :--- | :--- |
-| **Versiyon** | v1.11 |
-| **Kapsam** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Koşullu RF ve Havacılık profilleri |
+| **Versiyon** | v1.12 |
+| **Kapsam** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Koşullu RF ve Havacılık profilleri · Revizyon, varyant ve çıktılar |
 | **Hedef üreticiler** | JLCPCB / PCBWay (Hobi varsayılanı); diğer profillerde kullanıcı onaylı üretici |
 | **Tasarım önceliği** | Güvenilirlik · Üretilebilirlik · Proje hedefine göre maliyet/performans (INT-48) · Token verimliliği |
 
@@ -28,6 +28,15 @@
 | Detailed | Teknik ayrıntılar, hesaplamalar, varsayımlar ve alternatiflerin gerekçeleri. |
 
 Anlatım tercihi mühendislik doğrulamasını, kritik uyarıları, gerçek kanıt kayıtlarını veya kullanıcı onay kapılarını azaltmaz. Ajanlar arası görev ve sonuç özetleri her modda gereksiz ayrıntıdan arındırılır.
+
+### Başlangıç · Proje kimliği
+
+- [ ] **INT-49** — Her yeni projede ilk iş sor: **proje adı, proje kodu ve revizyon** (ör. ad "Sensör kartı", kod `DR00627`, revizyon `R01`). Kod biçimini kullanıcı belirler; örnek biçimi dayatma. Varyant varsa harfini sor (A, B, …). Kodu `projectctl.py set project_code`, revizyonu `set design_revision` ile kaydet. Bu soru ertelenemez; kod olmadan export yapılmaz.
+- [ ] **INT-50** — Tüm çıktılar bu kimlikle adlandırılır (bölüm 09): `<kod>-<rev>` → `DR00627-R01`, varyant için `<kod>-<harf>V-<rev>` → `DR00627-AV-R01`. Öneki `python scripts/projectctl.py name [--variant A]` verir.
+
+### Başlangıç · "Sonra karar ver" seçeneği
+
+- [ ] **INT-51** — Kritik olmayan sorularda (ör. logo/ikon, silkscreen yazıları, designator görünümü, imza, renk) kullanıcıya **"Sonra karar ver"** seçeneği sun. Ertelenen soruyu `Project-README.md` "Açık kararlar" tablosuna AÇIK olarak yaz ve en geç ilgili kapıda (G0.5 veya G1) tekrar sor. Hâlâ yanıt yoksa güvenli varsayılanı kullan ve kaydet (logo, imza, bakır yazı yok; designator açık). Kritik sorularda (besleme, güvenlik, izolasyon, konnektör/pinout, gerilim/akım, kalite profili, proje kimliği) bu seçenek yoktur.
 
 ### Başlangıç · Kalite profili
 
@@ -157,7 +166,7 @@ Hiçbir hedefte gereksinim, güvenlik, güvenilirlik veya doğrulama maliyet uğ
 
 - [ ] **INT-37** — **Diagnostik ve durum göstergeleri isteniyor mu?** Power LED, MCU/status/heartbeat LED, haberleşme TX/RX veya link LED, fault/error LED, debug LED, test point, reset/programlama arayüzü gibi öğelerden hangileri gerekiyor? Göstergelerin anlamı, renk tercihi, kullanıcı tarafından görünürlüğü ve gerekirse yazılım davranışını sor. Kullanıcı istemiyorsa gereksiz LED veya debug devresi ekleme.
 - [ ] **INT-24** — Tasarımın doğrulanması için hangi testler, ölçümler ve kabul kriterleri gerekli?
-- [ ] **INT-25** — Hangi dosyalar teslim edilecek? Native EDA projesi, PDF schematic, Gerber, drill, BOM, Pick & Place (CPL), stencil ve/veya 3D STEP gerekli mi?
+- [ ] **INT-25** — Hangi dosyalar teslim edilecek? Native EDA projesi, PDF schematic, Gerber, drill, BOM, Pick & Place (CPL), montaj çizimi (`_ASSY.pdf`), fab notu, stencil ve/veya 3D STEP gerekli mi? Varsayılan set ve dosya adları bölüm 09'dadır.
 - [ ] **INT-38** — Proje sonunda tek tek PCB 3D modelleri dışında **komple sistemin birleştirilmiş STEP/CAD assembly** dosyası isteniyor mu? PCB'ler, hazır modüller, konnektörler, karşı parçalar, varsa kasa ve mekanik referansların hangileri modele dahil olacak? Kullanıcının mevcut CAD datasını ve istenen teslim formatını baştan öğren.
 
 ### Tasarıma başlama koşulu — Design Input Approval
@@ -202,11 +211,20 @@ Hiçbir hedefte gereksinim, güvenlik, güvenilirlik veya doğrulama maliyet uğ
 - [ ] **PCB-12** — Kullanıcı evet derse bölüm 01–02'deki varsayılan 1.50 mm halka, 3.00 mm via aralığı, 0.80 mm via hole ve açık solder mask tercihlerini öner; seçilen PCB teknolojisine ve üretici limitlerine uygunluğunu doğrula. Ring ana GND'ye bağlanacak mı, ayrı mı kalacak? Bölüm 00, C kısmında onaylanmış GND/izolasyon kararı geçerliyse yeniden sorma; eksikse netleştir.
 - [ ] **PCB-13** — Kullanıcı hayır derse ring, ring'e ait stitching via ve ring solder mask açıklığı oluşturma; diğer devre GND polygon ve onaylı şase bağlantıları geçerlidir. Tercih belirsizse ring oluşturma ve G0.5 onayını bekle.
 
+### E · Silkscreen ve işaretleme (her soru INT-51'e göre ertelenebilir)
+
+- [ ] **PCB-17** — **Logo/ikon:** Kullanıcının kendi logosu veya sembolü konacak mı? Top, bottom veya ikisi? Dosyayı (tercihen SVG/PNG) ve kullanım hakkını kullanıcı sağlar; başkasına ait marka izinsiz konmaz.
+- [ ] **PCB-18** — **Kart kodu:** `<kod>-<rev>` (ör. `DR00627-R01`) kart üzerine yazılsın mı? Silkscreen mi bakır mı; top, bottom veya ikisi? Tarih de eklensin mi? Bakır yazı net, RF, yüksek gerilim ve empedans hatlarından uzak, DRC uyumlu olur.
+- [ ] **PCB-19** — **Konnektör etiketi:** Konnektörlerde pin numarası mı, net adı mı, ikisi mi yazılsın? Top, bottom veya ikisi?
+- [ ] **PCB-20** — **Designator:** Açık mı gizli mi? Açıksa boyut (varsayılan: üretici minimumu, ör. JLCPCB için ~0.8–1.0 mm yükseklik, 0.15 mm çizgi) ve konum (parçanın içi veya kenarı/köşesi). Gizli designator kartı küçültebilir ama dizgi ve tamiri zorlaştırır; o durumda `_ASSY.pdf` zorunludur ve designator Fab/Assembly katmanında kalır. Hobi/elle dizgide ve Havacılık profilinde bu riski kullanıcıya hatırlat.
+- [ ] **PCB-21** — **İmza / easter egg:** Kullanıcı isterse küçük bir imza veya çizim konabilir. DRC'yi bozmaz; RF, anten, yüksek gerilim ve test bölgelerine konmaz; uygunsuz içerik olmaz. Havacılık profilinde varsayılan kapalıdır.
+
 ### G0.5 · PCB Input Approval
 
 - [ ] PCB özelliklerini ve mekanik kararları `Project-README.md` içinde tek bir kısa özetle kaydet.
 - [ ] Şematikle çelişiyorsa yalnızca etkilenen gereksinimi ve tasarım alanını yeniden değerlendir. Gerekli durumda G0 onayını ve ilgili şematik review'u güncelle.
 - [ ] PCB girdilerine ait revizyon ve gerçek kullanıcı onayını kaydet. Onaylanan, değişmeyen kararları ve doğrulama kanıtlarını tekrar üretme.
+- [ ] INT-51 ile ertelenen kritik olmayan kararları (PCB-17…21) tekrar sor; yanıt yoksa güvenli varsayılanı kaydet.
 - [ ] Layout'a başlamadan önce `python scripts/projectctl.py check-layout` başarılı olmalıdır.
 
 ---
@@ -278,6 +296,8 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **DFM-10** — Teknik gereksinimleri sağlayan seçenekler arasında BOM, PCB ve dizgi maliyetinin toplamını INT-48 tasarım hedefine göre değerlendir; Performans öncelikli hedefte daha pahalı ama ölçülebilir fayda sağlayan seçeneği tercih edebilirsin. Uygun olduğunda standart, yaygın ve önceden doğrulanmış komponentleri, footprint'leri ve referans devreleri yeniden kullan. Her standart pasif için kapsamlı fiyat araştırması yapma; önemli maliyet veya tedarik riski oluşturan parçaları karşılaştır.
 - [ ] **DFM-11** — Kritik veya pahalı komponentlerde teknik olarak uygun, onaylanabilir alternatifleri değerlendir. Stok ve fiyat bilgilerini doğrulayabildiğin tarih itibarıyla kaydet; doğrulanmamış fiyat veya stok uydurma.
 - [ ] **DFM-12** — Yeni komponent araştırmadan önce `Hardware-Library/catalog/` kayıtlarını kontrol et. Doğrulanmış symbol, footprint, CAD model ve devre bloklarını, exact MPN ve geçerlilik koşulları uyuyorsa yeniden kullan. Yeni veya değiştirilen varlıkları bağımsız review tamamlanmadan VERIFIED olarak kaydetme.
+- [ ] **DFM-14** — **Muadil:** Her komponent için mümkünse en az 1 **drop-in muadil** belirle: aynı footprint ve pinout, eşdeğer veya daha iyi elektriksel/termal değer ve sıcaklık sınıfı; tercihen farklı üretici (gerçek ikinci kaynak). Parça yoksa muadil doğrudan takılıp dizgiye devam edilebilmeli. Muadili BOM'un `Alternate MPN` ve katalog `alternates` alanına yaz; bulunamazsa "muadil yok" diye işaretle. Muadil footprint/pinout'u Reviewer doğrular.
+- [ ] **DFM-15** — **Footprint katman haritası:** Footprint'lerde yalnızca ortak katman haritasını kullan: bakır, solder mask, paste, silkscreen, courtyard, Fab/Assembly (gövde ve designator) ve 3D gövde. KiCad'de KiCad Library Convention (KLC) katmanları, Altium'da proje başında belirlenen tek bir mechanical katman haritası (veya component layer type) geçerlidir. Haritada olmayan özel katman kullanma; böylece çıktıda gereksiz katman oluşmaz (`Hardware-Library/README.md`).
 - [ ] **DFM-13** — Onaylı hazır modülleri ve konnektör çiftlerini exact parça/revizyon ile kütüphaneye kaydet. Modülün pin/footprint/3D modeli ile uygun karşı konnektör ve montaj yönteminin eşleşmesini doğrula; her projede aynı varlıkları yeniden modelleme.
 
 ---
@@ -332,6 +352,11 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **LAY-27** — **Empedans eşleştirme:** Eşleştirme gereken hatlarda üç adımı birlikte ele al: (1) şematikte kaynak/yük empedansını ve eşleştirme ağını (terminasyon, pi/L, gerekirse DNP opsiyon, SCH-07) tanımla; (2) hat geometrisini onaylı üretici stack-up'ı ve hesap aracıyla belirle (DIF-03…07, RF-03); (3) via, konnektör, pad ve katman geçişi kaynaklı süreksizlikleri azalt. Hesap ve varsayımları kaydet; stack-up değişirse yeniden hesapla.
 - [ ] **LAY-28** — **Length ve delay matching:** Yüksek hızlı hatlarda (ör. USB, Ethernet, HDMI, MIPI, DDR, paralel bus) arayüz spesifikasyonundaki pair içi ve grup içi toleransları uygula. Hatlar farklı katmanlardan geçiyorsa uzunluk yerine gecikmeyi (ps) eşle; datasheet veriyorsa paket pin gecikmesini ve via gecikmesini de hesaba kat. Pair içi uyumsuzluğu oluştuğu yere yakın düzelt. Serpentine yaparken kıvrım aralığını en az 3W tut ve pad/via yakınına koyma.
 - [ ] **LAY-29** — **Bitiş kontrolü:** Bağlanmamış net sayısı 0, DRC/ERC temiz veya her istisna gerekçesiyle kayıtlı, polygon'lar yeniden dökülmüş, floating copper yok, silkscreen pad üstünde değil, LAY-23'e göre gereksiz uzun/dolanan hat yok, LAY-25'e göre her decoupling kapasitörü kendi pinine yakın, LAY-28'e göre eşleşme toleransları sağlanmış. Sonucu Reviewer kanıtı olarak kaydet.
+
+### Silkscreen ve işaretleme
+
+- [ ] **LAY-30** — Silkscreen her yüzde çakışmasız olur: silk silk'e, pad'e, açık maskeye, via açıklığına ve kart kenarına değmez. Logo, kart kodu, konnektör etiketi, designator ve imza bu kontrole dahildir; her yüz için DRC ile doğrula. Bottom yazılar doğru (aynalı) yönde olur.
+- [ ] **LAY-31** — PCB-17…21 kararlarını uygula: logo, kart kodu, konnektör etiketi, designator ve imza onaylı yüzlerde, onaylı boyut ve konumda. Ertelenmiş ve hâlâ yanıtsız kararlarda INT-51 güvenli varsayılanını kullan.
 
 ---
 
@@ -437,6 +462,27 @@ Aşağıdaki değerler üreticilerin mutlak üretim sınırları değil, standar
 - [ ] **AVI-08** — İzlenebilirlik: her ister için tasarım referansı ve doğrulama yöntemi `Project-README.md` ister tablosunda bulunmalıdır. Üretim çıktıları için `python scripts/projectctl.py manifest` ile checksum manifest oluştur; BOM ve çıktıların aynı revizyondan geldiğini manifest ile doğrula.
 - [ ] **AVI-09** — Kullanıcı veya standart gerektiriyorsa FMEA, güvenilirlik tahmini (ör. MIL-HDBK-217F, FIDES), worst-case ve termal analiz yap. Yapılmamış analizi tamamlanmış gösterme.
 - [ ] **AVI-10** — Havacılık profilinde Reviewer bu bölümün maddelerini ayrıca kontrol eder; doğrulanamayan maddeler PASS sayılmaz.
+
+---
+
+## 09 · Revizyon, varyant ve çıktılar
+
+- [ ] **REL-01** — **Revizyon mu, varyant mı?** Bakır, outline, delik veya stack-up değişiyorsa yeni **revizyon** olur (R01 → R02). PCB aynı kalıp yalnızca takılan parçalar veya değerler değişiyorsa **varyant** olur (`DR00627-AV-R01`, `DR00627-BV-R01`).
+- [ ] **REL-02** — **Revizyon geçişi:** Revizyon atlatılırken kullanıcıya sor: **Ne değişti, neden?** Yanıtı madde madde projenin `REVISION-HISTORY.md` dosyasına yaz (tarih, değişiklikler, sebep, etkilenen kart/dosyalar, onaylayan). Önceki revizyonun bilinen hatalarını (errata) da ekle. Eski revizyonun onay ve review kayıtları yeni revizyona taşınmaz.
+- [ ] **REL-03** — **Çıktı seti:** Teslim edilecek çıktıları INT-25'e göre seç; tipik set aşağıdadır. Her varyantın kendi BOM ve PnP dosyası olur; DNP parçalar PnP'den çıkarılır, BOM'da DNP olarak kalır. Template'ler `Manufacturing/templates/` içindedir.
+- [ ] **REL-04** — Çıktıları `Manufacturing/<rev>/` içine koy, ardından `projectctl.py manifest` ve `check-release` çalıştır. Kök klasördeki dosya adları proje koduyla başlamalıdır.
+
+| Çıktı | Dosya adı | Not |
+| :--- | :--- | :--- |
+| Gerber + drill | `<önek>_Gerber.zip` | Üreticinin istediği katman seti |
+| BOM | `<önek>_BOM.csv` | Varyant başına; MPN, muadil, DNP |
+| Pick & Place | `<önek>_PnP.csv` | Varyant başına; DNP hariç |
+| Şematik | `<önek>_SCH.pdf` | Revizyon ve tarih başlıkta |
+| Montaj çizimi (Draftsman tarzı) | `<önek>_ASSY.pdf` | Top/bottom, designator, Pin 1/polarite, DNP işaretli, ölçüler; bottom görünümün aynalı olup olmadığı yazılı |
+| Fab notu | `<önek>_FAB.md` veya `.pdf` | Stack-up, kalınlık, kaplama, renk, IPC sınıfı, özel istekler |
+| 3D model | `<önek>.step` | İstenirse |
+
+`<önek>` = `projectctl.py name [--variant X]` çıktısı.
 
 ---
 

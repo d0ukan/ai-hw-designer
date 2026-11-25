@@ -24,3 +24,18 @@ __pycache__/
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# KiCad caches and MCP server files (KiCAD-MCP-Server)
+fp-info-cache
+logs/
+*.dsn
+*.ses
+
+# Altium generated files
+__Previews/
+Project Logs for*/
+Project Outputs for*/
+*.PcbDocPreview
+*.SchDocPreview
+*.PrjPcbStructure
+*.LdrDocPreview

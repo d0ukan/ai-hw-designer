@@ -28,6 +28,7 @@ class ProjectGateTests(unittest.TestCase):
     def approved(self):
         state = copy.deepcopy(self.pending)
         state["project_name"] = "Test fixture"
+        state["project_code"] = "DR00627"
         state["requirements_revision"] = "REQ-1"
         state["pcb_requirements_revision"] = "PCB-REQ-1"
         state["design_revision"] = "R1"

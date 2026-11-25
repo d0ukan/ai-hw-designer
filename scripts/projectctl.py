@@ -3,6 +3,7 @@
 Checks never export or change design files. Record commands (set, approve,
 revoke, review, block, unblock) only update project/workflow-state.json after
 validating it. The manifest command only writes Manufacturing/<rev>/MANIFEST.sha256.
+The name command prints the output file prefix, e.g. DR00627-R01 or DR00627-AV-R01.
 """
 
 import argparse
@@ -10,6 +11,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -25,6 +27,10 @@ REVIEW_STATES = {"PENDING", "PASS", "REWORK", "BLOCKED"}
 REVIEW_KEYS = ("schematic", "pcb", "manufacturing")
 TEXT_FIELDS = ("project_name", "requirements_revision", "pcb_requirements_revision", "design_revision")
 OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by")
+OPTIONAL_TEXT_FIELDS = ("project_code",)
+SETTABLE_FIELDS = TEXT_FIELDS + OPTIONAL_TEXT_FIELDS
+NAME_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.]*$")
+VARIANT = re.compile(r"^[A-Z]$")
 GATES = {"G0": "input_approval", "G0.5": "pcb_input_approval", "G1": "export_approval"}
 
 
@@ -48,6 +54,9 @@ def validate_state(state):
             state[key] is not None and not nonempty_text(state[key])
         ):
             raise StateError(f"{key} must be a nonempty string or null.")
+    code = state.get("project_code")
+    if code is not None and not (isinstance(code, str) and NAME_PART.match(code)):
+        raise StateError("project_code must use letters, digits, '_' or '.' (e.g. DR00627) or be null.")
 
     def validate_record(record, name, statuses, accepted):
         if not isinstance(record, dict):
@@ -128,6 +137,8 @@ def gate_errors(state, *, layout=False, release=False):
         errors.append("PCB requirements revision is missing.")
     if not nonempty_text(design):
         errors.append("Design revision is missing.")
+    if not layout and not nonempty_text(state.get("project_code")):
+        errors.append("Project code is missing (needed to name outputs).")
 
     def check_record(record, label, expected_status, revision):
         if record["status"] != expected_status:
@@ -172,7 +183,7 @@ def _set_record(record, status, accepted, revision, evidence, by):
 
 
 def set_field(state, field, value):
-    if field not in TEXT_FIELDS:
+    if field not in SETTABLE_FIELDS:
         raise StateError(f"Unknown field: {field}")
     state[field] = value if nonempty_text(value) else None
     return validate_state(state)
@@ -210,6 +221,34 @@ def unblock(state, issue_id):
         raise StateError(f"{issue_id} is not an open blocking issue.")
     state["blocking_issues"].remove(issue_id)
     return validate_state(state)
+
+
+# --- Output naming -----------------------------------------------------------
+
+def output_name(state, variant=None):
+    """Return the output prefix: <code>-<rev> or <code>-<variant>V-<rev>."""
+    code, rev = state.get("project_code"), state["design_revision"]
+    if not nonempty_text(code):
+        raise StateError("project_code is not set.")
+    if not (nonempty_text(rev) and NAME_PART.match(rev)):
+        raise StateError("design_revision is not set or cannot be used in a file name.")
+    if variant is None:
+        return f"{code}-{rev}"
+    if not VARIANT.match(variant):
+        raise StateError("Variant must be one capital letter (A-Z).")
+    return f"{code}-{variant}V-{rev}"
+
+
+def naming_errors(folder, state):
+    """Top-level release files must start with the project code."""
+    code = state.get("project_code")
+    if not nonempty_text(code) or not Path(folder).is_dir():
+        return []
+    return [
+        f"File name does not start with project code {code}: {p.name}"
+        for p in sorted(Path(folder).iterdir())
+        if p.is_file() and p.name != MANIFEST_NAME and not p.name.startswith(code + "-")
+    ]
 
 
 # --- Manufacturing manifest --------------------------------------------------
@@ -293,7 +332,7 @@ def build_parser():
         sub.add_parser(name, parents=[common])
 
     p = sub.add_parser("set", parents=[common], help="Set a revision or project name (omit value to clear)")
-    p.add_argument("field", choices=TEXT_FIELDS)
+    p.add_argument("field", choices=SETTABLE_FIELDS)
     p.add_argument("value", nargs="?")
 
     p = sub.add_parser("approve", parents=[common], help="Record a real user approval")
@@ -312,6 +351,9 @@ def build_parser():
     p.add_argument("--evidence")
     p.add_argument("--by")
 
+    p = sub.add_parser("name", parents=[common], help="Print the output file prefix")
+    p.add_argument("--variant", help="Variant letter, e.g. A -> <code>-AV-<rev>")
+
     for name in ("block", "unblock"):
         p = sub.add_parser(name, parents=[common])
         p.add_argument("issue_id")
@@ -329,6 +371,7 @@ def main(argv=None):
             return 0
         if cmd == "status":
             print("Project:", state["project_name"] or "not started")
+            print("Project code:", state.get("project_code") or "not set")
             print("Requirements revision:", state["requirements_revision"] or "not set")
             print("PCB requirements revision:", state["pcb_requirements_revision"] or "not set")
             print("Design revision:", state["design_revision"] or "not set")
@@ -355,6 +398,10 @@ def main(argv=None):
             print(f"UPDATED: {cmd} recorded in {args.state.name}.")
             return 0
 
+        if cmd == "name":
+            print(output_name(state, args.variant))
+            return 0
+
         if cmd == "manifest":
             folder = release_dir(args.manufacturing_dir, state["design_revision"])
             count = write_manifest(folder)
@@ -365,7 +412,8 @@ def main(argv=None):
         release = cmd == "check-release"
         errors = gate_errors(state, layout=layout, release=release)
         if release and nonempty_text(state["design_revision"]):
-            errors += manifest_errors(release_dir(args.manufacturing_dir, state["design_revision"]))
+            folder = release_dir(args.manufacturing_dir, state["design_revision"])
+            errors += naming_errors(folder, state) + manifest_errors(folder)
         label = "LAYOUT" if layout else ("RELEASE" if release else "EXPORT")
         if errors:
             print(f"{label} BLOCKED:", file=sys.stderr)

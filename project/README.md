@@ -2,6 +2,7 @@
 
 `workflow-state.json` onay ve review durumunun kısa, makine tarafından okunabilir kaydıdır.
 
+- `project_code`: proje kodu (ör. `DR00627`); çıktı adları bundan türetilir. Export ve release için zorunlu. Eski state dosyalarında alan yoksa null kabul edilir.
 - `requirements_revision`: onaylanan proje girdilerinin revizyonu.
 - `pcb_requirements_revision`: PCB layout girdilerinin ayrı revizyonu. Malzeme, teknoloji, geometri, ring ve diğer PCB kararları değişirse güncelle.
 - `design_revision`: mevcut native tasarımın revizyonu veya commit kimliği. Tasarım değiştiğinde güncelle.
@@ -19,6 +20,10 @@ JSON'u elle düzenleme; komutlar dosyayı doğrulayıp güvenli şekilde yazar:
 
 ```bash
 python scripts/projectctl.py set project_name "Sensör kartı"
+python scripts/projectctl.py set project_code DR00627
+python scripts/projectctl.py set design_revision R01
+python scripts/projectctl.py name               # DR00627-R01
+python scripts/projectctl.py name --variant A   # DR00627-AV-R01
 python scripts/projectctl.py set requirements_revision REQ-1
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı, 2026-11-25 sohbet" --by "<isim>"
 python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
@@ -27,7 +32,7 @@ python scripts/projectctl.py unblock REV-001
 python scripts/projectctl.py manifest
 ```
 
-`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse veya dosyalar değişmişse başarısız olur.
+`manifest`, `Manufacturing/<design_revision>/` içindeki dosyaların SHA-256 listesini `MANIFEST.sha256` olarak yazar. `check-release` bu manifest eksikse, dosyalar değişmişse veya kök klasördeki bir dosyanın adı proje koduyla başlamıyorsa başarısız olur.
 
 Approval durumları: PENDING / APPROVED. Review durumları: PENDING / PASS / REWORK / BLOCKED. Geçerli onay veya PASS için revizyon ve gerçek kanıt gereklidir. Manager review sonucunu Reviewer'ın kaydına göre işler; onayları kendi adına üretmez.
 

@@ -70,6 +70,26 @@ class RecordFunctionTests(unittest.TestCase):
         projectctl.set_field(state, "design_revision", None)
         self.assertIsNone(state["design_revision"])
 
+    def test_output_name_and_variant(self):
+        state = projectctl.set_field(pending_state(), "project_code", "DR00627")
+        projectctl.set_field(state, "design_revision", "R01")
+        self.assertEqual(projectctl.output_name(state), "DR00627-R01")
+        self.assertEqual(projectctl.output_name(state, "A"), "DR00627-AV-R01")
+        with self.assertRaises(StateError):
+            projectctl.output_name(state, "ab")
+
+    def test_output_name_requires_code(self):
+        state = projectctl.set_field(pending_state(), "design_revision", "R01")
+        with self.assertRaises(StateError):
+            projectctl.output_name(state)
+
+    def test_invalid_project_code_rejected(self):
+        with self.assertRaises(StateError):
+            projectctl.set_field(pending_state(), "project_code", "DR 627/x")
+
+    def test_old_state_without_project_code_is_valid(self):
+        projectctl.validate_state(pending_state())
+
     def test_invalid_recorded_by_rejected(self):
         state = pending_state()
         state["input_approval"]["recorded_by"] = ""
@@ -99,6 +119,7 @@ class CliAndManifestTests(unittest.TestCase):
     def approve_everything(self):
         steps = [
             ("set", "project_name", "Test"),
+            ("set", "project_code", "DR00627"),
             ("set", "requirements_revision", "REQ-1"),
             ("set", "pcb_requirements_revision", "PCB-1"),
             ("set", "design_revision", "R1"),
@@ -127,7 +148,7 @@ class CliAndManifestTests(unittest.TestCase):
         release = self.mfg / "R1"
         (release / "gerber").mkdir(parents=True)
         (release / "gerber" / "top.gbr").write_bytes(b"G04 test*\n")
-        (release / "bom.csv").write_text("ref,mpn\n", encoding="utf-8")
+        (release / "DR00627-R1_BOM.csv").write_text("ref,mpn\n", encoding="utf-8")
 
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
@@ -136,12 +157,34 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertEqual(self.run_cli("manifest")[0], 0)
         self.assertEqual(self.run_cli("check-release")[0], 0)
 
-        (release / "bom.csv").write_text("ref,mpn\nR1,X\n", encoding="utf-8")
+        (release / "DR00627-R1_BOM.csv").write_text("ref,mpn\nR1,X\n", encoding="utf-8")
         (release / "extra.txt").write_text("x", encoding="utf-8")
         code, out = self.run_cli("check-release")
         self.assertEqual(code, 1)
-        self.assertIn("Checksum mismatch: bom.csv", out)
+        self.assertIn("Checksum mismatch: DR00627-R1_BOM.csv", out)
         self.assertIn("File not in manifest: extra.txt", out)
+
+    def test_export_requires_project_code(self):
+        self.approve_everything()
+        self.run_cli("set", "project_code")
+        code, out = self.run_cli("check-export")
+        self.assertEqual(code, 1)
+        self.assertIn("Project code is missing", out)
+
+    def test_name_command(self):
+        self.approve_everything()
+        self.assertEqual(self.run_cli("name")[1].strip(), "DR00627-R1")
+        self.assertEqual(self.run_cli("name", "--variant", "A")[1].strip(), "DR00627-AV-R1")
+
+    def test_release_rejects_unprefixed_file(self):
+        self.approve_everything()
+        release = self.mfg / "R1"
+        release.mkdir(parents=True)
+        (release / "bom.csv").write_text("x", encoding="utf-8")
+        self.run_cli("manifest")
+        code, out = self.run_cli("check-release")
+        self.assertEqual(code, 1)
+        self.assertIn("does not start with project code DR00627: bom.csv", out)
 
     def test_manifest_without_release_folder_fails(self):
         self.run_cli("set", "design_revision", "R9")

@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.12 — 2026-11-25
+
+**Proje kimliği ve çıktılar**
+- INT-49/50: İlk iş proje adı, kodu, revizyon ve varyant sorulur; çıktılar `<kod>-<rev>` veya `<kod>-<harf>V-<rev>` önekiyle adlandırılır (ör. `DR00627-R01`, `DR00627-AV-R01`).
+- `projectctl.py`: `project_code` alanı (eski state dosyalarıyla uyumlu), `name [--variant X]` komutu; `check-export` proje kodu ister, `check-release` kök dosya adlarının proje koduyla başlamasını kontrol eder. 7 yeni test (toplam 34).
+- Bölüm 09 (REL-01…04): revizyon/varyant ayrımı, revizyon geçişinde "ne değişti, neden?" kaydı, çıktı seti ve isimleri.
+- `REVISION-HISTORY.md` ve `Manufacturing/templates/` eklendi: `bom.csv`, `pnp.csv`, `schematic-outputs.md`, `assembly-drawing.md` (Draftsman tarzı `_ASSY.pdf`), `fab-notes.md`.
+
+**Kurallar**
+- INT-51: Kritik olmayan sorularda "Sonra karar ver" seçeneği; ertelenen karar ilgili kapıda tekrar sorulur, yanıt yoksa güvenli varsayılan.
+- PCB-17…21: logo/ikon, kart kodu (silk/bakır, yüz, tarih), konnektör etiketi, designator (açık/gizli, boyut, konum), imza/easter egg soruları.
+- LAY-30/31: Silkscreen her yüzde çakışmasız; işaretleme kararlarının uygulanması.
+- DFM-14: Her komponente mümkünse en az 1 drop-in muadil. DFM-15: Ortak footprint katman haritası (KiCad KLC, Altium sabit mechanical harita).
+- Roller: MGR-15/16, REV-13 (MCP'de Reviewer yalnız okur), REV-14 (çıktı seti kontrolü).
+
+**MCP ve Git**
+- README: KiCAD-MCP-Server ve altium-mcp kullanım notları.
+- `.gitignore`: KiCad `fp-info-cache`, MCP `logs/`, Freerouting `*.dsn/*.ses`, Altium önizleme/log/çıktı klasörleri.
+- `.gitattributes`: Altium tasarım dosyaları `binary`, `.PrjPcb`/`.OutJob` CRLF, EasyEDA `.epro` binary.
+
 ## v1.11.1 — 2026-11-25
 
 - `README.md`: İş akışı şemasına şematik ve üretim kontrolü için REWORK geri dönüşleri eklendi; G1 yeniden onay kuralı açıklandı.

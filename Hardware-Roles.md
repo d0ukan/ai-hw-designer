@@ -4,7 +4,7 @@
 
 | Doküman | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Versiyon** | v1.9 |
+| **Versiyon** | v1.12 |
 | **Ekip yapısı** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer |
 | **AI / Model** | Sağlayıcıdan ve istemciden bağımsız |
 | **Ortak tasarım kuralları** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -41,6 +41,8 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 - [ ] **MGR-12** — Programlanabilir komponent varsa G0'da on-board/off-board flash, debug, arayüz ve fiziksel konnektör tercihlerini açıkça onaylat. İlgisiz analog projede bu soru grubunu atla.
 - [ ] **MGR-13** — İlk görüşmede kullanıcının anlatım tercihini (Caveman / Balanced / Detailed) sor, `Project-README.md` içinde sakla ve kullanıcıya verilen yanıtları buna göre düzenle. Tercih belirlenmemişse Balanced kullan. Kritik bulguları ve gerekli onayları anlatım kısaltması nedeniyle gizleme.
 - [ ] **MGR-14** — Proje amacından sonra kalite profilini (Hobi / Endüstriyel / Havacılık, `Hardware-Rules.md` INT-47) ve ardından tasarım hedefini (Maliyet / Dengeli / Performans, INT-48) sor ve kaydet. RF varsa bandı ve RF kademesini, Havacılık profilinde bölüm 08 standart/seviye bilgilerini topla. İlgisiz profilleri ve RF sorularını sorma.
+- [ ] **MGR-15** — Yeni projede ilk iş proje adı, proje kodu, revizyon ve varsa varyant harfini sor (INT-49) ve `projectctl.py set project_code|design_revision` ile kaydet. Kritik olmayan sorularda "Sonra karar ver" seçeneği sun (INT-51); ertelenenleri `Project-README.md` "Açık kararlar" tablosuna yaz ve en geç ilgili kapıda tekrar sor.
+- [ ] **MGR-16** — Revizyon atlatılırken (REL-01/02) önce revizyon mu varyant mı olduğunu netleştir; kullanıcıya "ne değişti, neden?" diye sor ve yanıtı madde madde `REVISION-HISTORY.md` dosyasına yaz. Yeni revizyonda önceki onayları geçerli sayma.
 
 **Yetki sınırı:** Müdür, Designer'ın yaptığı teknik işi tekrar yapmaz ve Reviewer'ın incelemesini ikinci kez baştan yürütmez. Teknik bir karar çözülemiyorsa ilgili ajana yönlendirir veya kullanıcıdan görüş alır.
 
@@ -73,6 +75,8 @@ Roller model veya ürün adı değildir. Aynı proje içinde Codex, Claude, Gemi
 - [ ] **REV-10** — Uygunsa her kartın ve kartlar arası bağlantıların, harici konnektör/karşı parçaların, hazır modüllerin, diagnostik göstergelerin ve komple CAD assembly'nin onaylı isterlerle uyumunu incele. Multi-PCB bulgularını kart ID ve ortak tasarım revizyonuyla kaydet; sistem review PASS yalnızca kapsam içindeki kontroller tamamlandığında verilir.
 - [ ] **REV-11** — RF/high-speed isterleri varsa ilgili HS/DIF/RF kontrollerini ve gerçek analiz kanıtlarını incele. Havacılık profilinde bölüm 08 AVI maddelerini ayrıca kontrol et. EDA aracını veya MCP bağlantısını kullanırken gerçekleşmeyen kontrolleri PASS olarak işaretleme.
 - [ ] **REV-12** — Uygulanıyorsa programlama/flash/debug yönteminin, onaylı konnektörün, pin mapping, besleme ve erişim gereksinimlerinin tasarımla uyumunu doğrula. Gerçek donanım testi yapılmadıysa tamamlanmış gibi raporlama.
+- [ ] **REV-13** — MCP/EDA aracıyla incelerken yalnızca okuma ve kontrol araçlarını kullan; tasarımı değiştirme. KiCad MCP'de `KICAD_MCP_OPERATING_MODE=readonly` kullan; Altium MCP'de yalnız `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist` gibi okuma araçları. KiCad'de via-net kaymalarına karşı `audit_via_nets` (varsa) çalıştır.
+- [ ] **REV-14** — Çıktı setini (bölüm 09) kontrol et: dosya adları proje kodu/revizyon/varyantla uyumlu, her varyantın BOM ve PnP'si ayrı, DNP parçalar PnP'de yok, `_ASSY.pdf` designator/Pin 1/DNP işaretli, muadiller (DFM-14) footprint/pinout uyumlu, silkscreen çakışmasız (LAY-30).
 
 **Bağımsızlık kuralı:** Reviewer tasarım dosyalarını değiştirmez. Düzeltmeleri Designer yapar; Reviewer yalnızca inceleme raporlarını ve bulgu durumlarını günceller. Bir ajan kendi yaptığı tasarım değişikliğinin bağımsız onayını veremez.
 

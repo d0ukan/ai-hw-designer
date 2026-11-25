@@ -2,7 +2,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.11.1 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/ai-hw-designer/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.12 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır.
 
@@ -22,6 +22,22 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 
 4. Manager ilk görüşmede kullanıcının anlatım tercihini (Caveman / Balanced / Detailed) sorar. Gereksinimleri ve kararları `Project-README.md` dosyasına, onay/review durumunu ise `project/workflow-state.json` dosyasına kaydeder. G0 öncesinde kart tipi, besleme, tek/multi-PCB, hazır modül, fiziksel konnektör, diagnostik, varsa programlama/flash/debug ve CAD teslimat tercihlerini netleştirir; layout öncesinde G0.5 ile PCB teknolojisi, malzeme, kalite, köşe geometrisi ve isteğe bağlı şase halkasını onaylatır.
 5. Aktif görev gerektiğinde Designer veya Reviewer'a verilir. Üç rol sürekli çalışmaz.
+
+## Proje kimliği ve çıktı isimleri
+
+Manager ilk iş proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-49). Kod biçimini kullanıcı belirler. Tüm çıktılar bu kimlikle adlandırılır:
+
+| Durum | Önek | Örnek dosyalar |
+| :--- | :--- | :--- |
+| Revizyon | `DR00627-R01` | `DR00627-R01_BOM.csv`, `_PnP.csv`, `_SCH.pdf`, `_ASSY.pdf`, `_Gerber.zip` |
+| Varyant A | `DR00627-AV-R01` | `DR00627-AV-R01_BOM.csv`, `DR00627-AV-R01_PnP.csv` |
+
+- Bakır, outline veya stack-up değişirse yeni **revizyon**; sadece takılan parçalar değişirse **varyant** (REL-01).
+- Revizyon atlatılırken kullanıcıya "ne değişti, neden?" sorulur ve `REVISION-HISTORY.md` dosyasına yazılır (REL-02).
+- Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
+- Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; ertelenen karar en geç ilgili kapıda tekrar sorulur (INT-51).
+- Silkscreen soruları (PCB-17…21): logo/ikon, kart kodu (silk/bakır, top/bottom), konnektör etiketi (pin no/net adı), designator (açık/gizli, boyut, konum), imza/easter egg. Silkscreen her yüzde çakışmasız olur (LAY-30).
+- Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir.
 
 ## Kalite profilleri
 
@@ -63,9 +79,10 @@ Daha sonra kendi boş, tercihen private GitHub repository'ne yükleyip ayarları
 | `Hardware-Library/` | Doğrulanmış symbol, footprint, 3D model ve devre blokları |
 | `Hardware/` | Native EDA projesi (KiCad, Altium vb.) |
 | `Mechanical/` | Projeye özel mekanik kaynaklar ve isteğe bağlı komple CAD assembly |
-| `Manufacturing/` | Kullanıcı onayı sonrası üretilen dosyalar |
+| `Manufacturing/` | Kullanıcı onayı sonrası üretilen dosyalar; `templates/` içinde boş BOM, PnP, şematik çıktı, montaj çizimi ve fab notu şablonları |
 | `Project-README.md` | Başlangıçta boş proje bilgi/ister/ek kural şablonu; Manager güncel tutar |
 | `REVIEW_LOG.md` | Bağımsız review bulguları |
+| `REVISION-HISTORY.md` | Revizyon geçmişi: ne değişti, neden, errata |
 | `project/workflow-state.json` | Makine tarafından kontrol edilebilir iş akışı durumu |
 | `scripts/projectctl.py` | Modelsiz, yerel onay ve durum kontrolü |
 | `tests/` | Onay kontrol aracının otomatik testleri |
@@ -140,6 +157,25 @@ Yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/
 
 MCP server/eklenti sürümü, güvenilirliği, EDA uyumu, erişim ve gerçek araç fonksiyonları proje başında doğrulanır. Bağlantının var olması tüm şematik, layout, routing, export ve 3D işlemlerini desteklediği anlamına gelmez. İzin verilen native araçlarla deterministik kontrolleri öncelikli kullan.
 
+Reviewer MCP kullanırken yalnızca okuma araçlarıyla çalışır, tasarımı değiştirmez (REV-13).
+
+**[KiCAD-MCP-Server](https://github.com/mixelpixx/KiCAD-MCP-Server) kullanırken:**
+- `stable` dalı, v2.9 veya üstü kullan.
+- Token tasarrufu için `KICAD_MCP_TOOLBOXES=core` ile başla; gereken toolbox'ları aç.
+- Reviewer için `KICAD_MCP_OPERATING_MODE=readonly`, yalnız export için `manufacturing` kullan.
+- Autorouter (Freerouting) yalnızca kritik olmayan netlerde `routeNets`/`excludeNets` ile kullanılır (LAY-14); sonucu kontrol et.
+- Şematik düzenlerken dosya KiCad'de açık olmasın.
+- `KICAD_MCP_DEV=1` oturum logunu proje içindeki `logs/` klasörüne yazar; klasör `.gitignore` içindedir, yine de public repoya göndermeden önce kontrol et.
+
+**[altium-mcp](https://github.com/coffeenmusic/altium-mcp) kullanırken:**
+- Readonly modu yoktur; Reviewer yalnız `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist` gibi okuma araçlarını kullanır.
+- Stack-up, empedans, diff pair ve length matching kuralları MCP ile yazılamaz; Altium'da elle girilir.
+- `route_connections` bir autorouter'dır; kritik hatlarda kullanılmaz (LAY-14).
+- `run_altium_script` her kullanımda kullanıcı onayı ister.
+- `git pull`/`checkout` öncesi Altium'da dokümanları kaydet ve kapat; Altium dışarıdan değişen dosyanın üstüne yazabilir.
+- OutJob çıktı yolunu `Manufacturing/<rev>/` yap ve dosyaları proje önekiyle adlandır.
+- Altium tasarım dosyaları binary'dir (`.gitattributes`); git diff göstermez ve birleştirilemez. Aynı dosyayı aynı anda tek kişi düzenler.
+
 ## Yerleşim ve routing
 
 `Hardware-Rules.md` bölüm 04, tüm kartlar için şematik, yerleşim ve routing kurallarını içerir:
@@ -151,6 +187,7 @@ MCP server/eklenti sürümü, güvenilirliği, EDA uyumu, erişim ve gerçek ara
 | Yerleşim | LAY-08…LAY-13 | Datasheet/app note referans layout'u, yerleşim sırası, giriş koruması, switching döngüsü, kristal, termal, hizalama |
 | Routing | LAY-14…LAY-24 | Routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem, clock/3W, analog GND, güç dağıtımı, yüksek gerilim, pad girişi/teardrop, en kısa doğrudan yol, onaylı free-angle/organik routing |
 | SI / PI | LAY-25…LAY-29 | Decoupling döngüsü, kritik uzunluk, empedans eşleştirme (şematik + stack-up + routing), length/delay matching, bitiş kontrolü |
+| Silkscreen | LAY-30…LAY-31 | Her yüzde çakışmasız silkscreen; logo, kod, konnektör etiketi, designator, imza kararlarının uygulanması |
 
 Özel üretim (medikal, askeri/havacılık, HDI, özel stack-up) istenmediyse JLCPCB ve/veya PCBWay standart kabiliyetleri esas alınır (DFM-00).
 
@@ -174,6 +211,9 @@ python -m unittest discover -s tests -v
 Onay ve review kayıtları için JSON'u elle düzenleme; komutları kullan. Komutlar kaydı doğrular, tarih ve kişi bilgisini ekler:
 
 ```bash
+python scripts/projectctl.py set project_code DR00627
+python scripts/projectctl.py set design_revision R01
+python scripts/projectctl.py name --variant A      # DR00627-AV-R01
 python scripts/projectctl.py set requirements_revision REQ-1
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "Kullanıcı onayı" --by "<isim>"
 python scripts/projectctl.py review schematic PASS --revision R1 --evidence "REVIEW_LOG.md#R1"
@@ -183,12 +223,12 @@ python scripts/projectctl.py revoke G1
 python scripts/projectctl.py manifest
 ```
 
-`manifest`, `Manufacturing/<design_revision>/` içindeki üretim dosyalarının SHA-256 listesini (`MANIFEST.sha256`) yazar. `check-release` manifest eksikse veya dosyalar sonradan değişmişse başarısız olur. Ayrıntılar: [project/README.md](project/README.md).
+`manifest`, `Manufacturing/<design_revision>/` içindeki üretim dosyalarının SHA-256 listesini (`MANIFEST.sha256`) yazar. `check-release` manifest eksikse, dosyalar sonradan değişmişse veya kök klasördeki bir dosyanın adı proje koduyla başlamıyorsa başarısız olur. `check-export` proje kodu yoksa başarısız olur. Ayrıntılar: [project/README.md](project/README.md).
 
 Yeni projede `check-layout`, `check-export` ve `check-release` komutlarının başarısız olması normal ve istenen davranıştır. Manager gerçek kullanıcı onaylarını kaydetmeli, Reviewer ilgili revizyonun bağımsız kontrollerini yapmalı ve Designer layout öncesinde `check-layout`, export öncesinde `check-export` çalıştırmalıdır. Araç kayıtların tutarlılığını doğrular; onayın gerçekliğini veya kartın elektriksel doğruluğunu kendi başına kanıtlamaz ve Gerber/BOM/PnP üretmez.
 
 ## Donanım kütüphanesini büyütme
 
-[Hardware-Library/README.md](Hardware-Library/README.md) dosyasındaki kayıt yöntemine göre yalnızca doğrulanmış, lisansı uygun ve tekrar kullanılabilir varlıkları ekle. Yeni projelere aktarılmasını istediğin girişleri kendi template repository'ne inceleme sonrası geri kazandır. Projeye özel tasarımları otomatik olarak genel kütüphaneye taşıma.
+[Hardware-Library/README.md](Hardware-Library/README.md) dosyasındaki kayıt yöntemine ve ortak footprint katman haritasına (DFM-15: KiCad KLC, Altium sabit mechanical harita) göre yalnızca doğrulanmış, lisansı uygun ve tekrar kullanılabilir varlıkları ekle. Yeni projelere aktarılmasını istediğin girişleri kendi template repository'ne inceleme sonrası geri kazandır. Projeye özel tasarımları otomatik olarak genel kütüphaneye taşıma.
 
 > Bu şablon hazır bir PCB tasarımı değildir. EDA yazılımı, üretici, bileşen seçimleri, elektriksel tasarım ve gerçek doğrulamalar her proje için ayrıca belirlenir. AI aracının izinleri mevcut oturum ve kullanıcı kararlarıyla sınırlıdır.

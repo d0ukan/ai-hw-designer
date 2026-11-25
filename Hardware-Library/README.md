@@ -33,7 +33,23 @@ Proje içindeki ortak, tekrar kullanılabilir donanım kütüphanesi. İlk tasar
 | `msl` | Nem hassasiyet seviyesi | `1` / `3` |
 | `rohs` | RoHS durumu | `Yes` / `No` |
 
+`alternates` alanına mümkünse en az 1 drop-in muadil yaz: aynı footprint ve pinout, eşdeğer veya daha iyi değerler, tercihen farklı üretici (DFM-14). Bulunamazsa `notes` alanına "muadil yok" yaz.
+
 Bilinmeyen alanı boş bırak; uydurma. Hobi projelerde yalnızca gerekli sütunları doldurmak yeterlidir, Havacılık profilinde `temp_range`, `lifecycle`, `qualification` ve `alternates` zorunludur.
+
+### Footprint katman haritası (DFM-15)
+
+Footprint'ler yalnızca aşağıdaki ortak katmanları kullanır; haritada olmayan özel katman kullanılmaz. Böylece çıktı alırken gereksiz katman oluşmaz.
+
+| İçerik | KiCad (KLC) | Altium (proje başında sabitlenir; örnek) |
+| :--- | :--- | :--- |
+| Bakır, solder mask, paste | `F/B.Cu`, `F/B.Mask`, `F/B.Paste` | Top/Bottom Layer, Solder, Paste |
+| Silkscreen (gövde çizgisi, Pin 1) | `F/B.SilkS` | Top/Bottom Overlay |
+| Courtyard | `F/B.CrtYd` | Mech 15/16 veya Courtyard layer type |
+| Fab/Assembly (gövde, designator `${REFERENCE}`) | `F/B.Fab` | Mech 13/14 veya Assembly layer type |
+| 3D gövde | 3D model | Mech 13/14 veya 3D Body layer type |
+
+Altium'da mechanical katman numaraları kişiden kişiye değişir; projede seçilen haritayı `Project-README.md` içine yaz ve tüm footprint'lerde aynısını kullan. Mümkünse Altium'un component layer type (Assembly, Courtyard, 3D Body) özelliğini kullan. İsimlendirme IPC-7351'e yakın tutulur.
 
 Katalog başlangıçta yalnızca sütun başlıklarını içerir. Hazır doğrulanmış komponent veya devre bulunduğu varsayılmamalıdır. Kopyalanmış proje kütüphanesi daha sonra kullanıcı tarafından template repository'ye review ile geri kazandırılabilir.
 

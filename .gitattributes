@@ -28,6 +28,20 @@
 fp-lib-table  text
 sym-lib-table text
 
+# Altium Designer: design files are binary (OLE); project/OutJob files are
+# INI-style text that Altium writes with CRLF
+*.SchDoc   binary
+*.PcbDoc   binary
+*.SchLib   binary
+*.PcbLib   binary
+*.IntLib   binary
+*.PrjPcb   text eol=crlf
+*.PrjPcbVariants text eol=crlf
+*.OutJob   text eol=crlf
+
+# EasyEDA Pro project archive
+*.epro     binary
+
 # Manufacturing outputs (text, but never modify line endings)
 *.gbr  -text
 *.gb?  -text
