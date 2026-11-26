@@ -22,7 +22,7 @@
 
 ### C · Stack-up & Manufacturing
 
-- [ ] **PCB-09** — Is there a special request for manufacturer, standard layer count/stack-up, finished PCB thickness, outer/inner copper weight, solder mask/silkscreen color and surface finish? Otherwise propose the price/performance defaults in section 03 to the user.
+- [ ] **PCB-09** — Confirm the layer count from INT-20 (the user's target, or the AI's choice with its one-line reason). Is there a special request for manufacturer, stack-up, finished PCB thickness, outer/inner copper weight, solder mask/silkscreen color and surface finish? Otherwise propose the price/performance defaults in section 03 to the user.
 - [ ] **PCB-10** — Are controlled impedance, special vias, edge plating/castellation, panelization, stencil, single/double-sided assembly or special manufacturing tolerances required? If so, get only the related manufacturer and user information; apply section 05.
 
 ### D · Optional CHASSIS_GND perimeter ring

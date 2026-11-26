@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.20 — 2026-11-26
+
+- INT-19 moved right after the project purpose and made explicit: maximum envelope L × W × H in mm including connectors, mating cables and the tallest part, or "as small as possible" / "no limit"; shape, mounting holes and enclosure STEP.
+- INT-20: "Do you have a target layer count, or shall I choose (2, 4, 6, 8 …)?" The AI picks the lowest suitable count and gives a one-line reason; PCB-09 confirms it at G0.5.
+
 ## v1.19 — 2026-11-26
 
 - INT-55: the AI no longer proposes projects on its own. It asks in one question "What would you like to build? Or shall I suggest some ideas?"; only if the user wants ideas does it suggest 3–5, based on the user's earlier projects in the repo and stated interests (no searching other files without permission). The user always picks.

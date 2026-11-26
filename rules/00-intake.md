@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 00 · Project Intake — Project start questionnaire
 
-> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project idea (INT-55) → project identity (INT-49) → EDA tool and MCP offer (INT-04, INT-54) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
+> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project idea (INT-55) → project identity (INT-49) → EDA tool and MCP offer (INT-04, INT-54) → project purpose (INT-01) → size limit (INT-19) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
 
 ### Start · Communication preference
 
@@ -74,6 +74,7 @@ Under no goal are requirements, safety, reliability or verification cut for cost
 ### A · Project purpose and scope
 
 - [ ] **INT-01** — **What is the purpose of this project?** What will the PCB do, in which device or system will it be used, and what are its main functions?
+- [ ] **INT-19** — Right after the purpose, ask: **"Is there a size limit?"** Get the maximum envelope as length × width × height in mm, including connectors, mating cables/plugs and the tallest part; or let the user say **"as small as possible"** or **"no limit"**. Also ask board shape, mounting holes and any enclosure (ask for its STEP/drawing). Size drives package size, module choice, single/double-sided assembly and layer count, so record it before G0; finalize the details at G0.5 (PCB-05…08). If there is no answer, assume "no limit" and say so.
 - [ ] **INT-02** — Is the design from scratch, or a revision of an existing schematic/PCB? Is there a requirements document, reference design or existing file?
 - [ ] **INT-03** — Is the design for prototype, series production or test/development? What is the estimated production quantity and target PCB/PCBA unit cost?
 - [ ] **INT-27** — Are there written requirements, customer requirements, ICD, technical specification, reference board or mandatory component list for the project? Which requirements are fixed and which are left to the designer?
@@ -152,8 +153,7 @@ Under no goal are requirements, safety, reliability or verification cut for cost
 | PCBA | Manufacturer's automated component assembly service |
 | Hybrid | Automated PCBA plus manual assembly of specific components |
 
-- [ ] **INT-19** — What are the PCB dimensions, shape, maximum component height, mounting hole positions and mechanical/enclosure constraints?
-- [ ] **INT-20** — Is there a special requirement for layer count, PCB thickness, copper thickness or surface finish? Otherwise, may the economical defaults in section 03 be used?
+- [ ] **INT-20** — Ask: **"Do you have a target layer count? Or shall I choose the suitable one (2, 4, 6, 8, 10, 12 …)?"** If the user names a count, use it and warn only if it cannot meet the requirements (e.g. 2 layers with USB 3 or a fine-pitch BGA). If the AI chooses, use the lowest standard count that meets the requirements (section 03) and give the reason in one line: routing density and BGA/fine-pitch parts, controlled impedance or RF needing a solid reference plane, high-speed interfaces, power/current and heat, EMC, and the size limit (INT-19). Even counts are standard; 1 layer only for very simple boards. Confirm the count at G0.5 (PCB-09). Also ask about special PCB thickness, copper thickness or surface finish; otherwise propose the economical defaults in section 03.
 - [ ] **INT-21** — What are the operating environment and temperature range? Are there special requirements for humidity, vibration, dust/water, enclosure or cooling?
 - [ ] **INT-22** — Is single- or double-sided component assembly preferred? Are there limits on the smallest component package, manual soldering and rework?
 - [ ] **INT-31** — Is there a PCB technology, laminate, high power/heat dissipation, flex region, size, special quality or manufacturing constraint that affects the schematic/component selection? If so, record it before G0; finalize details before layout.
