@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.24 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.25 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -56,6 +56,7 @@ Right after the answer-style question, the Manager asks for the project name, pr
 - **Check the design yourself (optional):** after the schematic review the AI asks "The schematic is done. Do you want to check it?" On yes it shows the schematic as PDF and images and asks you to open it in your EDA tool; on no it continues. The same for the PCB with 3D images before G1 (SCH-08, LAY-32).
 - **Schematics a human can read** (SCH-09…12): real wires inside blocks, power symbols for supplies, few net labels, no overlapping text, left-to-right flow. The AI checks a PNG of its own drawing, runs ERC and lists the nets; the Reviewer returns REWORK if it is hard to read (REV-15).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
+- **Differential pairs are clear and routed as pairs:** in the schematic they are drawn side by side with a note like "USB D+/D− · 90 Ω diff" and named so the EDA recognizes them; on the PCB they are routed with the diff pair router at constant spacing, and a pair table (impedance, length difference) goes to the Reviewer (SCH-13, DIF-09…11, REV-17).
 - **Local sourcing for modules:** the AI asks your country and where the board is assembled. For a module or part the PCBA house does not stock, it asks where you can buy it (and checks local shops if it can), uses a stocked socket where possible, draws the footprint from the exact product you buy (clones often differ) and marks it USER-SUPPLIED / DNP in the PCBA BOM (INT-56, INT-57, DFM-16).
 - **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
 - Non-critical questions (logo, silkscreen text, designators, signature) offer **"decide later"**; anything on the board is settled by G0.5 at the latest (INT-51).

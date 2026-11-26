@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.25 — 2026-11-26
+
+- SCH-13: differential pairs are visible in the schematic: drawn side by side, series parts as matching pairs, and a note with interface and impedance (e.g. "USB D+/D− · 90 Ω diff").
+- DIF-09: pair net names the EDA recognizes (KiCad `+`/`-` or `P`/`N`, Altium diff pair directive); checked after netlist import.
+- DIF-10: route with the EDA's diff pair router, constant width/spacing, symmetric vias with GND return via, no stubs, local length tuning.
+- DIF-11 and REV-17: a pair table (impedance, width/spacing, length difference) as review evidence, checked by the Reviewer. Role files and both READMEs updated.
+
 ## v1.24 — 2026-11-26
 
 - INT-56: ask the user's country/region and where the board is assembled (PCBA house or by hand).

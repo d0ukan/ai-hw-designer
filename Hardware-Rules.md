@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.24 |
+| **Version** | v1.25 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aviation profiles · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |
@@ -20,8 +20,8 @@
 | [01 · PCB manufacturing parameters](rules/01-pcb-parameters.md) | Default limit table | When entering PCB rules into the EDA tool |
 | [02 · Chassis, Ground & Polygon](rules/02-ground-polygon.md) | GND-01…GND-08 | For GND, chassis and polygon work |
 | [03 · JLCPCB / PCBWay — DFM & Cost Optimization](rules/03-dfm-cost.md) | DFM-00…DFM-16 | For component selection, manufacturer and cost decisions |
-| [04 · Schematic, Component Placement & Routing](rules/04-schematic-layout.md) | SCH-01…SCH-12, LAY-01…LAY-32 | Schematic, placement, routing, SI/PI and silkscreen |
-| [05 · Differential Pairs, RF & High-Speed (SI/PI)](rules/05-diff-rf-hs.md) | DIF-01…DIF-08, HS-01…HS-05, RF-01…RF-09 | Only if differential, high-speed or RF is present |
+| [04 · Schematic, Component Placement & Routing](rules/04-schematic-layout.md) | SCH-01…SCH-13, LAY-01…LAY-32 | Schematic, placement, routing, SI/PI and silkscreen |
+| [05 · Differential Pairs, RF & High-Speed (SI/PI)](rules/05-diff-rf-hs.md) | DIF-01…DIF-11, HS-01…HS-05, RF-01…RF-09 | Only if differential, high-speed or RF is present |
 | [06 · Design Review & Verification](rules/06-verification.md) | VER-01…VER-13 | During review and verification stages |
 | [07 · AI working rules](rules/07-ai-rules.md) | AI-01…AI-10 | Once in the first session (short; AI-09 stop conditions) |
 | [08 · Aviation / Avionics — conditional profile](rules/08-aviation.md) | AVI-01…AVI-10 | Only in the Aviation profile |

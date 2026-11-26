@@ -22,6 +22,9 @@
 - [ ] **DIF-06** — Do not finalize traces that need controlled impedance without a verified manufacturer stack-up.
 - [ ] **DIF-07** — If the manufacturer changes, re-verify the impedance geometry with the new manufacturer's stack-up information.
 - [ ] **DIF-08** — Distinguish low-speed differential traces that need no special manufacturing from traces that need controlled impedance; do not create unnecessary manufacturing cost.
+- [ ] **DIF-09** — **Pair naming the EDA recognizes:** Both nets have the same base name and the suffix the EDA uses for pairs. KiCad: `+`/`-` or `P`/`N` at the end (e.g. `USB_D+`/`USB_D-`, `LVDS_CLK_P`/`LVDS_CLK_N`); Altium: a Differential Pair directive on the pair (`_P`/`_N` names). After the netlist import into the PCB, check that the EDA lists each pair as a differential pair; if not, fix the names before routing.
+- [ ] **DIF-10** — **Route as a coupled pair:** Route each pair with the EDA's differential pair router, not as two single traces. Keep width and pair spacing constant (net class / diff pair rule, DIF-04); uncouple only at pads and breakouts and keep those parts short. Place vias as a symmetric pair with a GND return via nearby (LAY-17); no stubs, no test points on the line except at a pad; no other trace between the two lines. Tune length with small bumps near the mismatch, not on one long side.
+- [ ] **DIF-11** — **Pair table as evidence:** Record a table for each pair: pair name, interface, net class, target impedance, width/spacing used, intra-pair length difference vs. limit, layer changes. Put it in the review evidence; the Reviewer checks it against the board (REV-17).
 
 ### RF / High-Speed — conditional design profile
 

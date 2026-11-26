@@ -4,7 +4,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.24 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.25 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -56,6 +56,7 @@ Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve var
 - **Tasarımı sen de kontrol edebilirsin (isteğe bağlı):** şematik review'dan sonra AI "Şematik bitti, kontrol etmek ister misin?" diye sorar. Evet dersen şematiği PDF ve görsel olarak gösterir, EDA programında açıp bakmanı ister; hayır dersen devam eder. G1'den önce PCB için aynısı 3D görsellerle yapılır (SCH-08, LAY-32).
 - **İnsanın okuyabileceği şematik** (SCH-09…12): blok içinde gerçek tel, beslemeler için güç sembolü, az net etiketi, üst üste binmeyen yazılar, soldan sağa akış. AI kendi çiziminin PNG'sine bakar, ERC çalıştırır ve net listesini verir; okunmuyorsa Reviewer REWORK verir (REV-15).
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
+- **Diferansiyel hatlar belli ve çift olarak çizilir:** şematikte yan yana çizilir, yanına "USB D+/D− · 90 Ω diff" gibi not yazılır ve EDA'nın çift olarak tanıyacağı isim verilir; PCB'de diferansiyel çift aracıyla sabit aralıkla çizilir, çift tablosu (empedans, uzunluk farkı) Reviewer'a verilir (SCH-13, DIF-09…11, REV-17).
 - **Modüller için yerel tedarik:** AI ülkeni ve kartın nerede dizileceğini sorar. PCBA firmasının stokta tutmadığı bir modül veya parça için onu nereden alabileceğini sorar (yapabiliyorsa yerel mağazalara bakar), mümkünse stoktaki bir soket kullanır, footprint'i senin alacağın ürüne göre çizer (klonlar farklı olabilir) ve PCBA BOM'unda KULLANICI TEMİN EDER / DNP olarak işaretler (INT-56, INT-57, DFM-16).
 - **Review yoğunluğu** başta sorulur (INT-53): **Hafif / Light** (kritik kontroller), **Orta / Medium** (tam liste, varsayılan) veya **Yüksek / High** (iki bağımsız Reviewer, ikisi de PASS vermeli). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
 - Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; kart üzerindeki kararlar en geç G0.5'te kesinleşir (INT-51).
