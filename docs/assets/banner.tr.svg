@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="Hardware for Anything: AI’dan bağımsız PCB tasarım şablonu">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b2230"/>
+      <stop offset="1" stop-color="#0f3d3a"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d2b34"/>
+      <stop offset="1" stop-color="#11191f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="18" fill="url(#bg)"/>
+  <!-- copper traces -->
+  <g fill="none" stroke="#d9a441" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+    <path d="M0 60 H180 L220 100 H360"/>
+    <path d="M0 250 H120 L160 210 H300 L330 240 H460"/>
+    <path d="M1200 40 H1060 L1030 70 H960"/>
+    <path d="M1200 270 H1080 L1040 230 H990"/>
+    <path d="M700 300 V270 L730 240 H780"/>
+  </g>
+  <g fill="#0b2230" stroke="#d9a441" stroke-width="3" opacity="0.5">
+    <circle cx="360" cy="100" r="6"/>
+    <circle cx="460" cy="240" r="6"/>
+    <circle cx="960" cy="70" r="6"/>
+    <circle cx="780" cy="240" r="6"/>
+  </g>
+  <!-- chip -->
+  <g transform="translate(905 95)">
+    <g fill="#c9ced3">
+      <rect x="18" y="-14" width="8" height="14"/><rect x="42" y="-14" width="8" height="14"/><rect x="66" y="-14" width="8" height="14"/><rect x="90" y="-14" width="8" height="14"/><rect x="114" y="-14" width="8" height="14"/>
+      <rect x="18" y="110" width="8" height="14"/><rect x="42" y="110" width="8" height="14"/><rect x="66" y="110" width="8" height="14"/><rect x="90" y="110" width="8" height="14"/><rect x="114" y="110" width="8" height="14"/>
+      <rect x="-14" y="18" width="14" height="8"/><rect x="-14" y="42" width="14" height="8"/><rect x="-14" y="66" width="14" height="8"/><rect x="-14" y="90" width="14" height="8"/>
+      <rect x="140" y="18" width="14" height="8"/><rect x="140" y="42" width="14" height="8"/><rect x="140" y="66" width="14" height="8"/><rect x="140" y="90" width="14" height="8"/>
+    </g>
+    <rect width="140" height="110" rx="10" fill="url(#chip)" stroke="#3c4c57" stroke-width="2"/>
+    <circle cx="18" cy="18" r="5" fill="#3c4c57"/>
+    <text x="70" y="52" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#5fe0b0">AI</text>
+    <text x="70" y="80" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="13" fill="#8aa0ad">HFA-1</text>
+  </g>
+  <!-- text -->
+  <text x="60" y="128" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="54" font-weight="700" fill="#ffffff">Hardware for Anything</text>
+  <text x="62" y="172" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" fill="#9fe6c8">AI’dan bağımsız PCB tasarım şablonu · fikir → üretim</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="600">
+    <rect x="62" y="200" width="118" height="34" rx="17" fill="#163f4f" stroke="#2f7a8c"/>
+    <text x="121" y="223" text-anchor="middle" fill="#d6f3ff">Manager</text>
+    <rect x="192" y="200" width="118" height="34" rx="17" fill="#163f4f" stroke="#2f7a8c"/>
+    <text x="251" y="223" text-anchor="middle" fill="#d6f3ff">Designer</text>
+    <rect x="322" y="200" width="118" height="34" rx="17" fill="#163f4f" stroke="#2f7a8c"/>
+    <text x="381" y="223" text-anchor="middle" fill="#d6f3ff">Reviewer</text>
+    <rect x="452" y="200" width="196" height="34" rx="17" fill="#3d3216" stroke="#d9a441"/>
+    <text x="550" y="223" text-anchor="middle" fill="#ffe2a3">Onaylar G0 · G0.5 · G1</text>
+    <rect x="660" y="200" width="170" height="34" rx="17" fill="#1f3b2a" stroke="#4fae78"/>
+    <text x="745" y="223" text-anchor="middle" fill="#c8f5d8">KiCad · Altium</text>
+  </g>
+</svg>

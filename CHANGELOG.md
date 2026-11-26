@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.27 — 2026-11-26
+
+- READMEs: banner and workflow images (`docs/assets/`, English and Turkish), badges, an "At a glance" table, team, first-question and sheet-order diagrams, a review depth table and colored workflow chart. No rule changes.
+
 ## v1.26 — 2026-11-26
 
 - SCH-14: standard schematic sheet: A4 landscape, one template for all sheets, full title block (name, code, revision, variant, sheet name, sheet x/y, date, designer, reviewer), EDA default styles.

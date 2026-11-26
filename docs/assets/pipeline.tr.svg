@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 270" width="1200" height="270" role="img" aria-label="İş akışı: başlangıç, şematik, PCB, çıktılar, teslim ve onay kapıları">
+<rect width="1200" height="270" rx="16" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="600" y="40" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2328">Fikirden üretim dosyalarına</text>
+<rect x="35" y="70" width="170" height="96" rx="14" fill="#ffffff" stroke="#6b5bd6" stroke-width="3"/>
+<rect x="35" y="70" width="170" height="10" rx="5" fill="#6b5bd6"/>
+<circle cx="63" cy="110" r="15" fill="#6b5bd6"/>
+<text x="63" y="116" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">1</text>
+<text x="87" y="117" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2328">Başlangıç</text>
+<text x="120" y="148" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#57606a">sorular · gereksinimler</text>
+<line x1="207" y1="118" x2="273" y2="118" stroke="#8c959f" stroke-width="2.5"/>
+<path d="M265 112 L274 118 L265 124 Z" fill="#8c959f"/>
+<path d="M240 94 L264 118 L240 142 L216 118 Z" fill="#fff4d6" stroke="#d9a441" stroke-width="2.5"/>
+<text x="240" y="123" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#7a5410">G0</text>
+<text x="240" y="194" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#7a5410">senin onayın</text>
+<rect x="275" y="70" width="170" height="96" rx="14" fill="#ffffff" stroke="#2f9e6b" stroke-width="3"/>
+<rect x="275" y="70" width="170" height="10" rx="5" fill="#2f9e6b"/>
+<circle cx="303" cy="110" r="15" fill="#2f9e6b"/>
+<text x="303" y="116" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">2</text>
+<text x="327" y="117" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2328">Şematik</text>
+<text x="360" y="148" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#57606a">okunur · ERC</text>
+<rect x="300" y="180" width="120" height="26" rx="13" fill="#e7f5ee" stroke="#2f9e6b"/>
+<text x="360" y="198" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1a6b46">✓ Reviewer PASS</text>
+<text x="360" y="228" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6e7781">isteğe bağlı: sen bakarsın</text>
+<line x1="447" y1="118" x2="513" y2="118" stroke="#8c959f" stroke-width="2.5"/>
+<path d="M505 112 L514 118 L505 124 Z" fill="#8c959f"/>
+<path d="M480 94 L504 118 L480 142 L456 118 Z" fill="#fff4d6" stroke="#d9a441" stroke-width="2.5"/>
+<text x="480" y="123" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#7a5410">G0.5</text>
+<text x="480" y="194" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#7a5410">senin onayın</text>
+<rect x="515" y="70" width="170" height="96" rx="14" fill="#ffffff" stroke="#2b7bbf" stroke-width="3"/>
+<rect x="515" y="70" width="170" height="10" rx="5" fill="#2b7bbf"/>
+<circle cx="543" cy="110" r="15" fill="#2b7bbf"/>
+<text x="543" y="116" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">3</text>
+<text x="567" y="117" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2328">PCB</text>
+<text x="600" y="148" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#57606a">yerleşim · DRC · 3D</text>
+<rect x="540" y="180" width="120" height="26" rx="13" fill="#e7f5ee" stroke="#2f9e6b"/>
+<text x="600" y="198" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1a6b46">✓ Reviewer PASS</text>
+<text x="600" y="228" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6e7781">isteğe bağlı: sen bakarsın</text>
+<line x1="687" y1="118" x2="753" y2="118" stroke="#8c959f" stroke-width="2.5"/>
+<path d="M745 112 L754 118 L745 124 Z" fill="#8c959f"/>
+<path d="M720 94 L744 118 L720 142 L696 118 Z" fill="#fff4d6" stroke="#d9a441" stroke-width="2.5"/>
+<text x="720" y="123" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#7a5410">G1</text>
+<text x="720" y="194" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="#7a5410">senin onayın</text>
+<rect x="755" y="70" width="170" height="96" rx="14" fill="#ffffff" stroke="#c7782a" stroke-width="3"/>
+<rect x="755" y="70" width="170" height="10" rx="5" fill="#c7782a"/>
+<circle cx="783" cy="110" r="15" fill="#c7782a"/>
+<text x="783" y="116" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">4</text>
+<text x="807" y="117" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2328">Çıktılar</text>
+<text x="840" y="148" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#57606a">Gerber · BOM · PnP</text>
+<rect x="780" y="180" width="120" height="26" rx="13" fill="#e7f5ee" stroke="#2f9e6b"/>
+<text x="840" y="198" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1a6b46">✓ Reviewer PASS</text>
+<line x1="927" y1="118" x2="993" y2="118" stroke="#8c959f" stroke-width="2.5"/>
+<path d="M985 112 L994 118 L985 124 Z" fill="#8c959f"/>
+<rect x="995" y="70" width="170" height="96" rx="14" fill="#ffffff" stroke="#c0455a" stroke-width="3"/>
+<rect x="995" y="70" width="170" height="10" rx="5" fill="#c0455a"/>
+<circle cx="1023" cy="110" r="15" fill="#c0455a"/>
+<text x="1023" y="116" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">5</text>
+<text x="1047" y="117" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2328">Teslim</text>
+<text x="1080" y="148" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#57606a">manifest · kontrol</text>
+</svg>

@@ -1,10 +1,14 @@
+<p align="center"><img src="docs/assets/banner.svg" alt="Hardware for Anything" width="100%"></p>
+
 # Hardware for Anything · AI-Agnostic Hardware Design Template
 
 **English** · [Türkçe](README.tr.md)
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.26 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.27 ([changelog](CHANGELOG.md))
+
+[![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white)
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -13,6 +17,37 @@ One manager agent and two specialist roles take a board from schematic to PCB, w
 | Hardware Manager | `agents/Manager.md` | Requirements, decisions, tasks and approvals |
 | Hardware Designer | `agents/Designer.md` | Schematic, footprints, 3D models, PCB and fixes |
 | Hardware Reviewer | `agents/Reviewer.md` | Independent design and manufacturing-output checks |
+
+<p align="center"><img src="docs/assets/pipeline.svg" alt="Intake, schematic, PCB, outputs and release with approval gates G0, G0.5 and G1" width="100%"></p>
+
+## At a glance
+
+| | | | |
+| :---: | :--- | :---: | :--- |
+| 🤖 | **Any AI, any EDA:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA | 🚦 | **You approve each gate:** requirements G0, PCB inputs G0.5, export G1 |
+| 🔍 | **Independent review:** Light, Medium or High (two Reviewers) | 📐 | **Readable schematics:** wires, power symbols, standard sheets |
+| 🔌 | **MCP setup offered:** for this project or all projects, only after your yes | 🌍 | **Local sourcing:** your country, user-supplied modules, drop-in alternates |
+| 📡 | **Diff pairs and RF:** visible in the schematic, routed as pairs | 📦 | **Release checks:** BOM/PnP, manifest hash, git commit binding |
+
+### How the team works
+
+```mermaid
+flowchart LR
+    U(["👤 You"]) <-->|"questions · approvals"| M["🧭 Manager"]
+    M -->|"task"| D["🛠️ Designer"]
+    D -->|"schematic · PCB · outputs"| R["🔍 Reviewer"]
+    R -->|"PASS / REWORK"| M
+    M -.->|"High depth"| R2["🔍 Reviewer 2"]
+    M --- S[("workflow-state.json")]
+    classDef you fill:#efe9ff,stroke:#6b5bd6,color:#1f2328
+    classDef mgr fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    classDef des fill:#e7f5ee,stroke:#2f9e6b,color:#1f2328
+    classDef rev fill:#e6f0fa,stroke:#2b7bbf,color:#1f2328
+    class U you
+    class M mgr
+    class D des
+    class R,R2 rev
+```
 
 ## Start in any AI chat with the repo link
 
@@ -40,6 +75,25 @@ In a tool with file and EDA access (Claude Code, Codex, Gemini CLI, …) open yo
 4. The Manager records decisions in `Project-README.md` and approvals/reviews in `project/workflow-state.json`. Requirements are approved before G0; PCB inputs at G0.5 before layout.
 5. Work is handed to the Designer or Reviewer only when needed. Next step and its command: `python scripts/projectctl.py next`.
 
+## First questions
+
+```mermaid
+flowchart TB
+    subgraph r1[" "]
+        direction LR
+        a["💬 Answer style"] --> b["💡 Project idea"] --> c["🏷️ Name · code · rev"] --> d["🖥️ EDA + MCP"]
+    end
+    subgraph r2[" "]
+        direction LR
+        e["🎯 Purpose · size"] --> f["⭐ Profile · goal"] --> g["🔧 Technical · sourcing"] --> h["🔍 Review depth"] --> G0{{"✅ G0"}}
+    end
+    r1 --> r2
+    classDef gate fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    class G0 gate
+    style r1 fill:none,stroke:none
+    style r2 fill:none,stroke:none
+```
+
 ## Project identity and output names
 
 Right after the answer-style question, the Manager asks for the project name, project code, revision and any variant (INT-49). You choose the code format. Every output is named from it:
@@ -57,9 +111,22 @@ Right after the answer-style question, the Manager asks for the project name, pr
 - **Schematics a human can read** (SCH-09…12): real wires inside blocks, power symbols for supplies, few net labels, no overlapping text, left-to-right flow. The AI checks a PNG of its own drawing, runs ERC and lists the nets; the Reviewer returns REWORK if it is hard to read (REV-15).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
 - **Standard schematic sheets:** every sheet uses the same template (A4 landscape, KiCad `.kicad_wks` in `Hardware-Library/sheet-templates/`) with a full title block (name, code, revision, variant, sheet x/y, date, designer, reviewer) and a fixed sheet order: cover → power → regulators → MCU → interfaces → connectors (SCH-14, SCH-15, REV-18).
+
+```mermaid
+flowchart LR
+    s1["1 · Cover<br/>block diagram · history"] --> s2["2 · Power input<br/>protection"] --> s3["3 · Regulators<br/>rails"] --> s4["4 · MCU<br/>main IC"] --> s5["5… · Interfaces<br/>RF · sensors"] --> s6["Last · Connectors<br/>mechanical · test points"]
+```
+
 - **Differential pairs are clear and routed as pairs:** in the schematic they are drawn side by side with a note like "USB D+/D− · 90 Ω diff" and named so the EDA recognizes them; on the PCB they are routed with the diff pair router at constant spacing, and a pair table (impedance, length difference) goes to the Reviewer (SCH-13, DIF-09…11, REV-17).
 - **Local sourcing for modules:** the AI asks your country and where the board is assembled. For a module or part the PCBA house does not stock, it asks where you can buy it (and checks local shops if it can), uses a stocked socket where possible, draws the footprint from the exact product you buy (clones often differ) and marks it USER-SUPPLIED / DNP in the PCBA BOM (INT-56, INT-57, DFM-16).
-- **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
+- **Review depth** is asked at the start (INT-53). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
+
+  | Depth | Reviewers | Checks |
+  | :--- | :---: | :--- |
+  | 🟢 **Light** | 1 | Critical checks only |
+  | 🟡 **Medium** (default) | 1 | Full checklist |
+  | 🔴 **High** | 2 independent | Full checklist twice; both must PASS |
+
 - Non-critical questions (logo, silkscreen text, designators, signature) offer **"decide later"**; anything on the board is settled by G0.5 at the latest (INT-51).
 - Silkscreen questions (PCB-17…21): logo/icon, board code (silk/copper, top/bottom), connector labels (pin number/net name), designators (visible/hidden, size, position), signature/easter egg. Silkscreen never overlaps on either side (LAY-30).
 - Output set (section 09): Gerber, BOM, PnP, schematic PDF, Draftsman-style assembly drawing (`_ASSY.pdf`), fab notes. Empty templates live in `Manufacturing/templates/`, with bring-up and review checklists.
@@ -70,9 +137,9 @@ The Manager asks for the board's level at the start. The profile sets how strict
 
 | Profile | For | What changes |
 | :--- | :--- | :--- |
-| **Hobby** | Personal projects, prototypes, lowest cost | JLCPCB/PCBWay standard process, fewest layers, cheap and easy sourcing |
-| **Industrial** | Reliable long-term field use | −40…+85 °C parts, input protection, long-life multi-source parts |
-| **Aerospace** | Flight, military, high reliability | Section 08: IPC Class 3, derating, DO-160/MIL-STD requirements, traceability |
+| 🧪 **Hobby** | Personal projects, prototypes, lowest cost | JLCPCB/PCBWay standard process, fewest layers, cheap and easy sourcing |
+| 🏭 **Industrial** | Reliable long-term field use | −40…+85 °C parts, input protection, long-life multi-source parts |
+| ✈️ **Aerospace** | Flight, military, high reliability | Section 08: IPC Class 3, derating, DO-160/MIL-STD requirements, traceability |
 
 **A design goal is also chosen (INT-48):** cost first, balanced (price/performance) or performance first. Suggested defaults: Hobby → cost, Industrial → balanced, Aerospace/military → performance (unless a cost target is given). No goal ever cuts reliability or verification to save money.
 
@@ -129,6 +196,16 @@ flowchart TD
     R -.->|"REWORK: schematic error (rare)"| D
     V -.->|"REWORK: schematic error (rare)"| D
     V -->|"PASS"| H["Manager: record review + check-release + deliver"]
+    classDef gate fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    classDef des fill:#e7f5ee,stroke:#2f9e6b,color:#1f2328
+    classDef rev fill:#e6f0fa,stroke:#2b7bbf,color:#1f2328
+    classDef user fill:#efe9ff,stroke:#6b5bd6,color:#1f2328
+    classDef done fill:#fde8ec,stroke:#c0455a,color:#1f2328
+    class A,B,G gate
+    class D,P,E des
+    class S,R,V rev
+    class I,US,UP user
+    class H done
 ```
 
 Every Reviewer check ends in `PASS`, `REWORK` or `BLOCKED`. On `REWORK` the Designer fixes and the Reviewer re-checks the affected areas. If only an output is wrong, only outputs are regenerated; if the layout must change, work returns to PCB and G1 is approved again. If the PCB or manufacturing check finds a schematic error (rare, dashed arrows), work returns to the schematic: schematic review, PCB update and review, and G1 are redone (`projectctl` invalidates the old records when schematic files change). `BLOCKED` stops the flow until the missing information, tool or approval arrives.

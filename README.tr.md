@@ -1,10 +1,14 @@
+<p align="center"><img src="docs/assets/banner.tr.svg" alt="Hardware for Anything" width="100%"></p>
+
 # Hardware for Anything · AI'dan Bağımsız Donanım Tasarım Şablonu
 
 [English](README.md) · **Türkçe**
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.26 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.27 ([değişiklikler](CHANGELOG.md))
+
+[![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white)
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -13,6 +17,37 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 | Hardware Manager | `agents/Manager.md` | Gereksinimler, kararlar, görevler ve onaylar |
 | Hardware Designer | `agents/Designer.md` | Şematik, footprint, 3D model, PCB ve düzeltmeler |
 | Hardware Reviewer | `agents/Reviewer.md` | Bağımsız tasarım ve üretim dosyası doğrulaması |
+
+<p align="center"><img src="docs/assets/pipeline.tr.svg" alt="Başlangıç, şematik, PCB, çıktılar ve teslim; G0, G0.5 ve G1 onayları" width="100%"></p>
+
+## Bir bakışta
+
+| | | | |
+| :---: | :--- | :---: | :--- |
+| 🤖 | **Her AI, her EDA:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA | 🚦 | **Her kapıyı sen onaylarsın:** gereksinim G0, PCB girdileri G0.5, export G1 |
+| 🔍 | **Bağımsız review:** Hafif, Orta veya Yüksek (iki Reviewer) | 📐 | **Okunur şematik:** tel, güç sembolü, standart sayfa |
+| 🔌 | **MCP kurulumu önerilir:** bu proje ya da tüm projeler, sadece senin onayınla | 🌍 | **Yerel tedarik:** ülken, kullanıcının aldığı modüller, drop-in muadiller |
+| 📡 | **Diferansiyel ve RF:** şematikte belli, PCB'de çift olarak çizilir | 📦 | **Teslim kontrolleri:** BOM/PnP, manifest hash, git commit bağlama |
+
+### Ekip nasıl çalışır
+
+```mermaid
+flowchart LR
+    U(["👤 Sen"]) <-->|"sorular · onaylar"| M["🧭 Manager"]
+    M -->|"görev"| D["🛠️ Designer"]
+    D -->|"şematik · PCB · çıktılar"| R["🔍 Reviewer"]
+    R -->|"PASS / REWORK"| M
+    M -.->|"Yüksek yoğunluk"| R2["🔍 Reviewer 2"]
+    M --- S[("workflow-state.json")]
+    classDef you fill:#efe9ff,stroke:#6b5bd6,color:#1f2328
+    classDef mgr fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    classDef des fill:#e7f5ee,stroke:#2f9e6b,color:#1f2328
+    classDef rev fill:#e6f0fa,stroke:#2b7bbf,color:#1f2328
+    class U you
+    class M mgr
+    class D des
+    class R,R2 rev
+```
 
 ## AI sohbetinde repo linkiyle başlamak
 
@@ -40,6 +75,25 @@ Dosya ve EDA erişimi olan bir araçta (Claude Code, Codex, Gemini CLI vb.) kend
 4. Manager kararları `Project-README.md` dosyasına, onay/review durumunu `project/workflow-state.json` dosyasına kaydeder. G0 öncesinde gereksinimleri, layout öncesinde G0.5 ile PCB girdilerini onaylatır.
 5. Aktif görev gerektiğinde Designer veya Reviewer'a verilir. Sıradaki adım ve komutu: `python scripts/projectctl.py next`.
 
+## İlk sorular
+
+```mermaid
+flowchart TB
+    subgraph r1[" "]
+        direction LR
+        a["💬 Anlatım tarzı"] --> b["💡 Proje fikri"] --> c["🏷️ Ad · kod · rev"] --> d["🖥️ EDA + MCP"]
+    end
+    subgraph r2[" "]
+        direction LR
+        e["🎯 Amaç · boyut"] --> f["⭐ Profil · hedef"] --> g["🔧 Teknik · tedarik"] --> h["🔍 Review yoğunluğu"] --> G0{{"✅ G0"}}
+    end
+    r1 --> r2
+    classDef gate fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    class G0 gate
+    style r1 fill:none,stroke:none
+    style r2 fill:none,stroke:none
+```
+
 ## Proje kimliği ve çıktı isimleri
 
 Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-49). Kod biçimini kullanıcı belirler. Tüm çıktılar bu kimlikle adlandırılır:
@@ -57,9 +111,22 @@ Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve var
 - **İnsanın okuyabileceği şematik** (SCH-09…12): blok içinde gerçek tel, beslemeler için güç sembolü, az net etiketi, üst üste binmeyen yazılar, soldan sağa akış. AI kendi çiziminin PNG'sine bakar, ERC çalıştırır ve net listesini verir; okunmuyorsa Reviewer REWORK verir (REV-15).
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
 - **Standart şematik sayfaları:** her sayfa aynı şablonu kullanır (yatay A4, KiCad `.kicad_wks` `Hardware-Library/sheet-templates/` içinde); başlık kutusu eksiksizdir (ad, kod, revizyon, varyant, sayfa x/y, tarih, tasarlayan, kontrol eden) ve sayfa sırası sabittir: kapak → güç → regülatörler → MCU → arayüzler → konnektörler (SCH-14, SCH-15, REV-18).
+
+```mermaid
+flowchart LR
+    s1["1 · Kapak<br/>blok diyagram · geçmiş"] --> s2["2 · Güç girişi<br/>koruma"] --> s3["3 · Regülatörler<br/>raylar"] --> s4["4 · MCU<br/>ana IC"] --> s5["5… · Arayüzler<br/>RF · sensör"] --> s6["Son · Konnektörler<br/>mekanik · test noktası"]
+```
+
 - **Diferansiyel hatlar belli ve çift olarak çizilir:** şematikte yan yana çizilir, yanına "USB D+/D− · 90 Ω diff" gibi not yazılır ve EDA'nın çift olarak tanıyacağı isim verilir; PCB'de diferansiyel çift aracıyla sabit aralıkla çizilir, çift tablosu (empedans, uzunluk farkı) Reviewer'a verilir (SCH-13, DIF-09…11, REV-17).
 - **Modüller için yerel tedarik:** AI ülkeni ve kartın nerede dizileceğini sorar. PCBA firmasının stokta tutmadığı bir modül veya parça için onu nereden alabileceğini sorar (yapabiliyorsa yerel mağazalara bakar), mümkünse stoktaki bir soket kullanır, footprint'i senin alacağın ürüne göre çizer (klonlar farklı olabilir) ve PCBA BOM'unda KULLANICI TEMİN EDER / DNP olarak işaretler (INT-56, INT-57, DFM-16).
-- **Review yoğunluğu** başta sorulur (INT-53): **Hafif / Light** (kritik kontroller), **Orta / Medium** (tam liste, varsayılan) veya **Yüksek / High** (iki bağımsız Reviewer, ikisi de PASS vermeli). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
+- **Review yoğunluğu** başta sorulur (INT-53). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
+
+  | Yoğunluk | Reviewer | Kontrol |
+  | :--- | :---: | :--- |
+  | 🟢 **Hafif / Light** | 1 | Sadece kritik kontroller |
+  | 🟡 **Orta / Medium** (varsayılan) | 1 | Tam kontrol listesi |
+  | 🔴 **Yüksek / High** | 2 bağımsız | Tam liste iki kez; ikisi de PASS vermeli |
+
 - Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; kart üzerindeki kararlar en geç G0.5'te kesinleşir (INT-51).
 - Silkscreen soruları (PCB-17…21): logo/ikon, kart kodu (silk/bakır, top/bottom), konnektör etiketi (pin no/net adı), designator (açık/gizli, boyut, konum), imza/easter egg. Silkscreen her yüzde çakışmasız olur (LAY-30).
 - Çıktı seti (bölüm 09): Gerber, BOM, PnP, şematik PDF, Draftsman tarzı montaj çizimi (`_ASSY.pdf`), fab notu. Boş şablonlar `Manufacturing/templates/` içindedir; bring-up ve review checklist'leri de var.
@@ -70,9 +137,9 @@ Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini
 
 | Profil | Ne için | Ne değişir |
 | :--- | :--- | :--- |
-| **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
-| **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
-| **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
+| 🧪 **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
+| 🏭 **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
+| ✈️ **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
 
 **Tasarım hedefi de seçilir (INT-48):** Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli. Varsayılan öneri: Hobi → Maliyet, Endüstriyel → Dengeli, Havacılık/askeri → Performans (kullanıcı maliyet hedefi vermediyse). Hiçbir hedefte güvenilirlik ve doğrulama maliyet için kısılmaz.
 
@@ -129,6 +196,16 @@ flowchart TD
     R -.->|"REWORK: şematik hatası (nadir)"| D
     V -.->|"REWORK: şematik hatası (nadir)"| D
     V -->|"PASS"| H["Manager: review kaydı + check-release + teslim"]
+    classDef gate fill:#fff4d6,stroke:#d9a441,color:#1f2328
+    classDef des fill:#e7f5ee,stroke:#2f9e6b,color:#1f2328
+    classDef rev fill:#e6f0fa,stroke:#2b7bbf,color:#1f2328
+    classDef user fill:#efe9ff,stroke:#6b5bd6,color:#1f2328
+    classDef done fill:#fde8ec,stroke:#c0455a,color:#1f2328
+    class A,B,G gate
+    class D,P,E des
+    class S,R,V rev
+    class I,US,UP user
+    class H done
 ```
 
 Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK` çıkarsa Designer düzeltir, Reviewer etkilenen alanları tekrar kontrol eder. Üretim kontrolünde sorun yalnız çıktıdaysa sadece çıktılar yeniden üretilir; yerleşim değişmeliyse PCB aşamasına dönülür ve G1 yeniden alınır. PCB veya üretim kontrolünde şematik hatası bulunursa (nadir, kesikli oklar) şematiğe dönülür: şematik review, PCB güncellemesi ve review, G1 yeniden yapılır (şematik dosyası değişince `projectctl` eski kayıtları geçersiz sayar). `BLOCKED` durumunda eksik bilgi, araç veya onay gelene kadar akış durur.
