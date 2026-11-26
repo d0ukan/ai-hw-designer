@@ -9,8 +9,10 @@
 | Output | File name | Note |
 | :--- | :--- | :--- |
 | Gerber + drill | `<prefix>_Gerber.zip` | Layer set the manufacturer requires |
-| BOM | `<prefix>_BOM.csv` | Per variant; MPN, alternate part, DNP |
-| Pick & Place | `<prefix>_PnP.csv` | Per variant; DNP excluded. CSV is the checked format; a `.txt`/`.pos`/`.xlsx` copy with the same name only if the manufacturer or user asks |
+| BOM | `<prefix>_BOM.csv` | Per variant; MPN, alternate part, DNP. The checked BOM |
+| JLCPCB BOM | `<prefix>_BOM_JLC.csv` | Only if JLCPCB assembles: `Comment, Designator, Footprint, LCSC Part #` |
+| Detailed BOM | `<prefix>_BOM.xlsx` | If requested: all BOM columns plus unit price, qty × build qty, line total, stock, supplier link, check date; BOM total at the bottom. Real prices and stock only, with source and date; leave a cell empty and say so if it could not be checked |
+| Pick & Place | `<prefix>_PnP.csv` + `<prefix>_PnP.txt` | Per variant; DNP excluded. CSV is the checked format; the `.txt` is the same data tab-separated (many PCBA houses ask for it). `.pos`/`.xlsx` only on request |
 | Schematic | `<prefix>_SCH.pdf` | Revision and date in the title block |
 | Assembly drawing (Draftsman style) | `<prefix>_ASSY.pdf` | Top/bottom, designators, Pin 1/polarity, DNP marked, dimensions; states whether the bottom view is mirrored |
 | Fab note | `<prefix>_FAB.md` or `.pdf` | Stack-up, thickness, finish, color, IPC class, special requests |

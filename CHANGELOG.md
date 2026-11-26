@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.40 — 2026-11-27
+
+- PnP is delivered as CSV plus a tab-separated `.txt` copy (many PCBA houses ask for it); the example project has both.
+- Optional outputs: `<prefix>_BOM_JLC.csv` (JLCPCB format) and `<prefix>_BOM.xlsx` (price, stock, line and BOM totals, source and date). INT-25 asks for them; the CSV BOM stays the checked one.
+
 ## v1.39 — 2026-11-26
 
 - LAY-34: a missing 3D model is reported to the user with three choices: user shares the STEP · AI draws it in an installed CAD tool · AI installs FreeCAD + a FreeCAD MCP (only with the user's OK).

@@ -30,7 +30,7 @@ Empty starter files. In the project, copy them into `Manufacturing/<rev>/`, rena
 | R1 | 9.00 | 9.50 | Top | 0 |
 | U1 | 15.20 | 8.40 | Top | 90 |
 
-PnP is always delivered as CSV; `check-bom` reads only CSV. KiCad `.pos`, Altium `.txt` or an `.xlsx` copy is added only if the manufacturer or user asks.
+PnP is delivered as CSV plus the same data as tab-separated `.txt`; `check-bom` reads only the CSV. Optional: `<prefix>_BOM_JLC.csv` (JLCPCB format) and `<prefix>_BOM.xlsx` (price, stock, totals); see section 09.
 
 To check the release folder: `python scripts/projectctl.py check-bom` (BOM/PnP consistency) and `check-release`. For a filled example, see the `examples/DR00001-usb-c-led/` folder.
 
