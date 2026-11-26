@@ -51,7 +51,7 @@ Right after the answer-style question, the Manager asks for the project name, pr
 
 - Copper, outline or stack-up changes → new **revision**; only fitted parts change → **variant** (REL-01).
 - On a revision bump the user is asked "what changed, and why?" and the answer goes to `REVISION-HISTORY.md` (REL-02).
-- No idea yet? The AI asks "Shall I suggest some project ideas?" and, on a yes, offers 3–5 ideas based on your earlier projects and interests (INT-55). It never starts a project you did not pick.
+- The AI asks "What would you like to build? Or shall I suggest some ideas?" If you want ideas, it offers 3–5 ideas based on your earlier projects and interests (INT-55). It never starts a project you did not pick.
 - Every component gets at least one drop-in alternate where possible (DFM-14).
 - **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
 - Non-critical questions (logo, silkscreen text, designators, signature) offer **"decide later"**; anything on the board is settled by G0.5 at the latest (INT-51).

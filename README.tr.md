@@ -51,7 +51,7 @@ Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve var
 
 - Bakır, outline veya stack-up değişirse yeni **revizyon**; sadece takılan parçalar değişirse **varyant** (REL-01).
 - Revizyon atlatılırken kullanıcıya "ne değişti, neden?" sorulur ve `REVISION-HISTORY.md` dosyasına yazılır (REL-02).
-- Fikrin yoksa AI "Proje fikri önereyim mi?" diye sorar; evet dersen önceki projelerine ve ilgi alanlarına göre 3–5 fikir sunar (INT-55). Senin seçmediğin bir projeye başlamaz.
+- AI "Ne yapmak istiyorsun? Yoksa ben proje fikri önereyim mi?" diye sorar; fikir istersen önceki projelerine ve ilgi alanlarına göre 3–5 fikir sunar (INT-55). Senin seçmediğin bir projeye başlamaz.
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
 - **Review yoğunluğu** başta sorulur (INT-53): **Hafif / Light** (kritik kontroller), **Orta / Medium** (tam liste, varsayılan) veya **Yüksek / High** (iki bağımsız Reviewer, ikisi de PASS vermeli). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
 - Kritik olmayan sorularda (logo, silkscreen yazıları, designator, imza) **"Sonra karar ver"** seçeneği vardır; kart üzerindeki kararlar en geç G0.5'te kesinleşir (INT-51).
