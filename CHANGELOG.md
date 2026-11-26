@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.43 — 2026-11-27
+
+- REL-05: all output documents share one look (SCH-14 title block on every PDF page, same font and layout, same header in the Excel BOM) with the user's logo, company name, signature or document number if given. INT-25 asks for them.
+
 ## v1.42 — 2026-11-27
 
 - INT-25 asks the language(s) of the manufacturing documents (default English).
