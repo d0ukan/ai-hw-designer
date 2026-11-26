@@ -25,6 +25,9 @@ __pycache__/
 .mcp.json
 .cursor/mcp.json
 
+# Draft review PDFs/images for the user check (SCH-08, LAY-32)
+Review/
+
 # OS metadata
 .DS_Store
 Thumbs.db

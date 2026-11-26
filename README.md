@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.20 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.21 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -53,6 +53,7 @@ Right after the answer-style question, the Manager asks for the project name, pr
 - On a revision bump the user is asked "what changed, and why?" and the answer goes to `REVISION-HISTORY.md` (REL-02).
 - The AI asks "What would you like to build? Or shall I suggest some ideas?" If you want ideas, it offers 3–5 ideas based on your earlier projects and interests (INT-55). It never starts a project you did not pick.
 - Early questions include the **size limit** (max L × W × H incl. connectors, or "as small as possible" / "no limit", INT-19) and the **layer count**: your target, or the AI picks the lowest suitable count (2, 4, 6 …) and says why (INT-20).
+- **Check the design yourself (optional):** after the schematic review the AI asks "The schematic is done. Do you want to check it?" On yes it shows the schematic as PDF and images and asks you to open it in your EDA tool; on no it continues. The same for the PCB with 3D images before G1 (SCH-08, LAY-32).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
 - **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
 - Non-critical questions (logo, silkscreen text, designators, signature) offer **"decide later"**; anything on the board is settled by G0.5 at the latest (INT-51).
@@ -108,11 +109,15 @@ flowchart TD
     A -->|"Approved"| D["Designer: schematic"]
     D --> S["Reviewer: schematic check"]
     S -->|"REWORK"| D
-    S -->|"PASS"| B{"PCB Intake approval G0.5"}
+    S -->|"PASS"| US["Check the schematic? yes: PDF/PNG + open in EDA"]
+    US -->|"changes"| D
+    US -->|"OK / no check"| B{"PCB Intake approval G0.5"}
     B -->|"Approved"| P["Designer: PCB"]
     P --> R["Reviewer: PCB check"]
     R -->|"REWORK"| P
-    R -->|"PASS"| G{"User export approval G1"}
+    R -->|"PASS"| UP["Check the PCB? yes: PDF/3D images + open in EDA"]
+    UP -->|"changes"| P
+    UP -->|"OK / no check"| G{"User export approval G1"}
     G -->|"Approved"| E["Designer: outputs + check-bom + manifest"]
     E --> V["Reviewer: manufacturing check"]
     V -->|"REWORK: output error only"| E

@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.20 |
+| **Version** | v1.21 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -58,6 +58,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **DES-08** — Create manufacturing files only when the user has explicitly approved the relevant design revision and `python scripts/projectctl.py check-export` passes.
 - [ ] **DES-09** — After approval, generate Gerber, drill, BOM, Pick & Place (PnP/CPL) and any other requested manufacturing outputs from the same design revision.
 - [ ] **DES-10** — In multi-PCB projects design the boards in separate native EDA areas, with a shared library and an approved interface table. Verify module/connector CAD fit; if requested, prepare the complete mechanical assembly. Create final manufacturing/CAD outputs only for the approved delivery scope and revision.
+- [ ] **DES-11** — After the schematic review PASS and after the PCB review PASS, if the user wants to check the design, export the draft PDF and PNG images to `Review/<rev>/` and show them (SCH-08, LAY-32).
 
 > **Manufacturing file constraint:** Do not automatically create Gerber, BOM, PnP/CPL or other release files just because the PCB design is finished. First get the user's approval, through the Manager, to prepare manufacturing files. During design, component data may be kept inside the native project; this does not mean the official manufacturing BOM has been exported.
 
@@ -114,11 +115,15 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 flowchart TD
     S["Designer: schematic"] --> SR["Reviewer: schematic review"]
     SR -->|"REWORK"| S
-    SR -->|"PASS"| G05{"Manager: G0.5 PCB input approval"}
+    SR -->|"PASS"| US["Optional user schematic check (SCH-08)"]
+    US -->|"Changes"| S
+    US -->|"OK / skipped"| G05{"Manager: G0.5 PCB input approval"}
     G05 -->|"Approved"| D["Designer: PCB layout"]
     D --> R["Reviewer: PCB review"]
     R -->|"REWORK"| D
-    R -->|"PASS"| M{"Manager: G1 export approval"}
+    R -->|"PASS"| UP["Optional user PCB check (LAY-32)"]
+    UP -->|"Changes"| D
+    UP -->|"OK / skipped"| M{"Manager: G1 export approval"}
     M -->|"Approved"| E["Designer: outputs + check-bom + manifest"]
     E --> V["Reviewer: manufacturing file review"]
     V -->|"Output error"| E

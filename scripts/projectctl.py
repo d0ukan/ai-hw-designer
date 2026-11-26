@@ -711,7 +711,7 @@ def next_step(state, folder, changed=None):
             "python scripts/projectctl.py set pcb_requirements_revision <PCB-1>"
     ordered = [
         (state["pcb_input_approval"], "G0.5", "APPROVED", pcb, None,
-         "Manager", "Record the user's G0.5 approval; then layout",
+         "Manager", "Ask if the user wants to check the schematic (SCH-08); record the user's G0.5 approval; then layout",
          f'python scripts/projectctl.py approve G0.5 --revision {pcb} --evidence "<approval reference>"'),
         (state["reviews"]["pcb"], "PCB review", "PASS", design, "design",
          "Reviewer", "Review the PCB; commit the design; record the result",
@@ -724,7 +724,7 @@ def next_step(state, folder, changed=None):
         return "Reviewer 2", "Independent second PCB review (VER-13, clean context)", \
             f'python scripts/projectctl.py review pcb PASS --second --by "<reviewer 2>" --revision {design} --evidence "REVIEW_LOG.md#..."'
     if record_problem(state["export_approval"], "G1", "APPROVED", design, "design", changed):
-        return ("Manager", "Record the user's G1 export approval",
+        return ("Manager", "Ask if the user wants to check the PCB (LAY-32); record the user's G1 export approval",
                 f'python scripts/projectctl.py approve G1 --revision {design} --evidence "<approval reference>"')
 
     if not state.get("deliverables"):

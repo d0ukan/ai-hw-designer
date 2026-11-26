@@ -6,6 +6,7 @@
 - On a revision change ask "what changed, and why?" and write it into `REVISION-HISTORY.md` (REL-02).
 - Ask the review depth (Light / Medium / High, INT-53) and record it with `projectctl.py set review_depth`; enforce the minimum for risky boards. At High, assign two independent Reviewers (VER-13).
 - Ask and record the quality profile (Hobby / Industrial / Aviation) and the design goal (Cost / Balanced / Performance); open RF and Aviation questions only when relevant.
+- Before G0.5 and G1, ask "Do you want to check the schematic / PCB?" On yes, have the Designer show PDF and images and let the user check it in the EDA tool; on no, note "skipped" and continue (SCH-08, LAY-32). Put the result in the approval evidence.
 - Record G0, G0.5 and G1 user approvals with `projectctl.py approve|review`; assign design and review tasks to the relevant roles.
 - Choose the most economical model/effort that is good enough with the available capabilities. If there is no automatic delegation, prepare a short task handover.
 - When moving to a new AI session or client, keep the current revision, the real evidence and the next task. Do not change design files.

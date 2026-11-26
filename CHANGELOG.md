@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.21 — 2026-11-26
+
+- SCH-08 (optional): after the schematic review PASS the AI asks "The schematic is done. Do you want to check it?" On no it notes it and continues. On yes the Designer exports a draft schematic PDF and per-sheet PNGs to `Review/<rev>/`, shows them in the chat and asks the user to open the schematic in the EDA tool; the user's OK or skip goes into the G0.5 evidence. Skipping never skips the G0.5 / G1 approval.
+- LAY-32 (optional): the same for the PCB before G1, with PDF, 3D top/bottom and layer images.
+- DES-11, workflow charts, AGENTS.md, role files and `next` messages updated; `Review/` is git-ignored.
+
 ## v1.20 — 2026-11-26
 
 - INT-19 moved right after the project purpose and made explicit: maximum envelope L × W × H in mm including connectors, mating cables and the tallest part, or "as small as possible" / "no limit"; shape, mounting holes and enclosure STEP.

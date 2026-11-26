@@ -44,6 +44,7 @@ This repository is **independent of AI provider, model and client**. The main se
 - G0: Requirements approved by the user must be recorded.
 - Schematic review and PCB review must be completed separately.
 - Review depth (INT-53): Light / Medium / High. High means two independent Reviewers (clean context, preferably different models); both must PASS the schematic and the PCB (VER-13). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
+- User checks (optional): after the schematic review PASS ask "The schematic is done. Do you want to check it?"; on yes show PDF and images and ask the user to open it in the EDA tool (SCH-08); on no, note it and continue. The same for the PCB with 3D images before G1 (LAY-32). Skipping a check never skips the G0.5 / G1 approval.
 - G0.5: Before PCB layout, get approval for the PCB Intake decisions in `Hardware-Rules.md` section 00B. Record PCB structure/material/quality, board geometry and radius/chamfer, stack-up and the CHASSIS_GND perimeter ring preference. Do not create the ring unless the user asks for it. Do not start layout unless `python scripts/projectctl.py check-layout` passes.
 - G1: Explicit user approval for the current design revision is required to create manufacturing files.
 - Without G1, do not create Gerber, drill, BOM, PnP or other release outputs in `Manufacturing/`.
