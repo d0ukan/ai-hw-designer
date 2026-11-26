@@ -8,7 +8,7 @@
 *.ps1  text eol=crlf
 
 # Documentation, code and config
-*.md    text
+*.md    text linguist-detectable
 *.txt   text
 *.csv   text
 *.json  text

@@ -6,9 +6,9 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.27 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.28 ([changelog](CHANGELOG.md))
 
-[![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white)
+[![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -24,7 +24,7 @@ One manager agent and two specialist roles take a board from schematic to PCB, w
 
 | | | | |
 | :---: | :--- | :---: | :--- |
-| 🤖 | **Any AI, any EDA:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA | 🚦 | **You approve each gate:** requirements G0, PCB inputs G0.5, export G1 |
+| 🤖 | **Any AI, any EDA, any OS:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA; Windows, macOS, Linux | 🚦 | **You approve each gate:** requirements G0, PCB inputs G0.5, export G1 |
 | 🔍 | **Independent review:** Light, Medium or High (two Reviewers) | 📐 | **Readable schematics:** wires, power symbols, standard sheets |
 | 🔌 | **MCP setup offered:** for this project or all projects, only after your yes | 🌍 | **Local sourcing:** your country, user-supplied modules, drop-in alternates |
 | 📡 | **Diff pairs and RF:** visible in the schematic, routed as pairs | 📦 | **Release checks:** BOM/PnP, manifest hash, git commit binding |
@@ -287,7 +287,15 @@ Without special manufacturing needs, JLCPCB and/or PCBWay standard capabilities 
 
 ## Local check commands
 
-Python 3.10+ is enough; no packages, API keys or LLM calls.
+Python 3.10+ is enough; no packages, API keys or LLM calls. Works the same on **Windows, macOS and Linux** (CI runs every push on all three).
+
+| OS | Install Python | Command |
+| :--- | :--- | :--- |
+| 🪟 Windows | python.org installer or `winget install Python.Python.3.12` | `python` (or `py`) |
+| 🍎 macOS | `brew install python` or python.org installer | `python3` |
+| 🐧 Linux | distro package (`apt install python3`, `dnf install python3`) | `python3` |
+
+The examples below use `python`; on macOS/Linux type `python3` if `python` is not found.
 
 ```bash
 python scripts/projectctl.py next            # next missing step and its command

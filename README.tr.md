@@ -6,9 +6,9 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.27 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.28 ([değişiklikler](CHANGELOG.md))
 
-[![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white)
+[![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -24,7 +24,7 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 
 | | | | |
 | :---: | :--- | :---: | :--- |
-| 🤖 | **Her AI, her EDA:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA | 🚦 | **Her kapıyı sen onaylarsın:** gereksinim G0, PCB girdileri G0.5, export G1 |
+| 🤖 | **Her AI, her EDA, her işletim sistemi:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA; Windows, macOS, Linux | 🚦 | **Her kapıyı sen onaylarsın:** gereksinim G0, PCB girdileri G0.5, export G1 |
 | 🔍 | **Bağımsız review:** Hafif, Orta veya Yüksek (iki Reviewer) | 📐 | **Okunur şematik:** tel, güç sembolü, standart sayfa |
 | 🔌 | **MCP kurulumu önerilir:** bu proje ya da tüm projeler, sadece senin onayınla | 🌍 | **Yerel tedarik:** ülken, kullanıcının aldığı modüller, drop-in muadiller |
 | 📡 | **Diferansiyel ve RF:** şematikte belli, PCB'de çift olarak çizilir | 📦 | **Teslim kontrolleri:** BOM/PnP, manifest hash, git commit bağlama |
@@ -287,7 +287,15 @@ MCP sürümü, EDA uyumu ve gerçek araç fonksiyonları proje başında doğrul
 
 ## Yerel kontrol komutları
 
-Python 3.10+ yeterlidir; ek paket, API anahtarı veya LLM çağrısı gerekmez.
+Python 3.10+ yeterlidir; ek paket, API anahtarı veya LLM çağrısı gerekmez. **Windows, macOS ve Linux**'ta aynı çalışır (CI her push'ta üçünde de test eder).
+
+| İşletim sistemi | Python kurulumu | Komut |
+| :--- | :--- | :--- |
+| 🪟 Windows | python.org kurulumu veya `winget install Python.Python.3.12` | `python` (veya `py`) |
+| 🍎 macOS | `brew install python` veya python.org kurulumu | `python3` |
+| 🐧 Linux | dağıtım paketi (`apt install python3`, `dnf install python3`) | `python3` |
+
+Aşağıdaki örnekler `python` kullanır; macOS/Linux'ta `python` bulunamazsa `python3` yaz.
 
 ```bash
 python scripts/projectctl.py next            # sıradaki eksik adım ve komutu

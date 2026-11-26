@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.28 — 2026-11-26
+
+- Cross-platform: CI now runs on Linux, Windows and macOS. Scripts always print UTF-8 (Turkish or other non-ASCII project names work on any console, also when piped).
+- READMEs: per-OS Python table (`python` / `python3` / `py`) and an OS badge. AGENTS.md tells the AI to use the user's OS syntax and `python3` when `python` is missing.
+- GitHub language stats now count Markdown (the rules), not only Python.
+
 ## v1.27 — 2026-11-26
 
 - READMEs: banner and workflow images (`docs/assets/`, English and Turkish), badges, an "At a glance" table, team, first-question and sheet-order diagrams, a review depth table and colored workflow chart. No rule changes.
