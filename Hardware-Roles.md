@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.41 |
+| **Version** | v1.42 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -75,7 +75,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-03** — Check footprints and 3D CAD models: pin/pad match, size, orientation, mechanical fit and assembly suitability.
 - [ ] **REV-04** — Check the PCB: approved PCB type/material/quality, outline and radius/chamfer, placement, layout, routing, clearance, ground/return path, ring preference, polygons, vias, isolation, DRC and manufacturability.
 - [ ] **REV-05** — Audit that both the project-specific rules and the `Hardware-Rules.md` items are applied.
-- [ ] **REV-06** — After Gerber/drill, BOM and PnP/CPL files are generated, check them independently. Verify layers, holes, board outline, component matching, positions, rotations, assembly side and that the files match the approved design revision.
+- [ ] **REV-06** — After Gerber/drill, BOM and PnP/CPL files are generated, check them independently. Verify layers, holes, board outline, component matching, positions, rotations, assembly side and that the files match the approved design revision. Check the document renders for overlapping text (REL-05).
 - [ ] **REV-07** — Record the issues found in a single numbered review report; for each finding give location, evidence, severity and the expected fix.
 - [ ] **REV-08** — After the Designer makes fixes, review the fixed areas and their effects again; run the required regression checks.
 - [ ] **REV-09** — Do not mark an item you could not verify as passed. If there are critical gaps, report the review result as BLOCKED or REWORK.

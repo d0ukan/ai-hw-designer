@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.42 — 2026-11-27
+
+- INT-25 asks the language(s) of the manufacturing documents (default English).
+- REL-05: render and check every output document and drawing layer; no text over text, parts, outlines, dimensions or marked areas. REV-06 includes it.
+
 ## v1.41 — 2026-11-27
 
 - JLCPCB BOM only with LCSC/Asia sourcing; never in the Aerospace profile (no CoC/lot traceability).

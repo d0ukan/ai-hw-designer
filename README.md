@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.41 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.42 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -117,6 +117,7 @@ After the answer style and the project idea (INT-55), the Manager asks for the p
 - **Test points are asked early** (INT-58): none, probe pads (default 1.5 × 1.5 mm SMD, 1.0 mm on small boards) or a pogo-pin fixture (≥ 1.0 mm pads, 2.54 mm spacing, one side, tooling holes); plus which nets.
 - **Outputs for the factory:** BOM and PnP as CSV, PnP also as `.txt`; on request a JLCPCB-format BOM (only with LCSC/Asia sourcing, never for Aerospace) and a detailed Excel BOM with price, stock and totals (section 09).
 - **Aerospace BOM for FMECA:** authorized distributor, CoC/lot, qualification (MIL/QML/AEC-Q, VID/SMD), FIT, MTBF with source; IC errata checked (AVI-11, AVI-12).
+- **Clean output documents:** you choose the language (default English); every PDF and drawing layer is rendered and checked for overlapping text (REL-05).
 - **Only parts you can buy:** no NRND / Last Time Buy / EOL / Obsolete parts without your OK; stock is checked, written into the BOM (`Lifecycle`, `Stock`, `Checked`) and re-checked before G1; `check-bom` warns on risky parts (DFM-17, REV-20).
 - **Step by step, schematic then PCB:** the schematic ends with short PCB notes. If layout finds a schematic problem, the AI goes back to the schematic, fixes it, tells you what changed and why (and shows it for your OK if you chose the schematic check), gets it re-reviewed and continues the PCB (SCH-16, LAY-33).
 - **Standard schematic sheets:** every sheet uses the same template (A4 landscape, KiCad `.kicad_wks` in `Hardware-Library/sheet-templates/`) with a full title block (name, code, revision, variant, sheet x/y, date, designer, reviewer) and a fixed sheet order: cover → power → regulators → MCU → interfaces → connectors (SCH-14, SCH-15, REV-18).
