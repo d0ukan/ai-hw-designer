@@ -35,7 +35,7 @@
 - [ ] **LAY-10** — In switching regulators, keep the high di/dt loop (input capacitor – switch – diode/low-side FET) in the smallest area and follow the datasheet layout example. Keep the SW node small; do not route sensitive traces under or beside it. Take the feedback trace from the output capacitor/load and route it away from the SW node and inductor.
 - [ ] **LAY-11** — Place the crystal/oscillator close to its IC pin, with the load capacitors adjacent. Do not route other signals under or near it; follow the datasheet recommendation for GND guarding and keepout.
 - [ ] **LAY-12** — Spread out heat-generating parts (regulator, power FET, LED driver); provide datasheet-compliant thermal vias and copper area under thermal pads. Keep heat-sensitive parts (crystal, reference, sensor, electrolytic) away from hot zones.
-- [ ] **LAY-13** — Place similar parts in the same orientation and aligned; use a consistent orientation for polarized parts. Follow the assembly side from PCB-22: one side → all SMD parts on Top; both sides → only the approved parts on Bottom. Model connector, test point and button access mechanically; check component-to-board-edge distance against panel/V-cut and manufacturer limits.
+- [ ] **LAY-13** — Place similar parts in the same orientation and aligned; use a consistent orientation for polarized parts. Follow the density from PCB-23 and the assembly side from PCB-22: one side → all SMD parts on Top; both sides → only the approved parts on Bottom. Model connector, test point and button access mechanically; check component-to-board-edge distance against panel/V-cut and manufacturer limits.
 
 ### Routing
 

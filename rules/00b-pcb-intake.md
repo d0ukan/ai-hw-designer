@@ -25,6 +25,7 @@
 - [ ] **PCB-09** — Confirm the layer count from INT-20 (the user's target, or the AI's choice with its one-line reason). Is there a special request for manufacturer, stack-up, finished PCB thickness, outer/inner copper weight, solder mask/silkscreen color and surface finish? Otherwise propose the price/performance defaults in section 03 to the user.
 - [ ] **PCB-10** — Are controlled impedance, special vias, edge plating/castellation, panelization, stencil or special manufacturing tolerances required? If so, get only the related manufacturer and user information; apply section 05.
 - [ ] **PCB-22** — Ask explicitly: **Parts on one side only (Top) or on both sides (Top + Bottom)?** Default: one side (cheaper, one stencil, one assembly pass). Both sides only for a small board or a real need; then ask which parts may go on the bottom (default: small passives only; no heavy, tall or THT parts). Record the answer; PnP, stencils and the assembly drawing follow it.
+- [ ] **PCB-23** — Ask: **Component density?** **High** (compact, small board; harder to rework and probe) · **Medium** (balanced, default) · **Low** (spacious; easy hand soldering, rework and probing). Tell the user: if the size limit (INT-19) or enclosure forces it, density follows that limit automatically and the AI says so. Record the answer; placement (LAY-13) follows it.
 
 ### D · Optional CHASSIS_GND perimeter ring
 

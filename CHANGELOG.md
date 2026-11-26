@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.37 — 2026-11-26
+
+- PCB-23: ask component density before layout: High · Medium (default) · Low. A size limit or enclosure sets it automatically and the user is told. LAY-13 follows it.
+
 ## v1.36 — 2026-11-26
 
 - PCB-22: ask before layout whether parts go on one side (Top) or both sides; default one side. If both, which parts may go on the bottom. LAY-13 follows the answer.
