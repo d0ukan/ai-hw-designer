@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.24 — 2026-11-26
+
+- INT-56: ask the user's country/region and where the board is assembled (PCBA house or by hand).
+- INT-57: for a ready module, header module or part the PCBA house does not stock, ask where the user buys it, check local availability when possible, offer socket/header vs. castellated mounting, and get the exact product (clones often differ in pinout, pitch or row spacing).
+- DFM-16: user-supplied parts are marked in the BOM (supplier, USER-SUPPLIED note), DNP in the PCBA BOM/PnP, shown in the assembly drawing; the footprint follows the exact product.
+- REV-16: the Reviewer checks user-supplied parts. Designer/Reviewer role files and both READMEs updated.
+
 ## v1.23 — 2026-11-26
 
 - Schematic readability rules SCH-09…12: real wires inside blocks and few net labels (harness/global labels only when needed), power symbols for supplies, left-to-right flow and grouped blocks on grid with junction dots, no overlapping text, and an AI self-check after each drawing step (PNG review, ERC, short net list).

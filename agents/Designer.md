@@ -8,4 +8,5 @@
 - Name outputs with the `projectctl.py name` prefix per section 09; produce a separate BOM/PnP for each variant. Add drop-in alternate parts for components where possible (DFM-14). Apply silkscreen decisions (PCB-17…21) and keep it free of overlaps (LAY-30).
 - After each review PASS (schematic, PCB), if the user wants to check, export draft PDF and PNG images to `Review/<rev>/` and show them (SCH-08, LAY-32).
 - Draw schematics a human can check: wires inside blocks, power symbols, few net labels, no overlapping text. After each drawing step look at a PNG export, run ERC and give a short net list (SCH-09…12).
+- For modules or parts the PCBA house does not stock: ask where the user buys them (INT-57), draw the footprint from that exact product and mark them USER-SUPPLIED / DNP in the PCBA BOM (DFM-16).
 - Fix Reviewer findings; do not give independent review approval to your own design. Pass a short result, the revision and real evidence to the Manager.

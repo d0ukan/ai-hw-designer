@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.23 |
+| **Version** | v1.24 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -79,6 +79,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-13** — When reviewing through an MCP/EDA tool, use only read and check tools; do not change the design. In KiCad MCP use `KICAD_MCP_OPERATING_MODE=readonly`; in Altium MCP use only read tools such as `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist`. In KiCad run `audit_via_nets` (if available) against via-net shifts.
 - [ ] **REV-14** — Check the output set (section 09): file names match project code/revision/variant, each variant has its own BOM and PnP, DNP parts are absent from PnP, `_ASSY.pdf` marks designators/Pin 1/DNP, alternates (DFM-14) are footprint/pinout compatible, silkscreen has no overlaps (LAY-30).
 - [ ] **REV-15** — Check that a human can read the schematic (SCH-09…12): real wires inside blocks, power symbols, no overlapping text, clear signal flow, ERC clean or explained, and a net list that matches the drawing. If it is hard to read, return REWORK even when it is electrically correct.
+- [ ] **REV-16** — For each user-supplied module or part (DFM-16, INT-57): the footprint matches the exact product the user buys (pinout, pitch, row spacing, Pin 1), the socket/header is stocked at the PCBA house, the part is DNP in the PCBA BOM/PnP and marked USER-SUPPLIED with its local source, and the silkscreen shows orientation.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 
