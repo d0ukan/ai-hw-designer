@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.17 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.18 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -95,6 +95,7 @@ The Manager asks for the board's level at the start. The profile sets how strict
 | `scripts/projectctl.py` | Model-free approval, commit binding, BOM/PnP, deliverables and release checks; `next` |
 | `scripts/check_repo.py` | Template consistency: rule IDs, index ranges, links, versions, CSV |
 | `tests/`, `.github/workflows/` | Automated tests and CI |
+| `MCP-SETUP.md`, `examples/mcp/` | MCP setup per EDA tool and AI client, example config |
 | `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md` | Version history, MIT license, contribution rules |
 
 ## Workflow
@@ -150,7 +151,7 @@ A new session works from `AGENTS.md`, the assigned role and the current `Project
 
 ## EDA & MCP integration
 
-The template does not depend on one EDA tool or MCP server. MCP, native CLI, scripting/API or GUI all work. The template never installs an MCP plugin by itself.
+The template does not depend on one EDA tool or MCP server. MCP, native CLI, scripting/API or GUI all work. The AI asks your EDA tool first and offers to set up the matching MCP server, for this project only or for all projects; it installs only after your yes (INT-54). Steps: [MCP-SETUP.md](MCP-SETUP.md).
 
 | EDA | Integration options and sources |
 | :--- | :--- |

@@ -1,6 +1,6 @@
 # hardware-for-anything
 
-> AI-agnostic, reusable hardware (PCB) design template in Turkish: Manager / Designer / Reviewer roles, user approval gates (G0, G0.5, G1), quality profiles (Hobby / Industrial / Aerospace), optional RF, battery and avionics rules, output naming like DR00627-R01, and a dependency-free Python checker. Start with AGENTS.md; do not read every rule file.
+> AI-agnostic, reusable hardware (PCB) design template: Manager / Designer / Reviewer roles, user approval gates (G0, G0.5, G1), quality profiles (Hobby / Industrial / Aerospace), optional RF, battery and avionics rules, output naming like DR00627-R01, and a dependency-free Python checker. Start with AGENTS.md; do not read every rule file.
 
 ## Start here
 - Run `python scripts/projectctl.py next` (or ask the user to run it) to see the next missing step and its command.
@@ -13,6 +13,7 @@
 - [rules/03-dfm-cost.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/rules/03-dfm-cost.md): Manufacturer, cost, component and alternates.
 - [rules/04-schematic-layout.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/rules/04-schematic-layout.md): Schematic, placement, routing, SI/PI, silkscreen.
 - [rules/09-release.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/rules/09-release.md): Revisions, variants, output files.
+- [MCP-SETUP.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/MCP-SETUP.md): Offer and set up the MCP server for the user's EDA tool (only after the user's yes).
 - [Hardware-Roles.md](https://raw.githubusercontent.com/d0ukan/hardware-for-anything/main/Hardware-Roles.md): Roles, workflow, review format.
 
 ## Optional

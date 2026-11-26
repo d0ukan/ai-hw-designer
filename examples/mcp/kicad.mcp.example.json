@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "kicad": {
+      "command": "node",
+      "args": ["<path>/KiCAD-MCP-Server/dist/index.js"],
+      "env": {
+        "KICAD_MCP_TOOLBOXES": "core",
+        "PYTHONPATH": "<KiCad python path>"
+      }
+    },
+    "kicad-readonly": {
+      "command": "node",
+      "args": ["<path>/KiCAD-MCP-Server/dist/index.js"],
+      "env": {
+        "KICAD_MCP_OPERATING_MODE": "readonly",
+        "KICAD_MCP_TOOLBOXES": "core",
+        "PYTHONPATH": "<KiCad python path>"
+      }
+    }
+  }
+}

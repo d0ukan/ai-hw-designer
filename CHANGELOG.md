@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.18 — 2026-11-26
+
+- EDA question moved to the start (INT-04, right after project identity).
+- INT-54: the AI offers to set up the matching MCP server (KiCad, Altium, EasyEDA), asks the scope (this project only or all projects), installs only after the user's yes and verifies the connection.
+- New `MCP-SETUP.md` (per EDA and AI client, Reviewer read-only entry) and `examples/mcp/kicad.mcp.example.json`.
+- `.gitignore` ignores local `.mcp.json` and `.cursor/mcp.json`; `llms.txt` no longer says the template is in Turkish.
+
 ## v1.17 — 2026-11-26
 
 - Workflow charts (README.md, README.tr.md, Hardware-Roles.md): added the rare return path from the PCB review and the manufacturing review to the schematic (dashed arrows). The note says what is redone: schematic review, PCB update and review, G1.

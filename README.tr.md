@@ -4,7 +4,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.17 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.18 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -95,6 +95,7 @@ Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini
 | `scripts/projectctl.py` | Modelsiz onay, commit bağı, BOM/PnP, teslim listesi ve release kontrolü; `next` |
 | `scripts/check_repo.py` | Şablon tutarlılık kontrolü: kural kimlikleri, dizin aralıkları, linkler, sürümler, CSV |
 | `tests/`, `.github/workflows/` | Otomatik testler ve CI |
+| `MCP-SETUP.md`, `examples/mcp/` | EDA programına ve AI istemcisine göre MCP kurulumu, örnek ayar |
 | `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md` | Sürüm geçmişi, MIT lisansı, katkı kuralları |
 
 ## İş akışı
@@ -150,7 +151,7 @@ Yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/
 
 ## EDA & MCP entegrasyonu
 
-Şablon belirli bir EDA veya MCP sunucusuna bağımlı değildir. MCP, native CLI, scripting/API veya GUI kullanılabilir. Şablon hiçbir MCP eklentisini otomatik kurmaz.
+Şablon belirli bir EDA veya MCP sunucusuna bağımlı değildir. MCP, native CLI, scripting/API veya GUI kullanılabilir. AI önce hangi EDA programını kullandığını sorar, sonra uygun MCP sunucusunu kurmayı önerir (sadece bu proje için ya da tüm projeler için); yalnızca sen evet dersen kurar (INT-54). Adımlar: [MCP-SETUP.md](MCP-SETUP.md).
 
 | EDA | Entegrasyon seçenekleri ve kaynaklar |
 | :--- | :--- |

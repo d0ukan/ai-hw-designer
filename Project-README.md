@@ -55,6 +55,7 @@ Do not copy the general `Hardware-Rules.md` and `Hardware-Roles.md` files. Recor
 | EDA / version | TBD |
 | Connection | MCP / native CLI / API-script / GUI / manual |
 | Adapter name, version and trusted source | TBD / N/A |
+| MCP scope (this project / all projects) and Reviewer read-only entry | TBD / N/A |
 | File access and read/write permission | TBD |
 | Schematic, PCB, library editing capabilities | TBD |
 | ERC/DRC, export, STEP/CAD capabilities | TBD |

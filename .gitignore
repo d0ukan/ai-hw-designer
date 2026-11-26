@@ -21,6 +21,10 @@ __pycache__/
 !.env.example
 /Hardware-Library/datasheets/local-cache/
 
+# Local AI-client MCP configs (contain local paths; see MCP-SETUP.md)
+.mcp.json
+.cursor/mcp.json
+
 # OS metadata
 .DS_Store
 Thumbs.db

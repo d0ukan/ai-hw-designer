@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 00 · Project Intake — Project start questionnaire
 
-> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
+> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → EDA tool and MCP offer (INT-04, INT-54) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
 
 ### Start · Communication preference
 
@@ -19,6 +19,11 @@ The communication preference does not reduce engineering verification, critical 
 
 - [ ] **INT-49** — Right after the communication preference, ask: **project name, project code and revision** (e.g. name "Sensor board", code `DR00627`, revision `R01`). The user defines the code format; do not impose the example format. If there is a variant, ask for its letter (A, B, …). Record the name with `projectctl.py set project_name`, the code with `set project_code`, the revision with `set design_revision`. This question cannot be deferred; no export without a code.
 - [ ] **INT-50** — All outputs are named with this identity (section 09): `<code>-<rev>` → `DR00627-R01`, for a variant `<code>-<letter>V-<rev>` → `DR00627-AV-R01`. `python scripts/projectctl.py name [--variant A]` gives the prefix.
+
+### Start · EDA tool and AI connection
+
+- [ ] **INT-04** — Right after the project identity, ask: **Which EDA software and version will be used? (KiCad, Altium Designer, EasyEDA Pro, etc.)** Does the user have existing, authorized MCP server, native CLI, API/script or GUI access? Record existing integration preferences and real capabilities.
+- [ ] **INT-54** — If the AI client can run tools and there is no working connection yet, offer the matching MCP server: KiCad → KiCAD-MCP-Server; Altium Designer → official Altium MCP Server or altium-mcp; EasyEDA Pro → Extension API (third-party MCP only on request). Ask: **"Shall I set up <server> for you? For this project only (recommended) or for all your projects?"** Install only after an explicit yes, show each command first, and let the user enter license keys and sign-ins. Follow `MCP-SETUP.md`. Verify with a real read call and record server, version and scope in `Project-README.md` → "EDA & Tool Integration". If the user says no, or the client has no tool access (web chat), give manual steps or continue in manual mode. The Reviewer uses a read-only connection (REV-13).
 
 ### Start · "Decide later" option
 
@@ -67,7 +72,6 @@ Under no goal are requirements, safety, reliability or verification cut for cost
 - [ ] **INT-01** — **What is the purpose of this project?** What will the PCB do, in which device or system will it be used, and what are its main functions?
 - [ ] **INT-02** — Is the design from scratch, or a revision of an existing schematic/PCB? Is there a requirements document, reference design or existing file?
 - [ ] **INT-03** — Is the design for prototype, series production or test/development? What is the estimated production quantity and target PCB/PCBA unit cost?
-- [ ] **INT-04** — Which EDA software and version will be used? (KiCad, Altium Designer, EasyEDA Pro, etc.) Does the user have existing, authorized MCP server, native CLI, API/script or GUI access? Record existing integration preferences and real capabilities.
 - [ ] **INT-27** — Are there written requirements, customer requirements, ICD, technical specification, reference board or mandatory component list for the project? Which requirements are fixed and which are left to the designer?
 - [ ] **INT-40** — Does the user have additional project-specific design rules, preferences, acceptance criteria or prohibitions? Record them with source and approval in `Project-README.md`; clarify points that conflict with the general rules.
 - [ ] **INT-28** — What is the board's main function/type? Power supply or power distribution, functional control/MCU, analog measurement, digital communication, RF, sensor/interface, motor driver or a mixed board? Open only the relevant technical question group.
