@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.32 — 2026-11-26
+
+- Simpler, strictly sequential flow: the parallel PCB prep rule from v1.31 is removed; PCB work starts only after the schematic and G0.5. The PCB notes rule is now SCH-16.
+- LAY-33: on a schematic problem found during layout, go back to the schematic stage, fix it and tell the user what changed and why; show it for their OK if they chose the SCH-08 check; re-review, then continue the PCB.
+
 ## v1.31 — 2026-11-26
 
 - SCH-16: netlist-free PCB prep (outline, holes, connector positions, stack-up/impedance, footprints, G0.5 questions) may run while the schematic is finished; no placement or routing before G0.5.

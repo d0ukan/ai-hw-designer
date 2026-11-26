@@ -11,5 +11,5 @@
 - Start every schematic with the standard sheet template and fill the title block; keep the fixed sheet order (SCH-14, SCH-15).
 - Differential pairs: draw them side by side with an interface/impedance note, name them so the EDA sees a pair, route them with the diff pair router and fill the pair table (SCH-13, DIF-09…11).
 - For modules or parts the PCBA house does not stock: ask where the user buys them (INT-57), draw the footprint from that exact product and mark them USER-SUPPLIED / DNP in the BOM, omitted from the PnP (DFM-16).
-- Schematic stage: netlist-free PCB prep in parallel, PCB notes at the end (SCH-16, SCH-17). Schematic change during layout: LAY-33.
+- Work in order: schematic, then PCB. PCB notes at the end of the schematic (SCH-16). Schematic change during layout: back to the schematic, explain why to the user (LAY-33).
 - Fix Reviewer findings; do not give independent review approval to your own design. Pass a short result, the revision and real evidence to the Manager.

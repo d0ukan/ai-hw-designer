@@ -110,7 +110,7 @@ If available, add references to the relevant mechanical files and verified manuf
 
 In a multi-PCB project, record each board's properties by board ID. For full assembly scope and matching connector/mechanical references, reference the `Mechanical/` sources.
 
-## PCB notes (SCH-17)
+## PCB notes (SCH-16)
 
 - TBD: critical loops, parts that sit together, diff pairs / controlled nets, hot parts, sensitive analog, connectors and test points.
 

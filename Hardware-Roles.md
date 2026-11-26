@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.31 |
+| **Version** | v1.32 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -64,7 +64,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **DES-13** — Draw, name and route differential pairs as pairs and fill the pair table (SCH-13, DIF-09…11).
 - [ ] **DES-14** — Add drop-in alternates (DFM-14); handle user-supplied parts per INT-57 and DFM-16.
 - [ ] **DES-15** — Apply the silkscreen decisions without overlaps (PCB-17…21, LAY-30).
-- [ ] **DES-16** — During the schematic, do the netlist-free PCB prep (SCH-16); at its end write the PCB notes (SCH-17). For a schematic change during layout follow LAY-33: inform the user, show it if they chose the SCH-08 check, get the re-review, then continue the PCB.
+- [ ] **DES-16** — Work in order: schematic first, PCB after G0.5. At the end of the schematic write the PCB notes (SCH-16). For a schematic change during layout follow LAY-33: go back to the schematic, explain to the user what changed and why, show it if they chose the SCH-08 check, get the re-review, then continue the PCB.
 
 > **Manufacturing file constraint:** Do not automatically create Gerber, BOM, PnP/CPL or other release files just because the PCB design is finished. First get the user's approval, through the Manager, to prepare manufacturing files. During design, component data may be kept inside the native project; this does not mean the official manufacturing BOM has been exported.
 
@@ -88,7 +88,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-16** — For each user-supplied module or part (DFM-16, INT-57): the footprint matches the exact product the user buys (pinout, pitch, row spacing, Pin 1), the socket/header is stocked at the PCBA house, the part is DNP in the BOM (marked USER-SUPPLIED with its local source), omitted from the PnP, and the silkscreen shows orientation.
 - [ ] **REV-17** — For each differential pair: the schematic shows it as a pair with a note (SCH-13), the EDA recognizes it as a pair (DIF-09), it is routed coupled with constant spacing and symmetric vias (DIF-10), and the pair table (DIF-11) matches the board and the interface limits.
 - [ ] **REV-18** — Every schematic sheet uses the standard template with a complete title block and follows the fixed sheet order (SCH-14, SCH-15). A missing or wrong field (code, revision, sheet x/y) means REWORK.
-- [ ] **REV-19** — PCB review: the layout follows the PCB notes (SCH-17). After a schematic change during layout (LAY-33), review only the changed schematic area and its PCB update, and check the user was informed.
+- [ ] **REV-19** — PCB review: the layout follows the PCB notes (SCH-16). After a schematic change during layout (LAY-33), review only the changed schematic area and its PCB update, and check the user was informed.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 

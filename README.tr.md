@@ -6,7 +6,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.31 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.32 ([değişiklikler](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -110,7 +110,7 @@ Manager anlatım tercihi ve proje fikrinden (INT-55) sonra proje adı, proje kod
 - **Tasarımı sen de kontrol edebilirsin (isteğe bağlı):** şematik review'dan sonra AI "Şematik bitti, kontrol etmek ister misin?" diye sorar. Evet dersen şematiği PDF ve görsel olarak gösterir, EDA programında açıp bakmanı ister; hayır dersen devam eder. G1'den önce PCB için aynısı 3D görsellerle yapılır (SCH-08, LAY-32).
 - **İnsanın okuyabileceği şematik** (SCH-09…12): blok içinde gerçek tel, beslemeler için güç sembolü, az net etiketi, üst üste binmeyen yazılar, soldan sağa akış. AI kendi çiziminin PNG'sine bakar, ERC çalıştırır ve net listesini verir; okunmuyorsa Reviewer REWORK verir (REV-15).
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
-- **Şematikten PCB'ye zaman ve bilgi kaybı olmadan:** şematik biterken bağlantıya bağlı olmayan PCB hazırlığı (dış hat, delikler, stack-up, footprint) paralel yapılır ve şematik kısa PCB notlarıyla biter. PCB sırasında şematik değişikliği gerekirse AI şematiği düzeltir, sana bildirir (şematik kontrolü seçtiysen gösterip onay ister), Reviewer'a tekrar kontrol ettirir ve PCB'ye devam eder (SCH-16, SCH-17, LAY-33).
+- **Adım adım, önce şematik sonra PCB:** şematik kısa PCB notlarıyla biter. PCB sırasında şematik hatası bulunursa AI şematiğe döner, düzeltir, neyin neden değiştiğini sana anlatır (şematik kontrolü seçtiysen gösterip onayını bekler), Reviewer'a tekrar kontrol ettirir ve PCB'ye devam eder (SCH-16, LAY-33).
 - **Standart şematik sayfaları:** her sayfa aynı şablonu kullanır (yatay A4, KiCad `.kicad_wks` `Hardware-Library/sheet-templates/` içinde); başlık kutusu eksiksizdir (ad, kod, revizyon, varyant, sayfa x/y, tarih, tasarlayan, kontrol eden) ve sayfa sırası sabittir: kapak → güç → regülatörler → MCU → arayüzler → konnektörler (SCH-14, SCH-15, REV-18).
 
 ```mermaid
@@ -275,7 +275,7 @@ MCP sürümü, EDA uyumu ve gerçek araç fonksiyonları proje başında doğrul
 
 | Grup | Kurallar | Kısaca |
 | :--- | :--- | :--- |
-| Şematik | SCH-01…SCH-17 | Bloklar, datasheet, güç ağacı (PI), pin bazlı decoupling, SI hazırlığı, kısıt işaretleme, 0 Ω / DNP opsiyonu, kullanıcı kontrolü, okunurluk, diferansiyel çiftler, sayfa şablonu ve sırası |
+| Şematik | SCH-01…SCH-16 | Bloklar, datasheet, güç ağacı (PI), pin bazlı decoupling, SI hazırlığı, kısıt işaretleme, 0 Ω / DNP opsiyonu, kullanıcı kontrolü, okunurluk, diferansiyel çiftler, sayfa şablonu ve sırası |
 | Genel | LAY-01…LAY-07 | Decoupling, güç hattı, bölgeleme, referans düzlemi, 45°, test point, silkscreen |
 | Yerleşim | LAY-08…LAY-13 | Referans layout, yerleşim sırası, giriş koruması, switching döngüsü, kristal, termal, hizalama |
 | Routing | LAY-14…LAY-24 | Routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem, clock aralığı (3W merkezden), analog GND, güç dağıtımı, yüksek gerilim, pad girişi/teardrop, en kısa doğrudan yol, onaylı free-angle |
