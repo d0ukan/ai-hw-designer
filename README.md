@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.25 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.26 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -56,6 +56,7 @@ Right after the answer-style question, the Manager asks for the project name, pr
 - **Check the design yourself (optional):** after the schematic review the AI asks "The schematic is done. Do you want to check it?" On yes it shows the schematic as PDF and images and asks you to open it in your EDA tool; on no it continues. The same for the PCB with 3D images before G1 (SCH-08, LAY-32).
 - **Schematics a human can read** (SCH-09…12): real wires inside blocks, power symbols for supplies, few net labels, no overlapping text, left-to-right flow. The AI checks a PNG of its own drawing, runs ERC and lists the nets; the Reviewer returns REWORK if it is hard to read (REV-15).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
+- **Standard schematic sheets:** every sheet uses the same template (A4 landscape, KiCad `.kicad_wks` in `Hardware-Library/sheet-templates/`) with a full title block (name, code, revision, variant, sheet x/y, date, designer, reviewer) and a fixed sheet order: cover → power → regulators → MCU → interfaces → connectors (SCH-14, SCH-15, REV-18).
 - **Differential pairs are clear and routed as pairs:** in the schematic they are drawn side by side with a note like "USB D+/D− · 90 Ω diff" and named so the EDA recognizes them; on the PCB they are routed with the diff pair router at constant spacing, and a pair table (impedance, length difference) goes to the Reviewer (SCH-13, DIF-09…11, REV-17).
 - **Local sourcing for modules:** the AI asks your country and where the board is assembled. For a module or part the PCBA house does not stock, it asks where you can buy it (and checks local shops if it can), uses a stocked socket where possible, draws the footprint from the exact product you buy (clones often differ) and marks it USER-SUPPLIED / DNP in the PCBA BOM (INT-56, INT-57, DFM-16).
 - **Review depth** is asked at the start (INT-53): **Light** (critical checks), **Medium** (full checklist, default) or **High** (two independent Reviewers, both must PASS). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
@@ -90,7 +91,7 @@ The Manager asks for the board's level at the start. The profile sets how strict
 | `rules/` | Technical rules split by section (00 intake … 10 battery) |
 | `Hardware-Roles.md` | Roles, workflow, review and token policy |
 | `examples/` | Filled example project (`DR00001` USB-C LED board); CI checks it on every push |
-| `Hardware-Library/` | Verified symbols, footprints, 3D models and circuit blocks |
+| `Hardware-Library/` | Verified symbols, footprints, 3D models, circuit blocks and the standard schematic sheet template (`sheet-templates/`) |
 | `Hardware/` | Native EDA project (KiCad, Altium, …) |
 | `Mechanical/` | Project-specific mechanical sources and optional full CAD assembly |
 | `Manufacturing/` | Outputs created after approval; `templates/` holds empty BOM, PnP, schematic-output, assembly-drawing, fab-notes templates and checklists |

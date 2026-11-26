@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.26 — 2026-11-26
+
+- SCH-14: standard schematic sheet: A4 landscape, one template for all sheets, full title block (name, code, revision, variant, sheet name, sheet x/y, date, designer, reviewer), EDA default styles.
+- SCH-15: fixed sheet order: cover (block diagram, revision history, notes) → power input → regulators → MCU → interfaces/RF/sensors → connectors, mechanical, test points; one block per sheet.
+- New `Hardware-Library/sheet-templates/` with a KiCad drawing sheet (`hfa-title-block.kicad_wks`) and field mapping for KiCad and Altium. Not yet opened in every KiCad version; fix in `pl_editor` if needed.
+- REV-18: the Reviewer checks template, title block and sheet order. Role files and both READMEs updated.
+
 ## v1.25 — 2026-11-26
 
 - SCH-13: differential pairs are visible in the schematic: drawn side by side, series parts as matching pairs, and a note with interface and impedance (e.g. "USB D+/D− · 90 Ω diff").

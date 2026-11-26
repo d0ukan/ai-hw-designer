@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.25 |
+| **Version** | v1.26 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -81,6 +81,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-15** — Check that a human can read the schematic (SCH-09…12): real wires inside blocks, power symbols, no overlapping text, clear signal flow, ERC clean or explained, and a net list that matches the drawing. If it is hard to read, return REWORK even when it is electrically correct.
 - [ ] **REV-16** — For each user-supplied module or part (DFM-16, INT-57): the footprint matches the exact product the user buys (pinout, pitch, row spacing, Pin 1), the socket/header is stocked at the PCBA house, the part is DNP in the PCBA BOM/PnP and marked USER-SUPPLIED with its local source, and the silkscreen shows orientation.
 - [ ] **REV-17** — For each differential pair: the schematic shows it as a pair with a note (SCH-13), the EDA recognizes it as a pair (DIF-09), it is routed coupled with constant spacing and symmetric vias (DIF-10), and the pair table (DIF-11) matches the board and the interface limits.
+- [ ] **REV-18** — Every schematic sheet uses the standard template with a complete title block and follows the fixed sheet order (SCH-14, SCH-15). A missing or wrong field (code, revision, sheet x/y) means REWORK.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 
