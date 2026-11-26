@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.22 |
+| **Version** | v1.23 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -78,6 +78,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-12** — If applicable, verify that the programming/flash/debug method, the approved connector, pin mapping, power and access requirements match the design. If no real hardware test was done, do not report it as complete.
 - [ ] **REV-13** — When reviewing through an MCP/EDA tool, use only read and check tools; do not change the design. In KiCad MCP use `KICAD_MCP_OPERATING_MODE=readonly`; in Altium MCP use only read tools such as `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist`. In KiCad run `audit_via_nets` (if available) against via-net shifts.
 - [ ] **REV-14** — Check the output set (section 09): file names match project code/revision/variant, each variant has its own BOM and PnP, DNP parts are absent from PnP, `_ASSY.pdf` marks designators/Pin 1/DNP, alternates (DFM-14) are footprint/pinout compatible, silkscreen has no overlaps (LAY-30).
+- [ ] **REV-15** — Check that a human can read the schematic (SCH-09…12): real wires inside blocks, power symbols, no overlapping text, clear signal flow, ERC clean or explained, and a net list that matches the drawing. If it is hard to read, return REWORK even when it is electrically correct.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 

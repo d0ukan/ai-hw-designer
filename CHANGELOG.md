@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.23 — 2026-11-26
+
+- Schematic readability rules SCH-09…12: real wires inside blocks and few net labels (harness/global labels only when needed), power symbols for supplies, left-to-right flow and grouped blocks on grid with junction dots, no overlapping text, and an AI self-check after each drawing step (PNG review, ERC, short net list).
+- REV-15: the Reviewer returns REWORK when the schematic is hard for a human to read. The SCH-08 user check now includes the net list. Designer/Reviewer role files and both READMEs updated.
+
 ## v1.22 — 2026-11-26
 
 - AI-10: the project stays in one conversation. The AI never asks the user to open a new session or chat. Roles run as in-session subagents, or the main session does the Designer work; for the independent review the AI asks the user how it should be done.

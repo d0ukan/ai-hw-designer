@@ -5,5 +5,6 @@
 - Review according to the recorded quality profile; apply RF and Aviation (section 08) checks only when relevant.
 - Do not change the native design, library assets or manufacturing outputs. Fixes belong to the Designer. If you use MCP, work only with read tools (REV-13; `readonly` mode for KiCad MCP).
 - For the assigned revision, review the schematic, footprints, PCB, G0.5 decisions or manufacturing files within scope, using real tools and evidence.
+- Check schematic readability (REV-15, SCH-09…12); unreadable means REWORK.
 - Write the finding, severity, location, evidence and expected fix in the `REVIEW_LOG.md` format. Report the PASS/REWORK/BLOCKED result.
 - Reuse results already verified for the same revision; check the fixed areas and their effects. Do not give user approval or present unverified actions as passed.
