@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.29 |
+| **Version** | v1.30 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -40,9 +40,10 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **MGR-11** — Record project-specific requirements, extra rules, EDA integration capabilities and, when needed, the RF/high-speed profile in `Project-README.md`. Do not duplicate documents needlessly; use only approved or verified short references.
 - [ ] **MGR-12** — If there is a programmable component, get explicit approval at G0 for on-board/off-board flash, debug, interface and physical connector preferences. Skip this question group for unrelated analog projects.
 - [ ] **MGR-13** — In the first conversation ask the user's reply style preference (Caveman / Balanced / Detailed), store it in `Project-README.md` and shape replies to the user accordingly. If no preference is set, use Balanced. Do not hide critical findings or required approvals because of a short reply style.
-- [ ] **MGR-14** — After the project purpose, ask and record the quality profile (Hobby / Industrial / Aviation, `Hardware-Rules.md` INT-47) and then the design goal (Cost / Balanced / Performance, INT-48). If there is RF, collect the band and RF tier; in the Aviation profile collect the section 08 standard/level information. Do not ask about unrelated profiles or RF.
-- [ ] **MGR-15** — In a new project first ask the project name, project code, revision and variant letter if any (INT-49), and record them with `projectctl.py set project_code|design_revision`. Offer a "Decide later" option for non-critical questions (INT-51); write deferred items into the "Open decisions" table in `Project-README.md` and ask again at the latest at the relevant gate.
+- [ ] **MGR-14** — After the project purpose, ask and record the quality profile (Hobby / Industrial / Aerospace, `Hardware-Rules.md` INT-47) and then the design goal (Cost / Balanced / Performance, INT-48). If there is RF, collect the band and RF tier; in the Aerospace profile collect the section 08 standard/level information. Do not ask about unrelated profiles or RF.
+- [ ] **MGR-15** — In a new project ask the first questions in the order at the top of `rules/00-intake.md`. Record the identity (INT-49) with `projectctl.py set project_name|project_code|design_revision`. Offer a "Decide later" option for non-critical questions (INT-51); write deferred items into the "Open decisions" table in `Project-README.md` and ask again at the latest at the relevant gate.
 - [ ] **MGR-16** — When moving to a new revision (REL-01/02), first make clear whether it is a revision or a variant; ask the user "what changed, and why?" and write the answer as bullet points into `REVISION-HISTORY.md`. Do not treat earlier approvals as valid for the new revision.
+- [ ] **MGR-17** — Also run INT-53 (review depth, minimum for risky boards), INT-54 (MCP offer), INT-55 (project idea), INT-56/57 (country, module sourcing). Never commit or push on your own (AI-11).
 
 **Authority limit:** The Manager does not redo the Designer's technical work and does not run the Reviewer's review a second time from scratch. If a technical decision cannot be resolved, the Manager routes it to the relevant agent or asks the user.
 
@@ -59,6 +60,10 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **DES-09** — After approval, generate Gerber, drill, BOM, Pick & Place (PnP/CPL) and any other requested manufacturing outputs from the same design revision.
 - [ ] **DES-10** — In multi-PCB projects design the boards in separate native EDA areas, with a shared library and an approved interface table. Verify module/connector CAD fit; if requested, prepare the complete mechanical assembly. Create final manufacturing/CAD outputs only for the approved delivery scope and revision.
 - [ ] **DES-11** — After the schematic review PASS and after the PCB review PASS, if the user wants to check the design, export the draft PDF and PNG images to `Review/<rev>/` and show them (SCH-08, LAY-32).
+- [ ] **DES-12** — Draw a readable schematic on the standard sheet template in the fixed order (SCH-09…15).
+- [ ] **DES-13** — Draw, name and route differential pairs as pairs and fill the pair table (SCH-13, DIF-09…11).
+- [ ] **DES-14** — Add drop-in alternates (DFM-14); handle user-supplied parts per INT-57 and DFM-16.
+- [ ] **DES-15** — Apply the silkscreen decisions without overlaps (PCB-17…21, LAY-30).
 
 > **Manufacturing file constraint:** Do not automatically create Gerber, BOM, PnP/CPL or other release files just because the PCB design is finished. First get the user's approval, through the Manager, to prepare manufacturing files. During design, component data may be kept inside the native project; this does not mean the official manufacturing BOM has been exported.
 
@@ -74,12 +79,12 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-08** — After the Designer makes fixes, review the fixed areas and their effects again; run the required regression checks.
 - [ ] **REV-09** — Do not mark an item you could not verify as passed. If there are critical gaps, report the review result as BLOCKED or REWORK.
 - [ ] **REV-10** — Where applicable, review that each board and the board-to-board connections, external connectors/mating parts, ready-made modules, diagnostic indicators and the complete CAD assembly match the approved requirements. Record multi-PCB findings with the board ID and the shared design revision; a system review PASS is given only when all in-scope checks are complete.
-- [ ] **REV-11** — If there are RF/high-speed requirements, review the related HS/DIF/RF checks and the real analysis evidence. In the Aviation profile also check the section 08 AVI items. When using an EDA tool or MCP connection, do not mark checks that did not actually run as PASS.
+- [ ] **REV-11** — If there are RF/high-speed requirements, review the related HS/DIF/RF checks and the real analysis evidence. In the Aerospace profile also check the section 08 AVI items. When using an EDA tool or MCP connection, do not mark checks that did not actually run as PASS.
 - [ ] **REV-12** — If applicable, verify that the programming/flash/debug method, the approved connector, pin mapping, power and access requirements match the design. If no real hardware test was done, do not report it as complete.
 - [ ] **REV-13** — When reviewing through an MCP/EDA tool, use only read and check tools; do not change the design. In KiCad MCP use `KICAD_MCP_OPERATING_MODE=readonly`; in Altium MCP use only read tools such as `get_*`, `check_*`, `run_drc`, ERC, `preview_eco`, `compare_netlist`. In KiCad run `audit_via_nets` (if available) against via-net shifts.
 - [ ] **REV-14** — Check the output set (section 09): file names match project code/revision/variant, each variant has its own BOM and PnP, DNP parts are absent from PnP, `_ASSY.pdf` marks designators/Pin 1/DNP, alternates (DFM-14) are footprint/pinout compatible, silkscreen has no overlaps (LAY-30).
 - [ ] **REV-15** — Check that a human can read the schematic (SCH-09…12): real wires inside blocks, power symbols, no overlapping text, clear signal flow, ERC clean or explained, and a net list that matches the drawing. If it is hard to read, return REWORK even when it is electrically correct.
-- [ ] **REV-16** — For each user-supplied module or part (DFM-16, INT-57): the footprint matches the exact product the user buys (pinout, pitch, row spacing, Pin 1), the socket/header is stocked at the PCBA house, the part is DNP in the PCBA BOM/PnP and marked USER-SUPPLIED with its local source, and the silkscreen shows orientation.
+- [ ] **REV-16** — For each user-supplied module or part (DFM-16, INT-57): the footprint matches the exact product the user buys (pinout, pitch, row spacing, Pin 1), the socket/header is stocked at the PCBA house, the part is DNP in the BOM (marked USER-SUPPLIED with its local source), omitted from the PnP, and the silkscreen shows orientation.
 - [ ] **REV-17** — For each differential pair: the schematic shows it as a pair with a note (SCH-13), the EDA recognizes it as a pair (DIF-09), it is routed coupled with constant spacing and symmetric vias (DIF-10), and the pair table (DIF-11) matches the board and the interface limits.
 - [ ] **REV-18** — Every schematic sheet uses the standard template with a complete title block and follows the fixed sheet order (SCH-14, SCH-15). A missing or wrong field (code, revision, sheet x/y) means REWORK.
 
@@ -187,7 +192,7 @@ flowchart TD
 - [ ] **CTX-08** — If the same unresolved issue keeps coming back, do not create an endless review loop. After two fix rounds without result, the Manager should look into the cause and upgrade the model, choose a different approach or consult the user.
 - [ ] **CTX-09** — If user approval is pending, stop the related task. While waiting, do not create new design or manufacturing output based on assumptions.
 - [ ] **CTX-10** — Store verified datasheet, footprint, component and technical calculation data briefly in the shared record with source/revision/page. Reuse it when valid for the same MPN and conditions; update changed or outdated data only when needed.
-- [ ] **CTX-11** — Use the existing Git/version control or EDA revision mechanism where possible. Protect the approved revision, change only the needed files and use the relevant diff in reviews. If there is no version control, keep an orderly revision ID and a short change log.
+- [ ] **CTX-11** — Use the existing Git/version control or EDA revision mechanism where possible (commit only after the user's yes, AI-11). Protect the approved revision, change only the needed files and use the relevant diff in reviews. If there is no version control, keep an orderly revision ID and a short change log.
 - [ ] **CTX-12** — Create intermediate outputs and separate reports only when they are needed for a decision, verification or delivery. If the project status, review log and verified source summaries are enough, do not produce extra documents.
 - [ ] **CTX-13** — Share library assets under `Hardware-Library/`. If the existing catalog has a verified and valid entry, do not research or model it again.
 

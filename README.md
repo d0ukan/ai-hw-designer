@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.29 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.30 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -59,7 +59,7 @@ The AI then ([AGENTS.md](AGENTS.md), section "AI started from a repo link"):
 - Does not read every rule up front; it uses the index and the per-stage reading set, which saves tokens and credits.
 - Asks you to create your own copy with GitHub's **Use this template**.
 - Without file access (web chat) it keeps decisions in the chat, gives you content to paste into files and commands to run, and never reports a check that did not run. Paste the output of `projectctl.py next` and it continues from there.
-- Asks the first questions in one message: answer style → project name/code/revision → purpose → quality profile → design goal.
+- Asks the first questions in short steps, in the order under "First questions" below.
 - Requires a qualified human engineer's sign-off for mains/high voltage, multi-cell lithium, patient-connected medical or aerospace DAL A/B work (AI-09).
 
 In a tool with file and EDA access (Claude Code, Codex, Gemini CLI, …) open your copy and follow the quick start below.
@@ -96,7 +96,7 @@ flowchart TB
 
 ## Project identity and output names
 
-Right after the answer-style question, the Manager asks for the project name, project code, revision and any variant (INT-49). You choose the code format. Every output is named from it:
+After the answer style and the project idea (INT-55), the Manager asks for the project name, project code, revision and any variant (INT-49). You choose the code format. Every output is named from it:
 
 | Case | Prefix | Example files |
 | :--- | :--- | :--- |
@@ -119,7 +119,7 @@ flowchart LR
 
 - **Differential pairs are clear and routed as pairs:** in the schematic they are drawn side by side with a note like "USB D+/D− · 90 Ω diff" and named so the EDA recognizes them; on the PCB they are routed with the diff pair router at constant spacing, and a pair table (impedance, length difference) goes to the Reviewer (SCH-13, DIF-09…11, REV-17).
 - **Local sourcing for modules:** the AI asks your country and where the board is assembled. For a module or part the PCBA house does not stock, it asks where you can buy it (and checks local shops if it can), uses a stocked socket where possible, draws the footprint from the exact product you buy (clones often differ) and marks it USER-SUPPLIED / DNP in the PCBA BOM (INT-56, INT-57, DFM-16).
-- **Review depth** is asked at the start (INT-53). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
+- **Review depth** is asked last before G0 (INT-53). Risky boards (Aerospace, RF, battery, above SELV) need at least Medium.
 
   | Depth | Reviewers | Checks |
   | :--- | :---: | :--- |
@@ -161,6 +161,8 @@ The Manager asks for the board's level at the start. The profile sets how strict
 | `Hardware-Library/` | Verified symbols, footprints, 3D models, circuit blocks and the standard schematic sheet template (`sheet-templates/`) |
 | `Hardware/` | Native EDA project (KiCad, Altium, …) |
 | `Mechanical/` | Project-specific mechanical sources and optional full CAD assembly |
+| `Review/` | Draft PDFs/images for the optional user check (SCH-08, LAY-32); git-ignored |
+| `docs/` | README images |
 | `Manufacturing/` | Outputs created after approval; `templates/` holds empty BOM, PnP, schematic-output, assembly-drawing, fab-notes templates and checklists |
 | `Project-README.md` | Project facts, requirements and decisions; kept current by the Manager |
 | `REVIEW_LOG.md` | Independent review findings (`F-001` …) |
@@ -214,7 +216,7 @@ Every Reviewer check ends in `PASS`, `REWORK` or `BLOCKED`. On `REWORK` the Desi
 
 ## Tokens and price/performance
 
-- The main session is the Manager; no third sub-agent is started.
+- The main session is the Manager; it starts only the Designer and Reviewer (a second Reviewer only at depth High).
 - At each stage the AI reads only the files in the "Reading set by stage" table in `Hardware-Rules.md`.
 - Simple work is done first with deterministic tools (`projectctl.py`, `check-bom`).
 - The default model/effort is economical; harder technical work moves to a stronger model.
@@ -271,12 +273,12 @@ Section 04 (`rules/04-schematic-layout.md`):
 
 | Group | Rules | In short |
 | :--- | :--- | :--- |
-| Schematic | SCH-01…SCH-07 | Blocks, datasheets, power tree (PI), per-pin decoupling, SI preparation, constraint marking, 0 Ω / DNP option footprints |
+| Schematic | SCH-01…SCH-15 | Blocks, datasheets, power tree (PI), per-pin decoupling, SI preparation, constraint marking, 0 Ω / DNP options, user check, readability, diff pairs, sheet template and order |
 | General | LAY-01…LAY-07 | Decoupling, power traces, partitioning, reference plane, 45°, test points, silkscreen |
 | Placement | LAY-08…LAY-13 | Reference layout, placement order, input protection, switching loop, crystal, thermal, alignment |
 | Routing | LAY-14…LAY-24 | Routing order, net classes and IPC-2152, layer use, split planes, clock spacing (3W center-to-center), analog ground, power distribution, high voltage, pad entry/teardrops, shortest direct path, approved free-angle routing |
 | SI / PI | LAY-25…LAY-29 | Decoupling loop, critical length, impedance matching, length/delay matching, final check |
-| Silkscreen | LAY-30…LAY-31 | Overlap-free silkscreen on each side; applying the marking decisions |
+| Silkscreen | LAY-30…LAY-32 | Overlap-free silkscreen on each side; applying the marking decisions; user PCB check |
 
 Without special manufacturing needs, JLCPCB and/or PCBWay standard capabilities are the baseline (DFM-00).
 
@@ -327,10 +329,11 @@ python scripts/projectctl.py manifest
 python scripts/projectctl.py review manufacturing PASS --revision R01 --evidence "REVIEW_LOG.md, R01 manufacturing"
 python scripts/projectctl.py check-release
 python scripts/projectctl.py block F-001
+python scripts/projectctl.py revoke G1     # reset an approval to PENDING
 ```
 
 - **Commit binding:** in a git repository, `approve` and `review` store the current commit. If anything under `Hardware/` changes afterwards, including new untracked files, the gate closes. `review ... PASS` and `approve G1` are refused while the design has uncommitted changes.
-- **Without git:** the project also works in a plain local folder (zip download, no git), with an AI client or just a terminal. Records then store SHA-256 hashes of the design files, so a later change still closes the gate. EDA backups and lock files are ignored.
+- **Without git:** the project also works in a plain local folder (zip download, no git), with an AI client or just a terminal. Records always store SHA-256 hashes of the design files too, so a later change still closes the gate, also when git is removed later. EDA backups and lock files are ignored.
 - **No automatic commits:** `projectctl.py` never commits or pushes, and the AI asks you before any commit and pushes only when you ask (AI-11).
 - **Manifest binding:** `review manufacturing PASS` stores the manifest hash; regenerating the manifest later makes `check-release` ask for a new review.
 - **Deliverables:** every item in `deliverables` (`<code>-..._BOM.csv`, `_Gerber.zip`, …) must exist in the release.

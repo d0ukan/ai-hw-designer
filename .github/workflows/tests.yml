@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python: ["3.10", "3.12"]
+        python: ["3.10", "3.12", "3.13"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -37,3 +37,16 @@ jobs:
           python scripts/projectctl.py check-release $A
           test "$(python scripts/projectctl.py name --variant A $A | tr -d '\r')" = "DR00001-AV-R01"
           python scripts/projectctl.py next $A | grep -q "nothing missing"
+      - name: Project without git (plain folder) detects design changes
+        shell: bash
+        run: |
+          T="$(mktemp -d)"
+          cp -r examples/DR00001-usb-c-led "$T/p"
+          mkdir -p "$T/p/Hardware"
+          echo v1 > "$T/p/Hardware/board.kicad_pcb"
+          S="--state $T/p/workflow-state.json --manufacturing-dir $T/p/Manufacturing --repo-root $T/p"
+          python scripts/projectctl.py review pcb PASS --revision R01 --evidence ci $S
+          python scripts/projectctl.py approve G1 --revision R01 --evidence ci $S
+          python scripts/projectctl.py check-export $S
+          echo v2 > "$T/p/Hardware/board.kicad_pcb"
+          if python scripts/projectctl.py check-export $S; then echo "change not detected"; exit 1; fi

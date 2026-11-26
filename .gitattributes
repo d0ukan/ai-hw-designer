@@ -42,6 +42,10 @@ sym-lib-table text
 # EasyEDA Pro project archive
 *.epro     binary
 
+# Release folders: keep every byte as exported, or MANIFEST.sha256 would not match
+# on another computer (CRLF CSV/drill files from Windows EDA tools).
+**/Manufacturing/** -text
+
 # Manufacturing outputs (text, but never modify line endings)
 *.gbr  -text
 *.gb?  -text

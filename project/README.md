@@ -2,6 +2,7 @@
 
 `workflow-state.json` is the short, machine-readable record of approval and review status.
 
+- `project_name`: project name (INT-49); used in the title block (SCH-14).
 - `project_code`: project code (e.g. `DR00627`); output names are derived from it. Required for export and release. If the field is missing in older state files, it is treated as null.
 - `requirements_revision`: revision of the approved project inputs.
 - `pcb_requirements_revision`: separate revision of the PCB layout inputs. Update it if material, technology, geometry, ring or other PCB decisions change.
@@ -16,7 +17,7 @@
 
 Records may also carry optional `recorded_on` (UTC date), `recorded_by`, `commit`, `schematic_sha256` and `design_sha256` fields; `projectctl.py` commands fill them automatically.
 
-**Commit binding:** If the project is a git repository, `approve` and `review` record the current commit. If the design changes within the same `R01`, `check-export`/`check-release` catches it: if schematic files (`*.kicad_sch`, `*.SchDoc`, `*.sch`) changed after the schematic review, or any file under `Hardware/` changed after the PCB/manufacturing review and G1, the gate closes and a new review is required. New design files not added to Git also count as changes. A `review ... PASS` or `approve G1` record is rejected if the design is not committed. `*.OutJob` files that the EDA tool rewrites during export do not count as changes. Without Git (plain local folder) the records store SHA-256 hashes of the schematic files and of all design files under `Hardware/` instead, and the same checks run against them; EDA backups, locks and local settings (`*.kicad_prl`, `*-backups/`, `*.lck` …) are ignored. `projectctl.py` never commits or pushes; the AI asks the user before any commit (AI-11).
+**Commit binding:** If the project is a git repository, `approve` and `review` record the current commit. If the design changes within the same `R01`, `check-export`/`check-release` catches it: if schematic files (`*.kicad_sch`, `*.SchDoc`, `*.sch`) changed after the schematic review, or any file under `Hardware/` changed after the PCB/manufacturing review and G1, the gate closes and a new review is required. New design files not added to Git also count as changes. A `review ... PASS` or `approve G1` record is rejected if the design is not committed. `*.OutJob` files that the EDA tool rewrites during export do not count as changes. Records always store SHA-256 hashes as well; without Git (plain local folder, ZIP download, or git removed later) the checks use the hashes of the schematic files and of all design files under `Hardware/`; EDA backups, locks and local settings (`*.kicad_prl`, `*-backups/`, `*.lck` …) are ignored. `projectctl.py` never commits or pushes; the AI asks the user before any commit (AI-11).
 
 **Deliverables and manifest:** The `deliverables` field (e.g. `BOM PnP Gerber SCH ASSY FAB`) is required for release; each item must exist as a `<code>-..._<item>.*` file or folder. `review manufacturing PASS` requires a valid manifest and stores its SHA-256 value as `manifest_sha256`.
 
@@ -57,6 +58,8 @@ python scripts/projectctl.py name --variant A     # DR00627-AV-R01
 python scripts/projectctl.py check-bom X_BOM.csv --pnp X_PnP.csv
 python scripts/projectctl.py block F-001
 python scripts/projectctl.py unblock F-001
+python scripts/projectctl.py revoke G1           # reset an approval to PENDING
+python scripts/projectctl.py validate            # check the state file only
 ```
 
 `manifest` writes the SHA-256 list of the files in `Manufacturing/<design_revision>/` as `MANIFEST.sha256`. `check-release` fails if this manifest is missing, if files changed, if a file name does not start with the project code (contents of prefixed folders, e.g. `DR00627-R01_Gerber/`, are free) or if `check-bom` finds errors. `check-bom` checks BOM and PnP designators, Qty counts, that DNP parts are absent from PnP, and MPNs; it warns if an alternate part is missing.

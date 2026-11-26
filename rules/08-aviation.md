@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 08 · Aviation / Avionics — conditional profile
 
-> **Apply only if the Aviation profile was selected in INT-47.** In Hobby and Industrial projects this section is N/A. This template does not provide certification; DO-254 compliance and airworthiness require an organizational process, a competent authority and independent approval.
+> **Apply only if the Aerospace profile was selected in INT-47.** In Hobby and Industrial projects this section is N/A. This template does not provide certification; DO-254 compliance and airworthiness require an organizational process, a competent authority and independent approval.
 
 - [ ] **AVI-01** — Obtain the applicable standards and levels from the user or the customer specification: DO-254 DAL, DO-160 test categories, MIL-STD-461 / 704 / 810, company standards. Do not invent a category or level; record unknowns as Undetermined.
 - [ ] **AVI-02** — Record the PCB and assembly quality class: IPC-2221/2222 for design, IPC-6012 Class 3 (or 3/A) for the bare board, IPC-A-610 Class 3 for assembly. Ask whether a suitably certified (e.g. AS9100) manufacturer is required. Tell the user that standard low-cost lines are usually Class 2.
@@ -12,4 +12,4 @@
 - [ ] **AVI-07** — Record heavy component fixing (staking/underfill), conformal coating (e.g. IPC-CC-830) and connector locking requirements per the vibration, shock, humidity and salt requirements.
 - [ ] **AVI-08** — Traceability: every requirement must have a design reference and verification method in the `Project-README.md` requirements table. For manufacturing outputs, create a checksum manifest with `python scripts/projectctl.py manifest`; use the manifest to verify that the BOM and outputs come from the same revision.
 - [ ] **AVI-09** — If the user or standard requires it, perform FMEA, reliability prediction (e.g. MIL-HDBK-217F, FIDES), worst-case and thermal analysis. Do not present an analysis that was not done as complete.
-- [ ] **AVI-10** — In the Aviation profile, the Reviewer checks this section's items separately; items that cannot be verified do not count as PASS.
+- [ ] **AVI-10** — In the Aerospace profile, the Reviewer checks this section's items separately; items that cannot be verified do not count as PASS.

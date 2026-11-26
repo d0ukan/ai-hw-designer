@@ -9,7 +9,7 @@
 
 ## Check
 
-- [ ] Project name, `<prefix>`, page number and date correct in the title block
+- [ ] Title block complete on every sheet (SCH-14); fixed sheet order (SCH-15)
 - [ ] DNP parts marked in the schematic
-- [ ] Net names and differential pairs (`_P/_N`) readable
+- [ ] Net names readable; differential pairs noted and named per SCH-13, DIF-09
 - [ ] ERC result recorded as Reviewer evidence

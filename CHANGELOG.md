@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.30 — 2026-11-26
+
+Full repo review fixes.
+
+- projectctl: records always store design file hashes too, so a record made with git is still checked when git is missing later (ZIP download, `.git` removed, untrusted drive); a commit-only record without git now reports "cannot verify" instead of passing. Hashing is the same on Windows, macOS and Linux (case-insensitive patterns, NFC names), skips Altium previews/`.PrjPcbStructure` and KiCad `#auto_saved_files#`, and never crashes on odd file names. File errors give a clean message (exit 2). Deliverables work with dotted revisions (`R1.2`); BOM Qty accepts only ASCII digits; duplicate manifest lines are rejected; `next` validates the revision folder; git runs with `core.fsmonitor=false`.
+- `.gitattributes`: files under any `Manufacturing/` folder keep their exact bytes, so `MANIFEST.sha256` matches on every computer.
+- CI: Python 3.13 added; a no-git end-to-end step checks that a design change is detected. No-git tests now run even when git is not installed (72 tests).
+- Docs: first-question order kept in one place (`rules/00-intake.md`) and referenced elsewhere (shorter AGENTS.md and Manager.md); stale rule ranges and question order in READMEs fixed; profile name "Aerospace" everywhere (section 08 stays "Aviation rules"); "DNP in the BOM, omitted from the PnP" for user-supplied parts; commit notes point to AI-11; INT-56 refers to INT-18 for assembly; SCH-06 refers to DIF-09.
+- New role duties: MGR-17 (INT-53…57, AI-11), DES-12…15 (readable schematics and sheets, diff pairs, user-supplied parts and alternates, silkscreen). Reading set, templates (review checklist, Project-README, assembly drawing, schematic outputs, BOM convention) and repository layout updated.
+
 ## v1.29 — 2026-11-26
 
 - Works without git: in a plain local folder, approvals and reviews store SHA-256 hashes of the schematic files and of all design files under `Hardware/` (new optional record fields `schematic_sha256`, `design_sha256`). A later design change closes the gate as with git; EDA backups, locks and local settings are ignored.

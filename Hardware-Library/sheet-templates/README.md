@@ -31,4 +31,4 @@ Use a sheet template with the same fields: `Title`, `Revision`, `Date`, `Documen
 
 ## Other EDA
 
-Same fields and the same sheet order (SCH-14). If the tool has no template, write the fields as text in the bottom right corner.
+Same fields (SCH-14) and the same sheet order (SCH-15). If the tool has no template, write the fields as text in the bottom right corner.

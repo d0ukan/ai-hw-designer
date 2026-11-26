@@ -34,6 +34,7 @@ Thumbs.db
 
 # KiCad caches and MCP server files (KiCAD-MCP-Server)
 fp-info-cache
+#auto_saved_files#
 logs/
 *.dsn
 *.ses

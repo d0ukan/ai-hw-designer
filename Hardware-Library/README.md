@@ -35,7 +35,7 @@ Shared, reusable hardware library inside the project. Search the catalogs in the
 
 In the `alternates` field, write at least 1 drop-in alternate part if possible: same footprint and pinout, equal or better ratings, preferably a different manufacturer (DFM-14). If none is found, write "no alternate" in the `notes` field.
 
-Leave unknown fields empty; do not invent. In Hobby projects filling only the needed columns is enough; in the Aviation profile `temp_range`, `lifecycle`, `qualification` and `alternates` are mandatory.
+Leave unknown fields empty; do not invent. In Hobby projects filling only the needed columns is enough; in the Aerospace profile `temp_range`, `lifecycle`, `qualification` and `alternates` are mandatory.
 
 ### Footprint layer map (DFM-15)
 

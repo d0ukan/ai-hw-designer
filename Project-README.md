@@ -7,8 +7,10 @@
 | Project name / purpose | TBD |
 | Project code / revision / variants (INT-49) | TBD — e.g. `DR00627` / `R01` / A, B |
 | Output prefix (`projectctl.py name`) | TBD — e.g. `DR00627-R01`, `DR00627-AV-R01` |
-| Quality profile (Hobby / Industrial / Aviation) | TBD |
+| Quality profile (Hobby / Industrial / Aerospace, INT-47) | TBD |
 | Design goal (Cost / Balanced / Performance, INT-48) | TBD |
+| Review depth (Light / Medium / High, INT-53) | TBD |
+| Human engineer sign-off (AI-09) | No / Yes — reason |
 | RF present? / band / tier (RF-A, RF-B, RF-C) | TBD / N/A |
 | Battery / chemistry / cells (INT-52, section 10) | TBD / N/A |
 | Board type / written requirements | TBD |
@@ -20,13 +22,18 @@
 | Programming/flash/debug (on-board / off-board / N/A) | TBD |
 | Full STEP/CAD assembly delivery | TBD |
 | Supply type / min–nom–max | TBD |
+| Size limit L × W × H mm (INT-19) / layer count (INT-20) | TBD |
 | EDA software | TBD |
 | EDA version / connection method | TBD |
 | Requirements revision | TBD |
 | PCB input revision | TBD |
-| Manufacturer / assembly | TBD |
+| Manufacturer / assembly method (INT-17, INT-18) | TBD |
+| Country / region (INT-56) | TBD |
 | Target quantity / cost | TBD |
 | Sourcing strategy | TBD |
+| User-supplied parts: exact product, local source, mounting (DFM-16, INT-57) | TBD / N/A |
+| Diff pairs: pair table in the review evidence (DIF-11) | TBD / N/A |
+| Reference layout source (LAY-08) | TBD / N/A |
 | Operating environment | TBD |
 | AI budget / model preferences | Record if the user defines them |
 | User communication preference | Caveman / Balanced / Detailed — TBD |
@@ -115,7 +122,7 @@ In a multi-PCB project, record each board's properties by board ID. For full ass
 
 State the source of the relevant manufacturer stack-up, material, line classes, models and measurement requirements. Leave this section N/A in unrelated projects.
 
-## Aviation / Avionics — only in the Aviation profile
+## Aviation / Avionics — only in the Aerospace profile
 
 | Field | Decision / source |
 | :--- | :--- |

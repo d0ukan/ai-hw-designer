@@ -17,7 +17,7 @@ The communication preference does not reduce engineering verification, critical 
 
 ### Start · Project idea
 
-- [ ] **INT-55** — Do not propose projects on your own. Ask in one question: **"What would you like to build? Or shall I suggest some project ideas?"** Only if the user wants ideas, suggest **3–5 ideas** tailored to the user. Base them only on what you can see: the user's earlier projects in this repo (`Project-README.md`, `REVISION-HISTORY.md`, `Hardware/`, `Manufacturing/`), interests the user mentioned, the EDA tool, experience level and budget if known. Do not search the user's other files, accounts or history without permission. For each idea give one line: what it does, difficulty (easy / medium / hard), rough cost and key parts; say which earlier project or interest it builds on. The user picks one, changes one or gives their own; do not start a project without the user's choice. Then continue with INT-49 and INT-01.
+- [ ] **INT-55** — Do not propose projects on your own. Ask in one question: **"What would you like to build? Or shall I suggest some project ideas?"** Only if the user wants ideas, suggest **3–5 ideas** tailored to the user. Base them only on what you can see: the user's earlier projects in this repo (`Project-README.md`, `REVISION-HISTORY.md`, `Hardware/`, `Manufacturing/`), interests the user mentioned, the EDA tool, experience level and budget if known. Do not search the user's other files, accounts or history without permission. For each idea give one line: what it does, difficulty (easy / medium / hard), rough cost and key parts; say which earlier project or interest it builds on. The user picks one, changes one or gives their own; do not start a project without the user's choice. Then continue with INT-49 and INT-04.
 
 ### Start · Project identity
 
@@ -135,7 +135,7 @@ Under no goal are requirements, safety, reliability or verification cut for cost
 | Asia / PCBA ecosystem | LCSC, JLCPCB Parts and other approved suppliers |
 | Hybrid | Selection from both groups based on cost, stock, technical fit and availability |
 
-- [ ] **INT-56** — With INT-14 ask: **Which country/region are you in, and where will the board be assembled (PCBA house, or by hand yourself)?** Record both in `Project-README.md` → "Sourcing strategy". The country decides which local distributors and shops count as "available" for parts the PCBA house does not stock.
+- [ ] **INT-56** — With INT-14 ask: **Which country/region are you in?** Record it in `Project-README.md` → "Country / region". It decides which local shops count as "available" for parts the PCBA house does not stock. The assembly method is INT-18.
 
 - [ ] **INT-15** — Is there a mandatory manufacturer/brand, approved component list, prohibited components, stock and lifecycle policy, or existing parts to use?
 - [ ] **INT-16** — Which is the priority in component selection: cost, performance, quality/traceability, stock availability or long-term availability? If an INT-48 design goal exists, stay consistent with it; do not ask again, only clarify the difference.

@@ -6,7 +6,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.29 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.30 ([değişiklikler](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -59,8 +59,8 @@ AI şunları yapar ([AGENTS.md](AGENTS.md), "AI started from a repo link" bölü
 - Tüm kuralları baştan okumaz; dizini ve aşamaya göre okuma setini kullanır. Bu token ve kredi tasarrufu sağlar.
 - Senden GitHub'da **Use this template** ile kendi kopyanı oluşturmanı ister.
 - Dosya erişimi yoksa (web sohbeti) kararları sohbette tutar, dosyalara yapıştıracağın içerikleri ve çalıştıracağın komutları verir; çalışmamış kontrolü geçmiş göstermez. `projectctl.py next` çıktısını yapıştırırsan oradan devam eder.
-- İlk soruları tek mesajda sorar: anlatım tercihi → proje adı/kodu/revizyonu → amaç → kalite profili → tasarım hedefi.
-- Şebeke/yüksek gerilim, çok hücreli lityum, medikal veya Havacılık DAL A/B gibi durumlarda insan mühendis onayını zorunlu tutar (AI-09).
+- İlk soruları kısa adımlarla, aşağıdaki "İlk sorular" sırasıyla sorar.
+- Şebeke/yüksek gerilim, çok hücreli lityum, hastaya bağlı medikal veya Havacılık DAL A/B gibi durumlarda insan mühendis onayını zorunlu tutar (AI-09).
 
 Dosya ve EDA erişimi olan bir araçta (Claude Code, Codex, Gemini CLI vb.) kendi kopyanı açıp aşağıdaki hızlı başlangıçla devam et.
 
@@ -96,7 +96,7 @@ flowchart TB
 
 ## Proje kimliği ve çıktı isimleri
 
-Manager anlatım tercihinden hemen sonra proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-49). Kod biçimini kullanıcı belirler. Tüm çıktılar bu kimlikle adlandırılır:
+Manager anlatım tercihi ve proje fikrinden (INT-55) sonra proje adı, proje kodu, revizyon ve varsa varyantı sorar (INT-49). Kod biçimini kullanıcı belirler. Tüm çıktılar bu kimlikle adlandırılır:
 
 | Durum | Önek | Örnek dosyalar |
 | :--- | :--- | :--- |
@@ -119,7 +119,7 @@ flowchart LR
 
 - **Diferansiyel hatlar belli ve çift olarak çizilir:** şematikte yan yana çizilir, yanına "USB D+/D− · 90 Ω diff" gibi not yazılır ve EDA'nın çift olarak tanıyacağı isim verilir; PCB'de diferansiyel çift aracıyla sabit aralıkla çizilir, çift tablosu (empedans, uzunluk farkı) Reviewer'a verilir (SCH-13, DIF-09…11, REV-17).
 - **Modüller için yerel tedarik:** AI ülkeni ve kartın nerede dizileceğini sorar. PCBA firmasının stokta tutmadığı bir modül veya parça için onu nereden alabileceğini sorar (yapabiliyorsa yerel mağazalara bakar), mümkünse stoktaki bir soket kullanır, footprint'i senin alacağın ürüne göre çizer (klonlar farklı olabilir) ve PCBA BOM'unda KULLANICI TEMİN EDER / DNP olarak işaretler (INT-56, INT-57, DFM-16).
-- **Review yoğunluğu** başta sorulur (INT-53). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
+- **Review yoğunluğu** G0'dan önce en son sorulur (INT-53). Riskli kartlarda (Aerospace, RF, batarya, SELV üstü gerilim) en az Orta.
 
   | Yoğunluk | Reviewer | Kontrol |
   | :--- | :---: | :--- |
@@ -139,9 +139,9 @@ Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini
 | :--- | :--- | :--- |
 | 🧪 **Hobi** | Kişisel proje, prototip, en düşük maliyet | JLCPCB/PCBWay standart hattı, en az katman, ucuz ve kolay tedarik |
 | 🏭 **Endüstriyel** | Sahada uzun süre güvenilir çalışma | −40…+85 °C komponent, giriş korumaları, uzun ömürlü ve çok kaynaklı parça |
-| ✈️ **Havacılık** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
+| ✈️ **Aerospace (Havacılık)** | Uçuş, askeri, yüksek güvenilirlik | `Hardware-Rules.md` bölüm 08: IPC Class 3, derating, DO-160/MIL-STD isterleri, izlenebilirlik |
 
-**Tasarım hedefi de seçilir (INT-48):** Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli. Varsayılan öneri: Hobi → Maliyet, Endüstriyel → Dengeli, Havacılık/askeri → Performans (kullanıcı maliyet hedefi vermediyse). Hiçbir hedefte güvenilirlik ve doğrulama maliyet için kısılmaz.
+**Tasarım hedefi de seçilir (INT-48):** Maliyet öncelikli, Dengeli (fiyat/performans) veya Performans öncelikli. Varsayılan öneri: Hobi → Maliyet, Endüstriyel → Dengeli, Aerospace/askeri → Performans (kullanıcı maliyet hedefi vermediyse). Hiçbir hedefte güvenilirlik ve doğrulama maliyet için kısılmaz.
 
 **RF, batarya ve Havacılık isteğe bağlıdır.** İlgisizse kuralları ve soruları tamamen atlanır. RF varsa band sorulur: RF-A (< 1 GHz), RF-B (1–6 GHz), RF-C (> 6 GHz).
 
@@ -161,6 +161,8 @@ Manager proje başında kartın seviyesini sorar. Profil kuralların sertliğini
 | `Hardware-Library/` | Doğrulanmış symbol, footprint, 3D model, devre blokları ve standart şematik sayfa şablonu (`sheet-templates/`) |
 | `Hardware/` | Native EDA projesi (KiCad, Altium vb.) |
 | `Mechanical/` | Projeye özel mekanik kaynaklar ve isteğe bağlı komple CAD assembly |
+| `Review/` | İsteğe bağlı kullanıcı kontrolü için taslak PDF/görseller (SCH-08, LAY-32); git'e girmez |
+| `docs/` | README görselleri |
 | `Manufacturing/` | Onay sonrası üretilen dosyalar; `templates/` içinde boş BOM, PnP, şematik çıktı, montaj çizimi, fab notu ve checklist'ler |
 | `Project-README.md` | Proje bilgi/ister/karar şablonu; Manager güncel tutar |
 | `REVIEW_LOG.md` | Bağımsız review bulguları (`F-001` …) |
@@ -214,7 +216,7 @@ Her Reviewer kontrolünün sonucu `PASS`, `REWORK` veya `BLOCKED` olur. `REWORK`
 
 ## Token ve fiyat/performans
 
-- Ana oturum Manager'dır; üçüncü bir alt ajan başlatılmaz.
+- Ana oturum Manager'dır; yalnızca Designer ve Reviewer başlatılır (ikinci Reviewer yalnızca High yoğunlukta).
 - AI her aşamada yalnızca `Hardware-Rules.md` içindeki "Reading set by stage" (aşamaya göre okuma seti) tablosundaki dosyaları okur.
 - Basit işler önce deterministik araç ve script ile çözülür (`projectctl.py`, `check-bom`).
 - Varsayılan model/efor düşük maliyetlidir; zor teknik işler için uygun model seçilir.
@@ -271,12 +273,12 @@ MCP sürümü, EDA uyumu ve gerçek araç fonksiyonları proje başında doğrul
 
 | Grup | Kurallar | Kısaca |
 | :--- | :--- | :--- |
-| Şematik | SCH-01…SCH-07 | Bloklar, datasheet, güç ağacı (PI), pin bazlı decoupling, SI hazırlığı, kısıt işaretleme, 0 Ω / DNP opsiyon yeri |
+| Şematik | SCH-01…SCH-15 | Bloklar, datasheet, güç ağacı (PI), pin bazlı decoupling, SI hazırlığı, kısıt işaretleme, 0 Ω / DNP opsiyonu, kullanıcı kontrolü, okunurluk, diferansiyel çiftler, sayfa şablonu ve sırası |
 | Genel | LAY-01…LAY-07 | Decoupling, güç hattı, bölgeleme, referans düzlemi, 45°, test point, silkscreen |
 | Yerleşim | LAY-08…LAY-13 | Referans layout, yerleşim sırası, giriş koruması, switching döngüsü, kristal, termal, hizalama |
 | Routing | LAY-14…LAY-24 | Routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem, clock aralığı (3W merkezden), analog GND, güç dağıtımı, yüksek gerilim, pad girişi/teardrop, en kısa doğrudan yol, onaylı free-angle |
 | SI / PI | LAY-25…LAY-29 | Decoupling döngüsü, kritik uzunluk, empedans eşleştirme, length/delay matching, bitiş kontrolü |
-| Silkscreen | LAY-30…LAY-31 | Her yüzde çakışmasız silkscreen; işaretleme kararlarının uygulanması |
+| Silkscreen | LAY-30…LAY-32 | Her yüzde çakışmasız silkscreen; işaretleme kararlarının uygulanması; kullanıcı PCB kontrolü |
 
 Özel üretim istenmediyse JLCPCB ve/veya PCBWay standart kabiliyetleri esas alınır (DFM-00).
 
@@ -327,10 +329,11 @@ python scripts/projectctl.py manifest
 python scripts/projectctl.py review manufacturing PASS --revision R01 --evidence "REVIEW_LOG.md, R01 üretim"
 python scripts/projectctl.py check-release
 python scripts/projectctl.py block F-001
+python scripts/projectctl.py revoke G1     # onayı PENDING'e döndürür
 ```
 
 - **Commit bağı:** Proje git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Review'dan sonra `Hardware/` altında değişiklik veya git'e eklenmemiş yeni dosya olursa kapı kapanır. Tasarım commit edilmeden `review ... PASS` veya `approve G1` kaydedilmez.
-- **Git olmadan:** proje düz bir yerel klasörde de çalışır (zip indirme, git yok); AI istemcisiyle ya da sadece terminalle. Kayıtlar o zaman tasarım dosyalarının SHA-256 özetini saklar; sonradan değişiklik olursa kapı yine kapanır. EDA yedek ve kilit dosyaları sayılmaz.
+- **Git olmadan:** proje düz bir yerel klasörde de çalışır (zip indirme, git yok); AI istemcisiyle ya da sadece terminalle. Kayıtlar her zaman tasarım dosyalarının SHA-256 özetini de saklar; sonradan değişiklik olursa (git sonradan kaldırılsa bile) kapı yine kapanır. EDA yedek ve kilit dosyaları sayılmaz.
 - **Otomatik commit yok:** `projectctl.py` hiçbir zaman commit veya push yapmaz; AI her commit'ten önce sana sorar, push'u sadece sen istersen yapar (AI-11).
 - **Manifest bağı:** `review manufacturing PASS` manifestin hash'ini saklar; manifest sonradan yeniden üretilirse `check-release` yeniden review ister.
 - **Teslim listesi:** `deliverables` içindeki her çıktı (`<kod>-..._BOM.csv`, `_Gerber.zip` …) release'te bulunmalıdır.

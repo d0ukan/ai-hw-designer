@@ -204,6 +204,14 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("changed after the review", out)
 
+    def test_deliverable_with_dotted_revision(self):
+        folder = self.root / "rel"
+        folder.mkdir()
+        (folder / "DR1-R1.2_BOM.csv").write_text("x\n", encoding="utf-8")
+        errors = projectctl.deliverable_errors(folder, {"deliverables": ["BOM", "PnP"], "project_code": "DR1"})
+        self.assertEqual(len(errors), 1)
+        self.assertIn("_PnP", errors[0])
+
     def test_missing_deliverable_blocks_release(self):
         self.approve_everything()
         self.run_cli("deliverables", "BOM", "PnP", "Gerber")
@@ -361,6 +369,10 @@ class CliAndManifestTests(unittest.TestCase):
         code, out = self.run_cli("check-bom", str(bom))
         self.assertEqual(code, 1)
         self.assertIn("Qty 3 does not match 2 designators", out)
+        bom.write_text(BOM.replace("C1 C2,2", "C1 C2,²"), encoding="utf-8")
+        code, out = self.run_cli("check-bom", str(bom))
+        self.assertEqual(code, 1)
+        self.assertIn("does not match 2 designators", out)
         bom.write_text("Designator,Qty\nR1,1\n", encoding="utf-8")
         code, out = self.run_cli("check-bom", str(bom))
         self.assertIn("missing columns", out)
@@ -450,6 +462,20 @@ class GitBindingTests(unittest.TestCase):
         self.approve()
         state = json.loads(self.state_path.read_text(encoding="utf-8"))
         self.assertRegex(state["export_approval"]["commit"], r"^[0-9a-f]{40}$")
+        self.assertRegex(state["export_approval"]["design_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_git_removed_later_falls_back_to_hashes(self):
+        self.approve()
+        real = projectctl.git_head
+        projectctl.git_head = lambda repo_root: None
+        try:
+            self.assertEqual(self.run_cli("check-export")[0], 0)
+            (self.root / "Hardware" / "board.kicad_pcb").write_text("v2\n", encoding="utf-8")
+            code, out = self.run_cli("check-export")
+        finally:
+            projectctl.git_head = real
+        self.assertEqual(code, 1)
+        self.assertIn("recorded design file hash", out)
 
     def test_pcb_change_after_review_blocks_export(self):
         self.approve()
@@ -508,6 +534,8 @@ class GitBindingTests(unittest.TestCase):
 class NoGitBindingTests(GitBindingTests):
     """Same checks without git: records store design file hashes instead of a commit."""
 
+    __unittest_skip__ = False  # runs even when git is not installed
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
@@ -546,6 +574,24 @@ class NoGitBindingTests(GitBindingTests):
         code, out = self.run_cli("check-layout")
         self.assertEqual(code, 2)
         self.assertIn("SHA-256", out)
+
+    def test_commit_record_without_git_is_not_silently_accepted(self):
+        self.approve()
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        record = state["reviews"]["pcb"]
+        record["commit"] = "a" * 40
+        record.pop("design_sha256")
+        self.state_path.write_text(json.dumps(state), encoding="utf-8")
+        code, out = self.run_cli("check-export")
+        self.assertEqual(code, 1)
+        self.assertIn("git is not available", out)
+
+    def test_hash_ignores_case_and_altium_previews(self):
+        self.approve()
+        (self.root / "Hardware" / "a.SCHDOCPREVIEW").write_text("x\n", encoding="utf-8")
+        (self.root / "Hardware" / "p.PrjPcbStructure").write_text("x\n", encoding="utf-8")
+        (self.root / "Hardware" / "#auto_saved_files#").mkdir()
+        self.assertEqual(self.run_cli("check-export")[0], 0)
 
     def test_backup_and_lock_files_are_ignored(self):
         self.approve()

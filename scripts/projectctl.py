@@ -7,8 +7,9 @@ The name command prints the output file prefix, e.g. DR00627-R01 or DR00627-AV-R
 check-bom checks BOM/PnP files; next prints the next missing step and its command.
 
 When the project is a git repository, approvals and reviews also store the git
-commit they were recorded at; without git they store SHA-256 hashes of the
-design files under Hardware/ instead. The manufacturing review stores the
+commit they were recorded at. They always store SHA-256 hashes of the design
+files under Hardware/ as well, so the check still works without git (plain
+folder, ZIP download) and when git is missing later. The manufacturing review stores the
 manifest hash. Export and release checks then fail if design files under
 Hardware/ (tracked or new) changed after the record, or if the release files
 changed after the manufacturing review, so a review cannot silently cover a
@@ -18,6 +19,7 @@ later change. This tool never commits or pushes.
 import argparse
 import csv
 import datetime
+import unicodedata
 import fnmatch
 import hashlib
 import json
@@ -56,9 +58,10 @@ SCHEMATIC_GLOBS = ("*.kicad_sch", "*.SchDoc", "*.sch")
 DESIGN_EXCLUDE_GLOBS = ("*.OutJob",)
 # Without git: local EDA files that are not design content (mirrors .gitignore).
 HASH_IGNORE_FILES = ("*.kicad_prl", "*.kicad_sch-bak", "*.kicad_pcb-bak", "*.lck", "*.tmp", "*.bak", "*~",
-                     "_autosave-*", "fp-info-cache", "*.dsn", "*.ses", "*.PcbDocPreview") + DESIGN_EXCLUDE_GLOBS
+                     "_autosave-*", "fp-info-cache", "*.dsn", "*.ses", "*.PcbDocPreview", "*.SchDocPreview",
+                     "*.LdrDocPreview", "*.PrjPcbStructure") + DESIGN_EXCLUDE_GLOBS
 HASH_IGNORE_DIRS = ("*-backups", "History", "__Previews", "logs", "Project Logs for*", "Project Outputs for*",
-                    ".git")
+                    ".git", "#auto_saved_files#")
 
 NAME_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.]*$")
 VARIANT = re.compile(r"^[A-Z]$")
@@ -269,7 +272,9 @@ def gate_errors(state, *, layout=False, release=False, changed=None):
 
 def _git(repo_root, *args, timeout=60):
     try:
-        return subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=timeout)
+        # core.fsmonitor off: never run hooks from an untrusted repo's config while only reading.
+        return subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo_root), *args],
+                              capture_output=True, timeout=timeout)
     except (OSError, subprocess.SubprocessError):
         return None
 
@@ -325,8 +330,14 @@ def git_change_detector(repo_root):
     return changed
 
 
+def _match(name, patterns):
+    """Case-insensitive glob match, the same on Windows, macOS and Linux."""
+    name = name.lower()
+    return any(fnmatch.fnmatchcase(name, p.lower()) for p in patterns)
+
+
 def _hash_ignored(name, patterns):
-    return name.lower() in JUNK_FILES or any(fnmatch.fnmatch(name, p) for p in patterns)
+    return name.lower() in JUNK_FILES or _match(name, patterns)
 
 
 def design_hashes(repo_root):
@@ -337,17 +348,18 @@ def design_hashes(repo_root):
         for folder, dirs, names in os.walk(base):
             dirs[:] = sorted(d for d in dirs if not _hash_ignored(d, HASH_IGNORE_DIRS))
             for name in names:
-                if not _hash_ignored(name, HASH_IGNORE_FILES):
-                    path = Path(folder) / name
-                    files.append((path.relative_to(base).as_posix(), path))
+                path = Path(folder) / name
+                if not _hash_ignored(name, HASH_IGNORE_FILES) and path.is_file():
+                    rel = unicodedata.normalize("NFC", path.relative_to(base).as_posix())
+                    files.append((rel, path))
     files.sort()
     result = {}
     for scope, globs in (("schematic", SCHEMATIC_GLOBS), ("design", None)):
         digest = hashlib.sha256()
         for rel, path in files:
-            if globs and not any(fnmatch.fnmatch(path.name, g) for g in globs):
+            if globs and not _match(path.name, globs):
                 continue
-            digest.update(f"{rel}\0{_sha256(path)}\n".encode("utf-8"))
+            digest.update(rel.encode("utf-8", "surrogatepass") + b"\0" + _sha256(path).encode("ascii") + b"\n")
         result[scope] = digest.hexdigest()
     return result
 
@@ -370,6 +382,9 @@ def change_detector(repo_root):
             if "hashes" not in cache:
                 cache["hashes"] = design_hashes(repo_root)
             return cache["hashes"][scope] != stored, "the recorded design file hash"
+        if nonempty_text(commit):
+            # Recorded with git, but git (or the repo) is not available now: do not pass silently.
+            return None, f"commit {commit[:12]} (git is not available; restore the git repo or review again)"
         return None
 
     return changed
@@ -509,11 +524,8 @@ def deliverable_errors(folder, state):
     folders = [p.name.lower() for p in folder.rglob("*") if p.is_dir()] if folder.is_dir() else []
     errors = []
     for name in names:
-        tag = f"_{name.lower()}"
-        found = any(
-            entry.startswith(code.lower() + "-") and (entry.split(".")[0].endswith(tag))
-            for entry in files + folders
-        )
+        tag = re.compile(rf"_{re.escape(name.lower())}(\.[^.]*)?$")
+        found = any(entry.startswith(code.lower() + "-") and tag.search(entry) for entry in files + folders)
         if not found:
             errors.append(f"Deliverable missing: {code}-..._{name}.* (see deliverables in workflow-state.json)")
     return errors
@@ -589,7 +601,7 @@ def bom_problems(bom_path, pnp_path=None):
                 errors.append(f"{bom_name}:{line}: duplicate designator {ref}.")
             seen.add(ref)
         qty = row.get("Qty") or ""
-        if not qty.isdigit() or int(qty) != len(refs):
+        if not (qty.isascii() and qty.isdecimal()) or int(qty) != len(refs):
             errors.append(f"{bom_name}:{line}: Qty {qty or '(empty)'} does not match {len(refs)} designators.")
         is_dnp = (row.get("DNP") or "").lower() in DNP_TRUE
         (dnp if is_dnp else fitted).update(refs)
@@ -711,6 +723,8 @@ def manifest_errors(folder):
         parts = rel.replace("\\", "/").split("/")
         if not sep or not SHA256.match(digest) or rel.startswith(("/", "\\")) or ".." in parts or ":" in rel:
             return [f"Malformed manifest line: {line}"]
+        if rel in listed:
+            return [f"Duplicate manifest line: {rel}"]
         listed[rel] = digest
     errors = []
     for rel, digest in listed.items():
@@ -909,8 +923,10 @@ def main(argv=None):
             return 0
 
         if cmd == "next":
-            folder = (manufacturing / state["design_revision"]) if nonempty_text(state["design_revision"]) \
-                else manufacturing / "_"
+            try:
+                folder = release_dir(manufacturing, state["design_revision"])
+            except StateError:
+                folder = manufacturing / "_"
             step = next_step(state, folder, changed)
             if step is None:
                 print("NEXT: nothing missing; run check-release to confirm.")
@@ -932,7 +948,7 @@ def main(argv=None):
 
         if cmd in ("set", "deliverables", "approve", "revoke", "review", "block", "unblock"):
             commit = git_head(repo_root)
-            hashes = design_hashes(repo_root) if commit is None and cmd in ("approve", "review") else None
+            hashes = design_hashes(repo_root) if cmd in ("approve", "review") else None
             design_record = (cmd == "review" and args.status == "PASS") or (cmd == "approve" and args.gate == "G1")
             if design_record and design_dirty(repo_root):
                 raise StateError(f"Uncommitted changes under {DESIGN_DIR}/; commit the reviewed design first "
@@ -992,6 +1008,10 @@ def main(argv=None):
         return 2
     except StateError as exc:
         print(f"INVALID STATE: {exc}", file=sys.stderr)
+        return 2
+    except OSError as exc:
+        print(f"FILE ERROR: {exc} (close the file in other programs, check permissions, then retry)",
+              file=sys.stderr)
         return 2
 
 
