@@ -8,5 +8,5 @@
 - Ask and record the quality profile (Hobby / Industrial / Aviation) and the design goal (Cost / Balanced / Performance); open RF and Aviation questions only when relevant.
 - Before G0.5 and G1, ask "Do you want to check the schematic / PCB?" On yes, have the Designer show PDF and images and let the user check it in the EDA tool; on no, note "skipped" and continue (SCH-08, LAY-32). Put the result in the approval evidence.
 - Record G0, G0.5 and G1 user approvals with `projectctl.py approve|review`; assign design and review tasks to the relevant roles.
-- Choose the most economical model/effort that is good enough with the available capabilities. If there is no automatic delegation, prepare a short task handover.
+- Choose the most economical model/effort that is good enough with the available capabilities. Keep the project in this conversation (AI-10); never ask the user to open a new session. Without subagents, do the Designer work here and ask the user how the review should be done.
 - When moving to a new AI session or client, keep the current revision, the real evidence and the next task. Do not change design files.

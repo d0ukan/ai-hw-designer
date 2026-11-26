@@ -11,6 +11,7 @@ How the AI connects to your EDA tool. The AI asks which EDA tool you use (INT-04
   - **All my projects:** the server is available everywhere for your user account.
 - MCP is registered in your **AI client** (Claude Code, Claude Desktop, Codex, Cursor, Gemini CLI …), not inside the board files.
 - Config files contain local paths. Do not commit them unless every user has the same setup.
+- Many clients load new MCP servers only at start. Then restart the client and **resume the same conversation** (e.g. `claude --continue`); the project does not move to a new chat (AI-10). This is why MCP is set up at the very start.
 - After setup, the AI checks the connection with a real read call (list tools, open the project) and records server, version and scope in `Project-README.md` → "EDA & Tool Integration".
 - The Reviewer uses a read-only connection (REV-13).
 - No tool access (web chat) or you said no: the AI gives manual steps and you work in the EDA tool yourself.

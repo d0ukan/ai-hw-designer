@@ -21,14 +21,15 @@ This repository is **independent of AI provider, model and client**. The main se
 ## Agent management
 
 - Manager manages decision and approval records. It does not redo design or independent review work.
-- If the client supports it, delegate design tasks to the Designer agent and independent reviews to the Reviewer agent. If not, give the task package to the user; the same role flow can continue in separate AI sessions or with human review.
+- Keep the whole project in this conversation (AI-10). Never send the user to a new session or chat to continue. If the client supports in-session subagents, delegate design tasks to the Designer agent and independent reviews to the Reviewer agent; if not, do the Designer work here and ask the user how the independent review should be done.
 - Start agents only at the relevant stage. Designer and Reviewer do not change the same design at the same time. Do not create new sub-roles or unbounded loops.
 - In each task, state the revision, inputs, relevant rule IDs and expected output. Ask for a short result and evidence; do not copy the whole chat history.
 - Do not open agents for routine work and record editing. For calculations and deterministic checks, use the EDA tool, an existing script or a calculator first.
 - Verify EDA/MCP/CLI/API capabilities with real connection and tool checks. If a native automatic check is enough, do not redo the same work in an extra AI turn. If the client/EDA does not support it, suggest an alternative or report BLOCKED; do not install plugins or widen permissions without user approval.
 - Choose the most economical sufficient model/effort the current client and model support. Upgrade when needed for complex or critical tasks. Do not lower technical quality for budget.
 - When switching to Codex, Claude, Gemini, DeepSeek or another model/client, the same project files, roles, revisions and approvals stay valid. First read the current state and the Git diff if any; do not redo completed work.
-- If there is no automatic agent support, tell the user; do not give an independent review of your own design by only changing the name. Record the real result and evidence of the separate review session.
+- Do not give an independent review of your own design by only changing the name. Record the real result and evidence of the review that was done.
+- If new tools (e.g. an MCP server) load only after a client restart, set them up at the start (INT-54) and ask the user to restart and resume this same conversation, not to open a new one.
 - If the client has no access to files, tools or EDA, report that operation as BLOCKED; never show undone design or checks as done.
 
 ## Design and library

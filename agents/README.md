@@ -8,6 +8,8 @@ The Manager stays in the main session; when needed it starts the Designer and Re
 
 ## If there is no automatic agent support / the AI is being changed
 
+The project stays in this conversation (AI-10). Use the steps below only when the user chooses to run a role in another AI or to switch AI.
+
 1. The Manager prepares a short task package from the current project records (`Hardware-Roles.md` §05).
 2. The user gives the relevant role file and the required project files to the AI session of their choice.
 3. The user passes the task result, the real file changes and the review evidence back to the Manager.

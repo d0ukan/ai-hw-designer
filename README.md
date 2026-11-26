@@ -4,7 +4,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.21 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.22 ([changelog](CHANGELOG.md))
 
 One manager agent and two specialist roles take a board from schematic to PCB, with independent review, a shared hardware library and controlled manufacturing outputs. All rule and role files are in English; AI assistants answer in your language.
 
@@ -154,7 +154,7 @@ The Reviewer not writing is a role rule, not an OS sandbox. Official adapter ref
 
 ### Switching AI and continuing
 
-A new session works from `AGENTS.md`, the assigned role and the current `Project-README.md`, `project/workflow-state.json` and `REVIEW_LOG.md`; `projectctl.py next` names the next step. You can use one model as Designer and another as Reviewer; earlier approvals and real review records stay valid.
+The project stays in one conversation; the AI never asks you to open a new chat (AI-10). If you switch AI yourself, the new session works from `AGENTS.md`, the assigned role and the current `Project-README.md`, `project/workflow-state.json` and `REVIEW_LOG.md`; `projectctl.py next` names the next step. You can use one model as Designer and another as Reviewer; earlier approvals and real review records stay valid.
 
 ## EDA & MCP integration
 

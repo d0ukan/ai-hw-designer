@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.21 |
+| **Version** | v1.22 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -12,7 +12,7 @@
 
 > **Core instruction:** The three agents work as a single hardware team. The Hardware Designer carries out the design, the Hardware Reviewer independently looks for errors, and the Hardware Manager runs the process. The user holds final decision and manufacturing approval authority.
 
-Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other suitable tools/model providers can be used within the same project. If there is no automatic subagent feature, the roles are run through separate sessions; authority and approval limits do not change.
+Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other suitable tools/model providers can be used within the same project. The project stays in one conversation (AI-10): with subagents the roles run inside it; without them the main session does the Designer work and asks the user how the independent review is done. Authority and approval limits do not change.
 
 ---
 
@@ -81,7 +81,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 
-**Review depth (INT-53, VER-13):** Light and Medium use one Reviewer. High uses two independent Reviewers: separate sessions, clean context, preferably different models; neither reads the other's findings before finishing. The Manager does not act as a Reviewer; it only checks that both records exist and merges the findings.
+**Review depth (INT-53, VER-13):** Light and Medium use one Reviewer. High uses two independent Reviewers: separate subagents with a clean context, preferably different models; neither reads the other's findings before finishing. The Manager does not act as a Reviewer; it only checks that both records exist and merges the findings.
 
 ---
 
@@ -201,7 +201,7 @@ Keep these records short. Do not duplicate project files into separate copies pe
 ### Cross-platform handoff
 
 - [ ] **CTX-14** — When switching AI/client, hand over the current project revision, approvals, review evidence, open findings and the next task through `Project-README.md`, `REVIEW_LOG.md` and the workflow state. Do not have the whole chat or large logs read again.
-- [ ] **CTX-15** — If there is no automatic delegation, the Manager gives the user the short task package from `Hardware-Roles.md` §05. The user can continue in a separate session in the Designer or Reviewer role. An independent review can be PASS only when a truly separate review was done and its evidence recorded.
+- [ ] **CTX-15** — Keep the work in this conversation (AI-10). Use the §05 task package for in-session subagents, or when the user chooses to run a review elsewhere. Never ask the user to move the project to a new session. An independent review can be PASS only when a truly separate review was done and its evidence recorded.
 - [ ] **CTX-16** — Verify capabilities such as file read/write, EDA, terminal, subagents and web access per client. Report work that cannot be completed because of a missing capability as BLOCKED. Do not assume permission to send files or private information to another AI service.
 
 ---

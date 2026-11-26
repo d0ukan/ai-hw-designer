@@ -4,7 +4,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.21 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.22 ([değişiklikler](CHANGELOG.md))
 
 Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar tasarım, bağımsız review, ortak donanım kütüphanesi ve kontrollü üretim çıktısı hazırlamak için kullanılır. Kural ve rol dosyaları İngilizcedir; AI asistanlar sizin dilinizde cevap verir.
 
@@ -154,7 +154,7 @@ Reviewer'ın yazmaması bir rol kuralıdır, ayrı bir işletim sistemi sandbox'
 
 ### AI değiştirirken kaldığın yerden devam et
 
-Yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/workflow-state.json`, `REVIEW_LOG.md` üzerinden ilerle; `projectctl.py next` sıradaki adımı söyler. Bir modeli Designer, başka bir modeli Reviewer olarak kullanabilirsin; önceki onaylar ve gerçek review kayıtları korunur.
+Proje tek sohbette kalır; AI seni yeni bir sohbet açmaya yönlendirmez (AI-10). AI'ı kendin değiştirirsen yeni oturumda `AGENTS.md`, atanacak rol ve mevcut `Project-README.md`, `project/workflow-state.json`, `REVIEW_LOG.md` üzerinden ilerle; `projectctl.py next` sıradaki adımı söyler. Bir modeli Designer, başka bir modeli Reviewer olarak kullanabilirsin; önceki onaylar ve gerçek review kayıtları korunur.
 
 ## EDA & MCP entegrasyonu
 

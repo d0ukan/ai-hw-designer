@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.22 — 2026-11-26
+
+- AI-10: the project stays in one conversation. The AI never asks the user to open a new session or chat. Roles run as in-session subagents, or the main session does the Designer work; for the independent review the AI asks the user how it should be done.
+- MCP tools that load only at client start: set them up at project start and resume the same conversation after a restart (INT-54, MCP-SETUP.md).
+- AGENTS.md, Hardware-Roles.md (CTX-15, review depth), agents/README.md, Manager.md and both READMEs updated.
+
 ## v1.21 — 2026-11-26
 
 - SCH-08 (optional): after the schematic review PASS the AI asks "The schematic is done. Do you want to check it?" On no it notes it and continues. On yes the Designer exports a draft schematic PDF and per-sheet PNGs to `Review/<rev>/`, shows them in the chat and asks the user to open the schematic in the EDA tool; the user's OK or skip goes into the G0.5 evidence. Skipping never skips the G0.5 / G1 approval.
