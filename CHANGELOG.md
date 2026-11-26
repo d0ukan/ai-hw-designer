@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.31 — 2026-11-26
+
+- SCH-16: netlist-free PCB prep (outline, holes, connector positions, stack-up/impedance, footprints, G0.5 questions) may run while the schematic is finished; no placement or routing before G0.5.
+- SCH-17: the schematic ends with short PCB notes in `Project-README.md` (critical loops, grouped parts, diff pairs, hot parts, analog, connectors, test points); the PCB review checks the layout against them.
+- LAY-33: schematic change during layout: change and record it, inform the user (show and wait for OK if they chose the SCH-08 check), schematic re-review of the changed area, update the PCB and continue; G0.5 again only if PCB inputs change.
+- DES-16, REV-19, role files, workflow charts and both READMEs updated. One Designer still owns schematic and PCB (no hand-off loss, fewer tokens).
+
 ## v1.30 — 2026-11-26
 
 Full repo review fixes.

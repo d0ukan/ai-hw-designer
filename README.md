@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.30 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.31 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -110,6 +110,7 @@ After the answer style and the project idea (INT-55), the Manager asks for the p
 - **Check the design yourself (optional):** after the schematic review the AI asks "The schematic is done. Do you want to check it?" On yes it shows the schematic as PDF and images and asks you to open it in your EDA tool; on no it continues. The same for the PCB with 3D images before G1 (SCH-08, LAY-32).
 - **Schematics a human can read** (SCH-09…12): real wires inside blocks, power symbols for supplies, few net labels, no overlapping text, left-to-right flow. The AI checks a PNG of its own drawing, runs ERC and lists the nets; the Reviewer returns REWORK if it is hard to read (REV-15).
 - Every component gets at least one drop-in alternate where possible (DFM-14).
+- **Schematic → PCB without losing time or intent:** netlist-free PCB prep (outline, holes, stack-up, footprints) runs while the schematic is finished, and the schematic ends with short PCB notes. If layout needs a schematic change, the AI changes the schematic, tells you (and shows it if you chose the schematic check), gets it re-reviewed and continues the PCB (SCH-16, SCH-17, LAY-33).
 - **Standard schematic sheets:** every sheet uses the same template (A4 landscape, KiCad `.kicad_wks` in `Hardware-Library/sheet-templates/`) with a full title block (name, code, revision, variant, sheet x/y, date, designer, reviewer) and a fixed sheet order: cover → power → regulators → MCU → interfaces → connectors (SCH-14, SCH-15, REV-18).
 
 ```mermaid
@@ -195,6 +196,7 @@ flowchart TD
     E --> V["Reviewer: manufacturing check"]
     V -->|"REWORK: output error only"| E
     V -->|"REWORK: layout must change"| P
+    P -.->|"schematic change during PCB (LAY-33)"| D
     R -.->|"REWORK: schematic error (rare)"| D
     V -.->|"REWORK: schematic error (rare)"| D
     V -->|"PASS"| H["Manager: record review + check-release + deliver"]
@@ -273,12 +275,12 @@ Section 04 (`rules/04-schematic-layout.md`):
 
 | Group | Rules | In short |
 | :--- | :--- | :--- |
-| Schematic | SCH-01…SCH-15 | Blocks, datasheets, power tree (PI), per-pin decoupling, SI preparation, constraint marking, 0 Ω / DNP options, user check, readability, diff pairs, sheet template and order |
+| Schematic | SCH-01…SCH-17 | Blocks, datasheets, power tree (PI), per-pin decoupling, SI preparation, constraint marking, 0 Ω / DNP options, user check, readability, diff pairs, sheet template and order, PCB prep and PCB notes |
 | General | LAY-01…LAY-07 | Decoupling, power traces, partitioning, reference plane, 45°, test points, silkscreen |
 | Placement | LAY-08…LAY-13 | Reference layout, placement order, input protection, switching loop, crystal, thermal, alignment |
 | Routing | LAY-14…LAY-24 | Routing order, net classes and IPC-2152, layer use, split planes, clock spacing (3W center-to-center), analog ground, power distribution, high voltage, pad entry/teardrops, shortest direct path, approved free-angle routing |
 | SI / PI | LAY-25…LAY-29 | Decoupling loop, critical length, impedance matching, length/delay matching, final check |
-| Silkscreen | LAY-30…LAY-32 | Overlap-free silkscreen on each side; applying the marking decisions; user PCB check |
+| Silkscreen and changes | LAY-30…LAY-33 | Overlap-free silkscreen on each side; applying the marking decisions; user PCB check; schematic change during layout |
 
 Without special manufacturing needs, JLCPCB and/or PCBWay standard capabilities are the baseline (DFM-00).
 

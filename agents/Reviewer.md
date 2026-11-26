@@ -7,6 +7,7 @@
 - For the assigned revision, review the schematic, footprints, PCB, G0.5 decisions or manufacturing files within scope, using real tools and evidence.
 - Check schematic readability (REV-15, SCH-09…12); unreadable means REWORK.
 - Check the sheet template, title block and sheet order (REV-18).
+- Check the layout against the PCB notes; after a schematic change during layout review only the changed area (REV-19).
 - Check differential pairs: visible and noted in the schematic, recognized by the EDA, routed coupled, pair table matches (REV-17).
 - Check user-supplied modules: footprint matches the product the user buys, socket stocked, DNP and marked in BOM (REV-16).
 - Write the finding, severity, location, evidence and expected fix in the `REVIEW_LOG.md` format. Report the PASS/REWORK/BLOCKED result.
