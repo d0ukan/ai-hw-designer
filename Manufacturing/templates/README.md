@@ -12,6 +12,26 @@ Empty starter files. In the project, copy them into `Manufacturing/<rev>/`, rena
 | `bring-up-checklist.md` | Project record (not part of the release) | First power-up and test order (VER-09) |
 | `review-checklist.md` | Project record (not part of the release) | Short stage-by-stage checklist for the Reviewer |
 
+## What the outputs look like
+
+`<prefix>_BOM.csv` (one row per value; values illustrative):
+
+| Designator | Qty | Comment | Footprint | MPN | Manufacturer | Alternate MPN | Alternate Manufacturer | LCSC Part # | Lifecycle | Stock | Checked | DNP | Notes |
+| :--- | :-: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :-: | :--- |
+| R1 R2 | 2 | 5.1k | 0402 | RC0402FR-075K1L | Yageo | CRCW04025K10FKED | Vishay | C… | Active | LCSC >100k | 2026-11-26 | | |
+| U1 | 1 | LM358 | SOIC-8 | LM358DR | TI | LM358DT | ST | C… | Active | LCSC >10k | 2026-11-26 | | |
+| C9 | 1 | 10uF | 0805 | GRM21BR61A106KE19L | Murata | CL21A106KPFNNNE | Samsung | C… | Active | LCSC >10k | 2026-11-26 | Yes | option |
+| M1 | 1 | ESP32 module | header 2×8 | … | … | | | | Active | local shop | 2026-11-26 | Yes | USER-SUPPLIED — hand assembly |
+
+`<prefix>_PnP.csv` (fitted SMD parts only, mm and degrees):
+
+| Designator | Mid X | Mid Y | Layer | Rotation |
+| :--- | ---: | ---: | :--- | ---: |
+| R1 | 9.00 | 9.50 | Top | 0 |
+| U1 | 15.20 | 8.40 | Top | 90 |
+
+PnP is always delivered as CSV; `check-bom` reads only CSV. KiCad `.pos`, Altium `.txt` or an `.xlsx` copy is added only if the manufacturer or user asks.
+
 To check the release folder: `python scripts/projectctl.py check-bom` (BOM/PnP consistency) and `check-release`. For a filled example, see the `examples/DR00001-usb-c-led/` folder.
 
 The revision history is kept in `REVISION-HISTORY.md` at the root. The templates in this folder are not a release; `manifest` and `check-release` check only the `Manufacturing/<rev>/` folder.

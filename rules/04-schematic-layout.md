@@ -25,7 +25,7 @@
 - [ ] **LAY-03** — Place sensitive analog circuits, noisy digital circuits and switching power supply areas appropriately.
 - [ ] **LAY-04** — Preserve the reference planes and return paths of signal traces.
 - [ ] **LAY-05** — Avoid unnecessary 90° corners during routing; prefer 45° transitions where possible. Use mitered or curved bends on RF traces (section 05, RF-06).
-- [ ] **LAY-06** — Provide accessible test points for supply rails and critical signals.
+- [ ] **LAY-06** — Provide accessible test points for supply rails and critical signals, with the nets and pad size from INT-58; keep them clear of tall parts and silkscreen.
 - [ ] **LAY-07** — Show component references, Pin 1 and polarity marks on the silkscreen, legible and not overlapping pads.
 
 ### Placement

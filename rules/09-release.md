@@ -10,7 +10,7 @@
 | :--- | :--- | :--- |
 | Gerber + drill | `<prefix>_Gerber.zip` | Layer set the manufacturer requires |
 | BOM | `<prefix>_BOM.csv` | Per variant; MPN, alternate part, DNP |
-| Pick & Place | `<prefix>_PnP.csv` | Per variant; DNP excluded |
+| Pick & Place | `<prefix>_PnP.csv` | Per variant; DNP excluded. CSV is the checked format; a `.txt`/`.pos`/`.xlsx` copy with the same name only if the manufacturer or user asks |
 | Schematic | `<prefix>_SCH.pdf` | Revision and date in the title block |
 | Assembly drawing (Draftsman style) | `<prefix>_ASSY.pdf` | Top/bottom, designators, Pin 1/polarity, DNP marked, dimensions; states whether the bottom view is mirrored |
 | Fab note | `<prefix>_FAB.md` or `.pdf` | Stack-up, thickness, finish, color, IPC class, special requests |

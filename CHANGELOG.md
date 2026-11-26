@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.34 — 2026-11-26
+
+- INT-58: ask early whether test points are wanted, on which nets and with which pad size (default 1.5 × 1.5 mm SMD; 1.0 mm on small boards; pogo fixtures ≥ 1.0 mm at ≥ 2.54 mm, one side). LAY-06 uses the answer.
+- `Manufacturing/templates/README.md` shows example BOM and PnP tables (incl. manufacturer and alternate manufacturer, user-supplied module row).
+- PnP: CSV is the checked format; `.txt` / `.pos` / `.xlsx` copies only on request (REL-03 table).
+
 ## v1.33 — 2026-11-26
 
 - DFM-17: no NRND / Last Time Buy / EOL / Obsolete parts without the user's OK ("user approved" in the BOM); stock of several times the build quantity, ideally multi-source; whole BOM re-checked before G1.
