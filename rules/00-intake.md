@@ -1,7 +1,7 @@
 <!-- Part of Hardware-Rules.md (index). Rule IDs are global. -->
 ## 00 · Project Intake — Project start questionnaire
 
-> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project identity (INT-49) → EDA tool and MCP offer (INT-04, INT-54) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
+> **MANDATORY — BEFORE STARTING THE DESIGN:** Question order: communication preference (INT-46) → project idea (INT-55) → project identity (INT-49) → EDA tool and MCP offer (INT-04, INT-54) → project purpose (INT-01) → quality profile (INT-47) → design goal (INT-48) → relevant technical questions → review depth (INT-53, last before G0, once RF/battery/voltage are known). Ask the user the questions below according to the project scope. Do not re-ask information already given. Do not start component selection, schematic or PCB layout until critical requirements and design preferences are clear.
 
 ### Start · Communication preference
 
@@ -15,9 +15,13 @@
 
 The communication preference does not reduce engineering verification, critical warnings, real evidence records or user approval gates. Inter-agent task and result summaries are stripped of unnecessary detail in every mode.
 
+### Start · Project idea
+
+- [ ] **INT-55** — Do not propose projects on your own. Ask: **"What would you like to build?"** If the user has no idea yet, ask: **"Shall I suggest some project ideas?"** Only on a yes, suggest **3–5 ideas** tailored to the user. Base them only on what you can see: the user's earlier projects in this repo (`Project-README.md`, `REVISION-HISTORY.md`, `Hardware/`, `Manufacturing/`), interests the user mentioned, the EDA tool, experience level and budget if known. Do not search the user's other files, accounts or history without permission. For each idea give one line: what it does, difficulty (easy / medium / hard), rough cost and key parts; say which earlier project or interest it builds on. The user picks one, changes one or gives their own; do not start a project without the user's choice. Then continue with INT-49 and INT-01.
+
 ### Start · Project identity
 
-- [ ] **INT-49** — Right after the communication preference, ask: **project name, project code and revision** (e.g. name "Sensor board", code `DR00627`, revision `R01`). The user defines the code format; do not impose the example format. If there is a variant, ask for its letter (A, B, …). Record the name with `projectctl.py set project_name`, the code with `set project_code`, the revision with `set design_revision`. This question cannot be deferred; no export without a code.
+- [ ] **INT-49** — Once the project idea is clear (INT-55), ask: **project name, project code and revision** (e.g. name "Sensor board", code `DR00627`, revision `R01`). The user defines the code format; do not impose the example format. If there is a variant, ask for its letter (A, B, …). Record the name with `projectctl.py set project_name`, the code with `set project_code`, the revision with `set design_revision`. This question cannot be deferred; no export without a code.
 - [ ] **INT-50** — All outputs are named with this identity (section 09): `<code>-<rev>` → `DR00627-R01`, for a variant `<code>-<letter>V-<rev>` → `DR00627-AV-R01`. `python scripts/projectctl.py name [--variant A]` gives the prefix.
 
 ### Start · EDA tool and AI connection

@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.18 |
+| **Version** | v1.19 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aviation profiles · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |
@@ -15,7 +15,7 @@
 
 | Section | Rules | When to read |
 | :--- | :--- | :--- |
-| [00 · Project Intake — Project start questionnaire](rules/00-intake.md) | INT-01…INT-54 | First session of every new project (before G0) |
+| [00 · Project Intake — Project start questionnaire](rules/00-intake.md) | INT-01…INT-55 | First session of every new project (before G0) |
 | [00B · PCB Intake — Technical and mechanical decisions before layout](rules/00b-pcb-intake.md) | PCB-01…PCB-21 | Before layout (G0.5) |
 | [01 · PCB manufacturing parameters](rules/01-pcb-parameters.md) | Default limit table | When entering PCB rules into the EDA tool |
 | [02 · Chassis, Ground & Polygon](rules/02-ground-polygon.md) | GND-01…GND-08 | For GND, chassis and polygon work |

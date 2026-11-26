@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.19 — 2026-11-26
+
+- INT-55: the AI no longer proposes projects on its own. It asks "What would you like to build?"; only if the user wants ideas does it suggest 3–5, based on the user's earlier projects in the repo and stated interests (no searching other files without permission). The user always picks.
+
 ## v1.18 — 2026-11-26
 
 - EDA question moved to the start (INT-04, right after project identity).
