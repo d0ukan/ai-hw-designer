@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.41 — 2026-11-27
+
+- JLCPCB BOM only with LCSC/Asia sourcing; never in the Aerospace profile (no CoC/lot traceability).
+- AVI-11: Aerospace BOM columns for FMECA: Distributor, CoC/Lot, Qualification (MIL/QML/AEC-Q, VID/SMD), FIT, MTBF, Rel. Source; real values only.
+- AVI-12: check each IC's errata sheet for the used revision and record design-relevant items.
+
 ## v1.40 — 2026-11-27
 
 - PnP is delivered as CSV plus a tab-separated `.txt` copy (many PCBA houses ask for it); the example project has both.

@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.40 |
+| **Version** | v1.41 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aerospace (Aviation) rules · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |
@@ -24,7 +24,7 @@
 | [05 · Differential Pairs, RF & High-Speed (SI/PI)](rules/05-diff-rf-hs.md) | DIF-01…DIF-11, HS-01…HS-05, RF-01…RF-09 | Only if differential, high-speed or RF is present |
 | [06 · Design Review & Verification](rules/06-verification.md) | VER-01…VER-13 | During review and verification stages |
 | [07 · AI working rules](rules/07-ai-rules.md) | AI-01…AI-11 | Once in the first session (short; AI-09 stop conditions) |
-| [08 · Aviation / Avionics — conditional profile](rules/08-aviation.md) | AVI-01…AVI-10 | Only in the Aerospace profile |
+| [08 · Aviation / Avionics — conditional profile](rules/08-aviation.md) | AVI-01…AVI-12 | Only in the Aerospace profile |
 | [09 · Revision, variants and outputs](rules/09-release.md) | REL-01…REL-04 | For revisions, variants and manufacturing outputs |
 | [10 · Battery and charging — conditional](rules/10-battery.md) | BAT-01…BAT-08 | Only if the board runs on a battery/cell or charges a battery (INT-52) |
 
