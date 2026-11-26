@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.39 — 2026-11-26
+
+- LAY-34: a missing 3D model is reported to the user with three choices: user shares the STEP · AI draws it in an installed CAD tool · AI installs FreeCAD + a FreeCAD MCP (only with the user's OK).
+
 ## v1.38 — 2026-11-26
 
 - PCB-23: minimum part-to-part gap per density (0.25 / 0.5 / 1.0 mm), courtyards never overlap.
