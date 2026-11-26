@@ -6,7 +6,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.34 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.35 ([değişiklikler](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -110,7 +110,7 @@ Manager anlatım tercihi ve proje fikrinden (INT-55) sonra proje adı, proje kod
 - **Tasarımı sen de kontrol edebilirsin (isteğe bağlı):** şematik review'dan sonra AI "Şematik bitti, kontrol etmek ister misin?" diye sorar. Evet dersen şematiği PDF ve görsel olarak gösterir, EDA programında açıp bakmanı ister; hayır dersen devam eder. G1'den önce PCB için aynısı 3D görsellerle yapılır (SCH-08, LAY-32).
 - **İnsanın okuyabileceği şematik** (SCH-09…12): blok içinde gerçek tel, beslemeler için güç sembolü, az net etiketi, üst üste binmeyen yazılar, soldan sağa akış. AI kendi çiziminin PNG'sine bakar, ERC çalıştırır ve net listesini verir; okunmuyorsa Reviewer REWORK verir (REV-15).
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
-- **Test noktaları başta sorulur** (INT-58): hangi hatlarda ve hangi pad boyutunda (varsayılan 1.5 × 1.5 mm SMD; küçük kartta veya pogo fikstüründe 1.0 mm).
+- **Test noktaları başta sorulur** (INT-58): yok, elle ölçüm padi (varsayılan 1.5 × 1.5 mm SMD, küçük kartta 1.0 mm) veya pogo pinli fikstür (≥ 1.0 mm pad, 2.54 mm aralık, tek yüz, hizalama delikleri); ayrıca hangi hatlarda olacağı.
 - **Sadece alınabilir parçalar:** NRND / Son Alım / EOL / Obsolete parçalar senin onayın olmadan kullanılmaz; stok kontrol edilir, BOM'a yazılır (`Lifecycle`, `Stock`, `Checked`) ve G1'den önce tekrar kontrol edilir; `check-bom` riskli parçada uyarı verir (DFM-17, REV-20).
 - **Adım adım, önce şematik sonra PCB:** şematik kısa PCB notlarıyla biter. PCB sırasında şematik hatası bulunursa AI şematiğe döner, düzeltir, neyin neden değiştiğini sana anlatır (şematik kontrolü seçtiysen gösterip onayını bekler), Reviewer'a tekrar kontrol ettirir ve PCB'ye devam eder (SCH-16, LAY-33).
 - **Standart şematik sayfaları:** her sayfa aynı şablonu kullanır (yatay A4, KiCad `.kicad_wks` `Hardware-Library/sheet-templates/` içinde); başlık kutusu eksiksizdir (ad, kod, revizyon, varyant, sayfa x/y, tarih, tasarlayan, kontrol eden) ve sayfa sırası sabittir: kapak → güç → regülatörler → MCU → arayüzler → konnektörler (SCH-14, SCH-15, REV-18).

@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.35 — 2026-11-26
+
+- INT-58: test point options are now explicit: No · Probe pads (1.5 × 1.5 mm default) · Pogo-pin fixture (≥ 1.0 mm pads, ≥ 2.54 mm spacing, one side, 2–3 tooling holes, pin type).
+
 ## v1.34 — 2026-11-26
 
 - INT-58: ask early whether test points are wanted, on which nets and with which pad size (default 1.5 × 1.5 mm SMD; 1.0 mm on small boards; pogo fixtures ≥ 1.0 mm at ≥ 2.54 mm, one side). LAY-06 uses the answer.
