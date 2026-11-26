@@ -537,6 +537,7 @@ BOM_REQUIRED = ("Designator", "Qty", "MPN", "DNP", "Alternate MPN")
 PNP_REQUIRED = ("Designator", "Mid X", "Mid Y", "Layer", "Rotation")
 DNP_TRUE = {"yes", "y", "true", "1", "dnp", "x"}
 NO_ALTERNATE = ("muadil yok", "no alternate")
+RISKY_LIFECYCLE = ("nrnd", "ltb", "last time buy", "eol", "obsolete", "end of life", "not recommended")
 RANGE = re.compile(r"^([A-Za-z]+)(\d+)-(?:\1)?(\d+)$")
 
 
@@ -610,6 +611,13 @@ def bom_problems(bom_path, pnp_path=None):
         notes = (row.get("Notes") or "").lower()
         if not is_dnp and not row.get("Alternate MPN") and not any(n in notes for n in NO_ALTERNATE):
             warnings.append(f"{bom_name}:{line}: no Alternate MPN and no 'no alternate' note ({', '.join(refs)}).")
+        if not is_dnp and "Lifecycle" in header:
+            life = (row.get("Lifecycle") or "").strip().lower()
+            if not life:
+                warnings.append(f"{bom_name}:{line}: no Lifecycle status (DFM-17) ({', '.join(refs)}).")
+            elif any(r in life for r in RISKY_LIFECYCLE) and "user approved" not in notes:
+                warnings.append(f"{bom_name}:{line}: {row['Lifecycle']} part without 'user approved' note (DFM-17) "
+                                f"({', '.join(refs)}).")
     if pnp_path is None:
         return errors, warnings
     pnp_name = Path(pnp_path).name

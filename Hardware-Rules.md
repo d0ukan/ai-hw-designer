@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.32 |
+| **Version** | v1.33 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aerospace (Aviation) rules · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |
@@ -19,7 +19,7 @@
 | [00B · PCB Intake — Technical and mechanical decisions before layout](rules/00b-pcb-intake.md) | PCB-01…PCB-21 | Before layout (G0.5) |
 | [01 · PCB manufacturing parameters](rules/01-pcb-parameters.md) | Default limit table | When entering PCB rules into the EDA tool |
 | [02 · Chassis, Ground & Polygon](rules/02-ground-polygon.md) | GND-01…GND-08 | For GND, chassis and polygon work |
-| [03 · JLCPCB / PCBWay — DFM & Cost Optimization](rules/03-dfm-cost.md) | DFM-00…DFM-16 | For component selection, manufacturer and cost decisions |
+| [03 · JLCPCB / PCBWay — DFM & Cost Optimization](rules/03-dfm-cost.md) | DFM-00…DFM-17 | For component selection, manufacturer and cost decisions |
 | [04 · Schematic, Component Placement & Routing](rules/04-schematic-layout.md) | SCH-01…SCH-16, LAY-01…LAY-33 | Schematic, placement, routing, SI/PI and silkscreen |
 | [05 · Differential Pairs, RF & High-Speed (SI/PI)](rules/05-diff-rf-hs.md) | DIF-01…DIF-11, HS-01…HS-05, RF-01…RF-09 | Only if differential, high-speed or RF is present |
 | [06 · Design Review & Verification](rules/06-verification.md) | VER-01…VER-13 | During review and verification stages |

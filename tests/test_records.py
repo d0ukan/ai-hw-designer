@@ -204,6 +204,16 @@ class CliAndManifestTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("changed after the review", out)
 
+    def test_risky_lifecycle_warns(self):
+        bom = self.root / "life.csv"
+        bom.write_text("Designator,Qty,MPN,Alternate MPN,Lifecycle,DNP,Notes\n"
+                       "U1,1,A,B,NRND,,\nU2,1,C,D,EOL,,user approved\nU3,1,E,F,,,\n", encoding="utf-8")
+        errors, warnings = projectctl.bom_problems(bom)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("NRND part" in w for w in warnings))
+        self.assertFalse(any("U2" in w for w in warnings))
+        self.assertTrue(any("no Lifecycle" in w and "U3" in w for w in warnings))
+
     def test_deliverable_with_dotted_revision(self):
         folder = self.root / "rel"
         folder.mkdir()

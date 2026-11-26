@@ -9,6 +9,7 @@
 - Check the sheet template, title block and sheet order (REV-18).
 - Check the layout against the PCB notes; after a schematic change during layout review only the changed area (REV-19).
 - Check differential pairs: visible and noted in the schematic, recognized by the EDA, routed coupled, pair table matches (REV-17).
+- Check BOM lifecycle and stock (REV-20, DFM-17).
 - Check user-supplied modules: footprint matches the product the user buys, socket stocked, DNP and marked in BOM (REV-16).
 - Write the finding, severity, location, evidence and expected fix in the `REVIEW_LOG.md` format. Report the PASS/REWORK/BLOCKED result.
 - Reuse results already verified for the same revision; check the fixed areas and their effects. Do not give user approval or present unverified actions as passed.

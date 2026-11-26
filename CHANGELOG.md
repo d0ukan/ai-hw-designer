@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.33 — 2026-11-26
+
+- DFM-17: no NRND / Last Time Buy / EOL / Obsolete parts without the user's OK ("user approved" in the BOM); stock of several times the build quantity, ideally multi-source; whole BOM re-checked before G1.
+- BOM template and example BOMs get `Lifecycle`, `Stock`, `Checked` columns; `check-bom` warns on a fitted part with no lifecycle or a risky lifecycle without approval. REV-20 for the Reviewer.
+
 ## v1.32 — 2026-11-26
 
 - Simpler, strictly sequential flow: the parallel PCB prep rule from v1.31 is removed; PCB work starts only after the schematic and G0.5. The PCB notes rule is now SCH-16.

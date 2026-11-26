@@ -12,4 +12,5 @@
 - Differential pairs: draw them side by side with an interface/impedance note, name them so the EDA sees a pair, route them with the diff pair router and fill the pair table (SCH-13, DIF-09…11).
 - For modules or parts the PCBA house does not stock: ask where the user buys them (INT-57), draw the footprint from that exact product and mark them USER-SUPPLIED / DNP in the BOM, omitted from the PnP (DFM-16).
 - Work in order: schematic, then PCB. PCB notes at the end of the schematic (SCH-16). Schematic change during layout: back to the schematic, explain why to the user (LAY-33).
+- Only Active parts with real stock; fill Lifecycle/Stock/Checked and re-check before G1 (DFM-17).
 - Fix Reviewer findings; do not give independent review approval to your own design. Pass a short result, the revision and real evidence to the Manager.

@@ -4,7 +4,7 @@ Empty starter files. In the project, copy them into `Manufacturing/<rev>/`, rena
 
 | Template | Project output | Note |
 | :--- | :--- | :--- |
-| `bom.csv` | `<prefix>_BOM.csv` | One per variant. A part with `DNP` = `Yes` is not fitted. `Alternate MPN` holds at least 1 drop-in alternate part (DFM-14); if none, `Notes` = "no alternate". The `Comment`, `Designator`, `Footprint`, `LCSC Part #` columns match the JLCPCB upload. User-supplied parts: `Supplier`, `Notes` = "USER-SUPPLIED", `DNP` = `Yes` (DFM-16). |
+| `bom.csv` | `<prefix>_BOM.csv` | One per variant. A part with `DNP` = `Yes` is not fitted. `Alternate MPN` holds at least 1 drop-in alternate part (DFM-14); if none, `Notes` = "no alternate". The `Comment`, `Designator`, `Footprint`, `LCSC Part #` columns match the JLCPCB upload. User-supplied parts: `Supplier`, `Notes` = "USER-SUPPLIED", `DNP` = `Yes` (DFM-16). `Lifecycle` / `Stock` / `Checked`: status, supplier stock and check date (DFM-17). |
 | `pnp.csv` | `<prefix>_PnP.csv` | Units mm, angles in degrees. `Layer` = `Top` / `Bottom`. DNP parts are not listed. Check the manufacturer's rotation reference on the order screen. |
 | `schematic-outputs.md` | `<prefix>_SCH.pdf` and attachments | Schematic output list |
 | `assembly-drawing.md` | `<prefix>_ASSY.pdf` | Draftsman-style assembly drawing |

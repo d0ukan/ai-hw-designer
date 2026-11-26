@@ -12,7 +12,7 @@ A small board that shows the template flow from start to finish: it takes 5 V fr
 | Example review findings (F-001 …) | [REVIEW_LOG.md](REVIEW_LOG.md) |
 | Main and A variant BOM/PnP, fab note, manifest | [Manufacturing/R01/](Manufacturing/R01/) |
 
-The deliverables were deliberately kept to `BOM PnP FAB`. A real project also has `Gerber SCH ASSY`; since the example has no EDA files, no fake Gerbers or PDFs were added.
+`Lifecycle`, `Stock` and `Checked` in the BOMs are illustrative values, not a real stock check. The deliverables were deliberately kept to `BOM PnP FAB`. A real project also has `Gerber SCH ASSY`; since the example has no EDA files, no fake Gerbers or PDFs were added.
 
 Check this example locally:
 
