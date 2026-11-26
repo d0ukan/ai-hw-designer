@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.28 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.29 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -27,7 +27,7 @@ One manager agent and two specialist roles take a board from schematic to PCB, w
 | 🤖 | **Any AI, any EDA, any OS:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA; Windows, macOS, Linux | 🚦 | **You approve each gate:** requirements G0, PCB inputs G0.5, export G1 |
 | 🔍 | **Independent review:** Light, Medium or High (two Reviewers) | 📐 | **Readable schematics:** wires, power symbols, standard sheets |
 | 🔌 | **MCP setup offered:** for this project or all projects, only after your yes | 🌍 | **Local sourcing:** your country, user-supplied modules, drop-in alternates |
-| 📡 | **Diff pairs and RF:** visible in the schematic, routed as pairs | 📦 | **Release checks:** BOM/PnP, manifest hash, git commit binding |
+| 📡 | **Diff pairs and RF:** visible in the schematic, routed as pairs | 📦 | **Release checks:** BOM/PnP, manifest hash, change binding with or without git |
 
 ### How the team works
 
@@ -330,6 +330,8 @@ python scripts/projectctl.py block F-001
 ```
 
 - **Commit binding:** in a git repository, `approve` and `review` store the current commit. If anything under `Hardware/` changes afterwards, including new untracked files, the gate closes. `review ... PASS` and `approve G1` are refused while the design has uncommitted changes.
+- **Without git:** the project also works in a plain local folder (zip download, no git), with an AI client or just a terminal. Records then store SHA-256 hashes of the design files, so a later change still closes the gate. EDA backups and lock files are ignored.
+- **No automatic commits:** `projectctl.py` never commits or pushes, and the AI asks you before any commit and pushes only when you ask (AI-11).
 - **Manifest binding:** `review manufacturing PASS` stores the manifest hash; regenerating the manifest later makes `check-release` ask for a new review.
 - **Deliverables:** every item in `deliverables` (`<code>-..._BOM.csv`, `_Gerber.zip`, …) must exist in the release.
 - **`check-bom`:** BOM/PnP match, Qty, DNP, MPN, `R1-R3` ranges, numeric coordinates; warns on missing alternates. Gives a clear error for semicolon-separated or non-UTF-8 CSV files.

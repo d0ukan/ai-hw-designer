@@ -7,15 +7,18 @@ The name command prints the output file prefix, e.g. DR00627-R01 or DR00627-AV-R
 check-bom checks BOM/PnP files; next prints the next missing step and its command.
 
 When the project is a git repository, approvals and reviews also store the git
-commit they were recorded at, and the manufacturing review stores the manifest
-hash. Export and release checks then fail if design files under Hardware/
-(tracked or new) changed after that commit, or if the release files changed
-after the manufacturing review, so a review cannot silently cover a later change.
+commit they were recorded at; without git they store SHA-256 hashes of the
+design files under Hardware/ instead. The manufacturing review stores the
+manifest hash. Export and release checks then fail if design files under
+Hardware/ (tracked or new) changed after the record, or if the release files
+changed after the manufacturing review, so a review cannot silently cover a
+later change. This tool never commits or pushes.
 """
 
 import argparse
 import csv
 import datetime
+import fnmatch
 import hashlib
 import json
 import math
@@ -41,7 +44,8 @@ DEFAULT_REVIEW_DEPTH = "Medium"
 TEXT_FIELDS = ("project_name", "requirements_revision", "pcb_requirements_revision", "design_revision")
 OPTIONAL_TEXT_FIELDS = ("project_code", "review_depth")
 SETTABLE_FIELDS = TEXT_FIELDS + OPTIONAL_TEXT_FIELDS
-OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by", "commit", "manifest_sha256")
+HASH_FIELDS = {"schematic": "schematic_sha256", "design": "design_sha256"}
+OPTIONAL_RECORD_FIELDS = ("recorded_on", "recorded_by", "commit", "manifest_sha256") + tuple(HASH_FIELDS.values())
 GATES = {"G0": "input_approval", "G0.5": "pcb_input_approval", "G1": "export_approval"}
 RESERVED_RELEASE_NAMES = {"templates"}
 JUNK_FILES = {"thumbs.db", "desktop.ini", ".ds_store"}
@@ -50,6 +54,11 @@ DESIGN_DIR = "Hardware"
 SCHEMATIC_GLOBS = ("*.kicad_sch", "*.SchDoc", "*.sch")
 # Output-job files that EDA tools rewrite during export; not design changes.
 DESIGN_EXCLUDE_GLOBS = ("*.OutJob",)
+# Without git: local EDA files that are not design content (mirrors .gitignore).
+HASH_IGNORE_FILES = ("*.kicad_prl", "*.kicad_sch-bak", "*.kicad_pcb-bak", "*.lck", "*.tmp", "*.bak", "*~",
+                     "_autosave-*", "fp-info-cache", "*.dsn", "*.ses", "*.PcbDocPreview") + DESIGN_EXCLUDE_GLOBS
+HASH_IGNORE_DIRS = ("*-backups", "History", "__Previews", "logs", "Project Logs for*", "Project Outputs for*",
+                    ".git")
 
 NAME_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.]*$")
 VARIANT = re.compile(r"^[A-Z]$")
@@ -109,8 +118,9 @@ def validate_state(state):
                 raise StateError(f"{name}.{field} must be a nonempty string or null.")
         if record.get("commit") is not None and not COMMIT.match(record["commit"]):
             raise StateError(f"{name}.commit must be a hexadecimal git commit id.")
-        if record.get("manifest_sha256") is not None and not SHA256.match(record["manifest_sha256"]):
-            raise StateError(f"{name}.manifest_sha256 must be a SHA-256 hex digest.")
+        for field in ("manifest_sha256",) + tuple(HASH_FIELDS.values()):
+            if record.get(field) is not None and not SHA256.match(record[field]):
+                raise StateError(f"{name}.{field} must be a SHA-256 hex digest.")
         if status == accepted and not (nonempty_text(record["revision"]) and nonempty_text(record["evidence"])):
             raise StateError(f"{name} {accepted} requires a revision and evidence.")
 
@@ -194,12 +204,13 @@ def record_problem(record, label, expected_status, revision, scope=None, changed
         return f"{label}: requires {expected_status}."
     if not nonempty_text(revision) or record["revision"] != revision:
         return f"{label}: revision does not match the current revision."
-    if scope and changed and nonempty_text(record.get("commit")):
-        result = changed(record["commit"], scope)
+    check = changed(record, scope) if scope and changed else None
+    if check is not None:
+        result, ref = check
         if result is None:
-            return f"{label}: cannot verify design files against commit {record['commit'][:12]}."
+            return f"{label}: cannot verify design files against {ref}."
         if result:
-            return f"{label}: design files changed after commit {record['commit'][:12]}; review again."
+            return f"{label}: design files changed after {ref}; review again."
     return None
 
 
@@ -314,6 +325,56 @@ def git_change_detector(repo_root):
     return changed
 
 
+def _hash_ignored(name, patterns):
+    return name.lower() in JUNK_FILES or any(fnmatch.fnmatch(name, p) for p in patterns)
+
+
+def design_hashes(repo_root):
+    """SHA-256 over the design files under Hardware/ (no git needed), per scope."""
+    base = Path(repo_root) / DESIGN_DIR
+    files = []
+    if base.is_dir():
+        for folder, dirs, names in os.walk(base):
+            dirs[:] = sorted(d for d in dirs if not _hash_ignored(d, HASH_IGNORE_DIRS))
+            for name in names:
+                if not _hash_ignored(name, HASH_IGNORE_FILES):
+                    path = Path(folder) / name
+                    files.append((path.relative_to(base).as_posix(), path))
+    files.sort()
+    result = {}
+    for scope, globs in (("schematic", SCHEMATIC_GLOBS), ("design", None)):
+        digest = hashlib.sha256()
+        for rel, path in files:
+            if globs and not any(fnmatch.fnmatch(path.name, g) for g in globs):
+                continue
+            digest.update(f"{rel}\0{_sha256(path)}\n".encode("utf-8"))
+        result[scope] = digest.hexdigest()
+    return result
+
+
+def change_detector(repo_root):
+    """Return changed(record, scope) -> None or (True/False/None, reference).
+
+    Records with a git commit are checked with git; records with file hashes
+    (recorded without git) are checked against the current design file hashes.
+    """
+    git_changed = git_change_detector(repo_root)
+    cache = {}
+
+    def changed(record, scope):
+        commit = record.get("commit")
+        if nonempty_text(commit) and git_changed:
+            return git_changed(commit, scope), f"commit {commit[:12]}"
+        stored = record.get(HASH_FIELDS.get(scope, ""))
+        if nonempty_text(stored):
+            if "hashes" not in cache:
+                cache["hashes"] = design_hashes(repo_root)
+            return cache["hashes"][scope] != stored, "the recorded design file hash"
+        return None
+
+    return changed
+
+
 # --- Record updates (pure functions on a state dict) -------------------------
 
 def _today():
@@ -356,8 +417,12 @@ def set_deliverables(state, names):
     return validate_state(state)
 
 
-def approve(state, gate, revision, evidence, by=None, commit=None):
-    _set_record(state[GATES[gate]], "APPROVED", "APPROVED", revision, evidence, by, commit)
+def _hash_extra(hashes):
+    return {HASH_FIELDS[k]: v for k, v in (hashes or {}).items() if k in HASH_FIELDS}
+
+
+def approve(state, gate, revision, evidence, by=None, commit=None, hashes=None):
+    _set_record(state[GATES[gate]], "APPROVED", "APPROVED", revision, evidence, by, commit, _hash_extra(hashes))
     return validate_state(state)
 
 
@@ -367,7 +432,7 @@ def revoke(state, gate):
 
 
 def record_review(state, kind, status, revision=None, evidence=None, by=None, commit=None, manifest_sha256=None,
-                  second=False):
+                  second=False, hashes=None):
     if kind not in REVIEW_KEYS:
         raise StateError(f"Unknown review: {kind}")
     if status not in REVIEW_STATES:
@@ -379,7 +444,7 @@ def record_review(state, kind, status, revision=None, evidence=None, by=None, co
         key = SECOND_REVIEW_KEYS[kind]
         state["reviews"].setdefault(key, _pending())
     _set_record(state["reviews"][key], status, "PASS", revision, evidence, by, commit,
-                {"manifest_sha256": manifest_sha256})
+                {"manifest_sha256": manifest_sha256, **_hash_extra(hashes)})
     return validate_state(state)
 
 
@@ -824,7 +889,7 @@ def main(argv=None):
     try:
         state = load_state(args.state)
         cmd = args.command
-        changed = git_change_detector(repo_root)
+        changed = change_detector(repo_root)
 
         if cmd == "validate":
             print("VALID: workflow state schema.")
@@ -867,15 +932,17 @@ def main(argv=None):
 
         if cmd in ("set", "deliverables", "approve", "revoke", "review", "block", "unblock"):
             commit = git_head(repo_root)
+            hashes = design_hashes(repo_root) if commit is None and cmd in ("approve", "review") else None
             design_record = (cmd == "review" and args.status == "PASS") or (cmd == "approve" and args.gate == "G1")
             if design_record and design_dirty(repo_root):
-                raise StateError(f"Uncommitted changes under {DESIGN_DIR}/; commit the reviewed design first.")
+                raise StateError(f"Uncommitted changes under {DESIGN_DIR}/; commit the reviewed design first "
+                                 "(ask the user before committing).")
             if cmd == "set":
                 set_field(state, args.field, args.value)
             elif cmd == "deliverables":
                 set_deliverables(state, args.names)
             elif cmd == "approve":
-                approve(state, args.gate, args.revision, args.evidence, args.by, commit)
+                approve(state, args.gate, args.revision, args.evidence, args.by, commit, hashes)
             elif cmd == "revoke":
                 revoke(state, args.gate)
             elif cmd == "review":
@@ -887,7 +954,7 @@ def main(argv=None):
                                          "(projectctl.py manifest), then review those files.")
                     digest = manifest_hash(folder)
                 record_review(state, args.kind, args.status, args.revision, args.evidence, args.by, commit, digest,
-                              args.second)
+                              args.second, hashes)
             elif cmd == "block":
                 block(state, args.issue_id)
             else:

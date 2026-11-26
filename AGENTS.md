@@ -53,7 +53,7 @@ This repository is **independent of AI provider, model and client**. The main se
 - Release order (REL-04): Manager records `deliverables` → Designer generates outputs, runs `check-bom` and `manifest` last → Reviewer reviews → Manager records `review manufacturing PASS` → `check-release`.
 - Commands work on Windows, macOS and Linux. Use the user's OS syntax for shell commands; if `python` is not found (common on macOS/Linux), use `python3`, on Windows also `py`.
 - Write approval and review records with `python scripts/projectctl.py approve|review|set|block|unblock`; do not edit `workflow-state.json` by hand.
-- Commit the `Hardware/` design files before recording a review or approval. The record stores the current git commit; if the design changes later, `check-export`/`check-release` stops and asks for a new review.
+- Git is optional (AI-11). In a git repo the record stores the current commit, so the `Hardware/` design must be committed before a review PASS or G1: ask the user first and commit only after a yes; never push on your own. Without git the record stores design file hashes. Either way, if the design changes later, `check-export`/`check-release` stops and asks for a new review.
 - Before release, check BOM/PnP consistency with `python scripts/projectctl.py check-bom`.
 - Designer writes `MANIFEST.sha256`; the manufacturing PASS record stores its hash. If the manifest changes later, `check-release` asks for a new review. Next step and command: `python scripts/projectctl.py next`.
 - Record approvals only based on a real user decision. Reviewer verifies PASS status and its revision based on a real review. An earlier approval or review does not automatically cover a new revision.

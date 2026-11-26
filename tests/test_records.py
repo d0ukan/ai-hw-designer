@@ -505,5 +505,55 @@ class GitBindingTests(unittest.TestCase):
         self.assertIn("Schematic review: design files changed", out)
 
 
+class NoGitBindingTests(GitBindingTests):
+    """Same checks without git: records store design file hashes instead of a commit."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "Hardware").mkdir()
+        (self.root / "Hardware" / "board.kicad_pcb").write_text("v1\n", encoding="utf-8")
+        (self.root / "Hardware" / "board.kicad_sch").write_text("v1\n", encoding="utf-8")
+        self.state_path = self.root / "workflow-state.json"
+        self.state_path.write_text(json.dumps(pending_state()), encoding="utf-8")
+        self._real_head = projectctl.git_head
+        projectctl.git_head = lambda repo_root: None
+
+    def tearDown(self):
+        projectctl.git_head = self._real_head
+        self.tmp.cleanup()
+
+    def test_commit_is_recorded(self):
+        self.approve()
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        record = state["export_approval"]
+        self.assertNotIn("commit", record)
+        self.assertRegex(record["design_sha256"], r"^[0-9a-f]{64}$")
+        self.assertRegex(record["schematic_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_review_refused_with_uncommitted_design(self):
+        self.approve()
+        (self.root / "Hardware" / "board.kicad_pcb").write_text("v3\n", encoding="utf-8")
+        self.assertEqual(self.run_cli("review", "pcb", "PASS", "--revision", "R1", "--evidence", "e")[0], 0)
+        self.assertEqual(self.run_cli("approve", "G1", "--revision", "R1", "--evidence", "e")[0], 0)
+        self.assertEqual(self.run_cli("check-export")[0], 0)
+
+    def test_invalid_commit_value_rejected(self):
+        self.approve()
+        state = json.loads(self.state_path.read_text(encoding="utf-8"))
+        state["reviews"]["schematic"]["design_sha256"] = "not-a-hash"
+        self.state_path.write_text(json.dumps(state), encoding="utf-8")
+        code, out = self.run_cli("check-layout")
+        self.assertEqual(code, 2)
+        self.assertIn("SHA-256", out)
+
+    def test_backup_and_lock_files_are_ignored(self):
+        self.approve()
+        (self.root / "Hardware" / "board.kicad_prl").write_text("x\n", encoding="utf-8")
+        (self.root / "Hardware" / "board-backups").mkdir()
+        (self.root / "Hardware" / "board-backups" / "b.zip").write_text("x\n", encoding="utf-8")
+        self.assertEqual(self.run_cli("check-export")[0], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -14,9 +14,9 @@
 - `deliverables`: list of outputs required in the release (INT-25); written with `projectctl.py deliverables ...`.
 - `review_depth`: `Light`, `Medium` or `High` (INT-53); null means Medium. At High, `reviews.schematic_2` and `reviews.pcb_2` hold the second Reviewer's results (`review ... --second`); layout and G1 need both PASS records with different `--by` names.
 
-Records may also carry optional `recorded_on` (UTC date), `recorded_by` and `commit` fields; `projectctl.py` commands fill them automatically.
+Records may also carry optional `recorded_on` (UTC date), `recorded_by`, `commit`, `schematic_sha256` and `design_sha256` fields; `projectctl.py` commands fill them automatically.
 
-**Commit binding:** If the project is a git repository, `approve` and `review` record the current commit. If the design changes within the same `R01`, `check-export`/`check-release` catches it: if schematic files (`*.kicad_sch`, `*.SchDoc`, `*.sch`) changed after the schematic review, or any file under `Hardware/` changed after the PCB/manufacturing review and G1, the gate closes and a new review is required. New design files not added to Git also count as changes. A `review ... PASS` or `approve G1` record is rejected if the design is not committed. `*.OutJob` files that the EDA tool rewrites during export do not count as changes. Without Git the check is skipped.
+**Commit binding:** If the project is a git repository, `approve` and `review` record the current commit. If the design changes within the same `R01`, `check-export`/`check-release` catches it: if schematic files (`*.kicad_sch`, `*.SchDoc`, `*.sch`) changed after the schematic review, or any file under `Hardware/` changed after the PCB/manufacturing review and G1, the gate closes and a new review is required. New design files not added to Git also count as changes. A `review ... PASS` or `approve G1` record is rejected if the design is not committed. `*.OutJob` files that the EDA tool rewrites during export do not count as changes. Without Git (plain local folder) the records store SHA-256 hashes of the schematic files and of all design files under `Hardware/` instead, and the same checks run against them; EDA backups, locks and local settings (`*.kicad_prl`, `*-backups/`, `*.lck` …) are ignored. `projectctl.py` never commits or pushes; the AI asks the user before any commit (AI-11).
 
 **Deliverables and manifest:** The `deliverables` field (e.g. `BOM PnP Gerber SCH ASSY FAB`) is required for release; each item must exist as a `<code>-..._<item>.*` file or folder. `review manufacturing PASS` requires a valid manifest and stores its SHA-256 value as `manifest_sha256`.
 
@@ -34,7 +34,7 @@ python scripts/projectctl.py set design_revision R01
 python scripts/projectctl.py set requirements_revision REQ-1
 python scripts/projectctl.py set review_depth Medium   # Light | Medium | High (INT-53)
 python scripts/projectctl.py approve G0 --revision REQ-1 --evidence "User approval, 2026-11-25 chat" --by "<name>"
-# Schematic → review (commit the design first)
+# Schematic → review (in git: commit the design first, after the user's OK)
 python scripts/projectctl.py review schematic PASS --revision R01 --evidence "REVIEW_LOG.md#R01-SCH"
 # High only: second, independent Reviewer (also for pcb); use different --by names
 python scripts/projectctl.py review schematic PASS --second --by "<reviewer 2>" --revision R01 --evidence "REVIEW_LOG.md#R01-SCH-2"

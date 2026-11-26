@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.29 — 2026-11-26
+
+- Works without git: in a plain local folder, approvals and reviews store SHA-256 hashes of the schematic files and of all design files under `Hardware/` (new optional record fields `schematic_sha256`, `design_sha256`). A later design change closes the gate as with git; EDA backups, locks and local settings are ignored.
+- AI-11: the AI never commits, pushes, runs `git init` or changes branches on its own; it asks before any commit and pushes only when the user asks. `projectctl.py` never commits or pushes. AGENTS.md updated.
+- Tests: the git binding tests also run without git (67 tests).
+
 ## v1.28 — 2026-11-26
 
 - Cross-platform: CI now runs on Linux, Windows and macOS. Scripts always print UTF-8 (Turkish or other non-ASCII project names work on any console, also when piped).

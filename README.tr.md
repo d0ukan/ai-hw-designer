@@ -6,7 +6,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.28 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.29 ([değişiklikler](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -27,7 +27,7 @@ Bu şablon tek bir yönetici ajan ve iki uzman rol ile şematikten PCB'ye kadar 
 | 🤖 | **Her AI, her EDA, her işletim sistemi:** Claude, Codex, Gemini …; KiCad, Altium, EasyEDA; Windows, macOS, Linux | 🚦 | **Her kapıyı sen onaylarsın:** gereksinim G0, PCB girdileri G0.5, export G1 |
 | 🔍 | **Bağımsız review:** Hafif, Orta veya Yüksek (iki Reviewer) | 📐 | **Okunur şematik:** tel, güç sembolü, standart sayfa |
 | 🔌 | **MCP kurulumu önerilir:** bu proje ya da tüm projeler, sadece senin onayınla | 🌍 | **Yerel tedarik:** ülken, kullanıcının aldığı modüller, drop-in muadiller |
-| 📡 | **Diferansiyel ve RF:** şematikte belli, PCB'de çift olarak çizilir | 📦 | **Teslim kontrolleri:** BOM/PnP, manifest hash, git commit bağlama |
+| 📡 | **Diferansiyel ve RF:** şematikte belli, PCB'de çift olarak çizilir | 📦 | **Teslim kontrolleri:** BOM/PnP, manifest hash, git'li veya git'siz değişiklik bağlama |
 
 ### Ekip nasıl çalışır
 
@@ -330,6 +330,8 @@ python scripts/projectctl.py block F-001
 ```
 
 - **Commit bağı:** Proje git deposuysa `approve` ve `review` o anın commit'ini kaydeder. Review'dan sonra `Hardware/` altında değişiklik veya git'e eklenmemiş yeni dosya olursa kapı kapanır. Tasarım commit edilmeden `review ... PASS` veya `approve G1` kaydedilmez.
+- **Git olmadan:** proje düz bir yerel klasörde de çalışır (zip indirme, git yok); AI istemcisiyle ya da sadece terminalle. Kayıtlar o zaman tasarım dosyalarının SHA-256 özetini saklar; sonradan değişiklik olursa kapı yine kapanır. EDA yedek ve kilit dosyaları sayılmaz.
+- **Otomatik commit yok:** `projectctl.py` hiçbir zaman commit veya push yapmaz; AI her commit'ten önce sana sorar, push'u sadece sen istersen yapar (AI-11).
 - **Manifest bağı:** `review manufacturing PASS` manifestin hash'ini saklar; manifest sonradan yeniden üretilirse `check-release` yeniden review ister.
 - **Teslim listesi:** `deliverables` içindeki her çıktı (`<kod>-..._BOM.csv`, `_Gerber.zip` …) release'te bulunmalıdır.
 - **`check-bom`:** BOM ile PnP eşleşmesi, Qty, DNP, MPN, `R1-R3` aralıkları, sayısal koordinatlar; muadil eksikse uyarır. Noktalı virgüllü veya UTF-8 olmayan CSV'de açık hata verir.
