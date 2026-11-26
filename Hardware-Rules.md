@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.37 |
+| **Version** | v1.38 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aerospace (Aviation) rules · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |
@@ -16,11 +16,11 @@
 | Section | Rules | When to read |
 | :--- | :--- | :--- |
 | [00 · Project Intake — Project start questionnaire](rules/00-intake.md) | INT-01…INT-58 | First session of every new project (before G0) |
-| [00B · PCB Intake — Technical and mechanical decisions before layout](rules/00b-pcb-intake.md) | PCB-01…PCB-23 | Before layout (G0.5) |
+| [00B · PCB Intake — Technical and mechanical decisions before layout](rules/00b-pcb-intake.md) | PCB-01…PCB-25 | Before layout (G0.5) |
 | [01 · PCB manufacturing parameters](rules/01-pcb-parameters.md) | Default limit table | When entering PCB rules into the EDA tool |
 | [02 · Chassis, Ground & Polygon](rules/02-ground-polygon.md) | GND-01…GND-08 | For GND, chassis and polygon work |
 | [03 · JLCPCB / PCBWay — DFM & Cost Optimization](rules/03-dfm-cost.md) | DFM-00…DFM-17 | For component selection, manufacturer and cost decisions |
-| [04 · Schematic, Component Placement & Routing](rules/04-schematic-layout.md) | SCH-01…SCH-16, LAY-01…LAY-33 | Schematic, placement, routing, SI/PI and silkscreen |
+| [04 · Schematic, Component Placement & Routing](rules/04-schematic-layout.md) | SCH-01…SCH-16, LAY-01…LAY-34 | Schematic, placement, routing, SI/PI and silkscreen |
 | [05 · Differential Pairs, RF & High-Speed (SI/PI)](rules/05-diff-rf-hs.md) | DIF-01…DIF-11, HS-01…HS-05, RF-01…RF-09 | Only if differential, high-speed or RF is present |
 | [06 · Design Review & Verification](rules/06-verification.md) | VER-01…VER-13 | During review and verification stages |
 | [07 · AI working rules](rules/07-ai-rules.md) | AI-01…AI-11 | Once in the first session (short; AI-09 stop conditions) |

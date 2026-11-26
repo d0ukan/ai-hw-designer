@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.38 — 2026-11-26
+
+- PCB-23: minimum part-to-part gap per density (0.25 / 0.5 / 1.0 mm), courtyards never overlap.
+- PCB-24: ask the parts-to-board-edge distance (default 3 mm without edge rails, 1 mm with rails/panel).
+- PCB-25: ask via tenting (all / except chosen nets / per net class); via size per net class, power vias larger and optionally untented. DFM-04 follows it.
+- LAY-30: silk-to-pad/mask/silk DRC checks set to error plus a top/bottom render; designators that do not fit are moved or follow PCB-20.
+- LAY-34: every part, module and mechanical part has a 3D model; missing ones are drawn from datasheet dimensions. REV-21 for the Reviewer.
+
 ## v1.37 — 2026-11-26
 
 - PCB-23: ask component density before layout: High · Medium (default) · Low. A size limit or enclosure sets it automatically and the user is told. LAY-13 follows it.

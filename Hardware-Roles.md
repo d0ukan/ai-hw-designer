@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.37 |
+| **Version** | v1.38 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -90,6 +90,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-18** — Every schematic sheet uses the standard template with a complete title block and follows the fixed sheet order (SCH-14, SCH-15). A missing or wrong field (code, revision, sheet x/y) means REWORK.
 - [ ] **REV-19** — PCB review: the layout follows the PCB notes (SCH-16). After a schematic change during layout (LAY-33), review only the changed schematic area and its PCB update, and check the user was informed.
 - [ ] **REV-20** — BOM stock and lifecycle (DFM-17): every fitted part has `Lifecycle`, `Stock` and a recent `Checked` date; no NRND/LTB/EOL/Obsolete part without "user approved"; else REWORK.
+- [ ] **REV-21** — PCB checks: silk not on pads or mask openings (LAY-30), every part has a 3D model (LAY-34), part-to-edge and part-to-part distances (PCB-23, PCB-24), via tenting and sizes as approved (PCB-25); else REWORK.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 

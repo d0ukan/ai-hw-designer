@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.37 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.38 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -112,6 +112,8 @@ After the answer style and the project idea (INT-55), the Manager asks for the p
 - Every component gets at least one drop-in alternate where possible (DFM-14).
 - **Parts on one side or both** is asked before layout (PCB-22); default one side (cheaper).
 - **Component density** is asked too (PCB-23): High (compact) · Medium (balanced, default) · Low (spacious). A size limit or enclosure sets it automatically, and you are told.
+- **Edge distance and via tenting are asked** (PCB-24, PCB-25): default 3 mm parts-to-edge; vias tented by default, power vias may be larger and untented.
+- **Clean silkscreen and full 3D:** no silk on pads (checked as a DRC error plus a render), and every part gets a 3D model; missing ones are drawn from the datasheet (LAY-30, LAY-34).
 - **Test points are asked early** (INT-58): none, probe pads (default 1.5 × 1.5 mm SMD, 1.0 mm on small boards) or a pogo-pin fixture (≥ 1.0 mm pads, 2.54 mm spacing, one side, tooling holes); plus which nets.
 - **Only parts you can buy:** no NRND / Last Time Buy / EOL / Obsolete parts without your OK; stock is checked, written into the BOM (`Lifecycle`, `Stock`, `Checked`) and re-checked before G1; `check-bom` warns on risky parts (DFM-17, REV-20).
 - **Step by step, schematic then PCB:** the schematic ends with short PCB notes. If layout finds a schematic problem, the AI goes back to the schematic, fixes it, tells you what changed and why (and shows it for your OK if you chose the schematic check), gets it re-reviewed and continues the PCB (SCH-16, LAY-33).
@@ -284,7 +286,7 @@ Section 04 (`rules/04-schematic-layout.md`):
 | Placement | LAY-08…LAY-13 | Reference layout, placement order, input protection, switching loop, crystal, thermal, alignment |
 | Routing | LAY-14…LAY-24 | Routing order, net classes and IPC-2152, layer use, split planes, clock spacing (3W center-to-center), analog ground, power distribution, high voltage, pad entry/teardrops, shortest direct path, approved free-angle routing |
 | SI / PI | LAY-25…LAY-29 | Decoupling loop, critical length, impedance matching, length/delay matching, final check |
-| Silkscreen and changes | LAY-30…LAY-33 | Overlap-free silkscreen on each side; applying the marking decisions; user PCB check; schematic change during layout |
+| Silkscreen, 3D and changes | LAY-30…LAY-34 | Overlap-free silkscreen on each side; applying the marking decisions; user PCB check; schematic change during layout; 3D model for every part |
 
 Without special manufacturing needs, JLCPCB and/or PCBWay standard capabilities are the baseline (DFM-00).
 

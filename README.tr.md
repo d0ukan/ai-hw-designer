@@ -6,7 +6,7 @@
 
 **Model ve platformdan bağımsız, tekrarlanabilir donanım tasarım projesi; maliyet/performans dengesi proje hedefine göre seçilir.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.37 ([değişiklikler](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · Lisans: [MIT](LICENSE) · Sürüm: v1.38 ([değişiklikler](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-şablon-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-her%20asistan-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -112,6 +112,8 @@ Manager anlatım tercihi ve proje fikrinden (INT-55) sonra proje adı, proje kod
 - Her komponente mümkünse en az 1 drop-in muadil bulunur (DFM-14).
 - **Komponentler tek yüzde mi, iki yüzde mi** PCB'den önce sorulur (PCB-22); varsayılan tek yüz (daha ucuz).
 - **Yerleşim yoğunluğu** da sorulur (PCB-23): Yüksek (sıkı) · Orta (dengeli, varsayılan) · Düşük (ferah). Boyut sınırı veya kutu varsa yoğunluk otomatik ona göre olur ve sana söylenir.
+- **Kenar mesafesi ve via tenting sorulur** (PCB-24, PCB-25): varsayılan parça–kenar 3 mm; via'lar varsayılan kapalı (tented), güç via'ları daha büyük ve açık olabilir.
+- **Temiz silkscreen ve tam 3D:** silkscreen pad'e binmez (DRC hatası olarak ve render ile kontrol edilir); her parçanın 3D modeli olur, eksikse datasheet ölçüsünden çizilir (LAY-30, LAY-34).
 - **Test noktaları başta sorulur** (INT-58): yok, elle ölçüm padi (varsayılan 1.5 × 1.5 mm SMD, küçük kartta 1.0 mm) veya pogo pinli fikstür (≥ 1.0 mm pad, 2.54 mm aralık, tek yüz, hizalama delikleri); ayrıca hangi hatlarda olacağı.
 - **Sadece alınabilir parçalar:** NRND / Son Alım / EOL / Obsolete parçalar senin onayın olmadan kullanılmaz; stok kontrol edilir, BOM'a yazılır (`Lifecycle`, `Stock`, `Checked`) ve G1'den önce tekrar kontrol edilir; `check-bom` riskli parçada uyarı verir (DFM-17, REV-20).
 - **Adım adım, önce şematik sonra PCB:** şematik kısa PCB notlarıyla biter. PCB sırasında şematik hatası bulunursa AI şematiğe döner, düzeltir, neyin neden değiştiğini sana anlatır (şematik kontrolü seçtiysen gösterip onayını bekler), Reviewer'a tekrar kontrol ettirir ve PCB'ye devam eder (SCH-16, LAY-33).
@@ -284,7 +286,7 @@ MCP sürümü, EDA uyumu ve gerçek araç fonksiyonları proje başında doğrul
 | Yerleşim | LAY-08…LAY-13 | Referans layout, yerleşim sırası, giriş koruması, switching döngüsü, kristal, termal, hizalama |
 | Routing | LAY-14…LAY-24 | Routing sırası, net class ve IPC-2152, katman kullanımı, bölünmüş düzlem, clock aralığı (3W merkezden), analog GND, güç dağıtımı, yüksek gerilim, pad girişi/teardrop, en kısa doğrudan yol, onaylı free-angle |
 | SI / PI | LAY-25…LAY-29 | Decoupling döngüsü, kritik uzunluk, empedans eşleştirme, length/delay matching, bitiş kontrolü |
-| Silkscreen ve değişiklik | LAY-30…LAY-33 | Her yüzde çakışmasız silkscreen; işaretleme kararlarının uygulanması; kullanıcı PCB kontrolü; layout sırasında şematik değişikliği |
+| Silkscreen, 3D ve değişiklik | LAY-30…LAY-34 | Her yüzde çakışmasız silkscreen; işaretleme kararlarının uygulanması; kullanıcı PCB kontrolü; layout sırasında şematik değişikliği; her parça için 3D model |
 
 Özel üretim istenmediyse JLCPCB ve/veya PCBWay standart kabiliyetleri esas alınır (DFM-00).
 

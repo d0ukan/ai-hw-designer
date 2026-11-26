@@ -18,7 +18,7 @@
 - [ ] **DFM-01** — Check the current standard manufacturing limits of JLCPCB and PCBWay.
 - [ ] **DFM-02** — Keep design rules compatible with the standard manufacturing capabilities of both manufacturers where possible.
 - [ ] **DFM-03** — Do not use blind vias, buried vias, microvias, HDI or via-in-pad unless required.
-- [ ] **DFM-04** — Define standard signal and GND vias as tented vias. Do not apply this rule to CHASSIS_GND vias that must stay open.
+- [ ] **DFM-04** — Apply the via tenting and via sizes from PCB-25 (default: signal and GND vias tented). CHASSIS_GND vias stay open.
 - [ ] **DFM-05** — Unless required, do not choose special laminates, special copper thickness, special solder mask colors or extra manufacturing processes that increase cost.
 - [ ] **DFM-06** — Keep footprints, solder mask dams, pad spacing and component placement compatible with PCB/PCBA manufacturing limits.
 - [ ] **DFM-07** — Report to the user, with justification, every option outside standard manufacturing that increases cost.
