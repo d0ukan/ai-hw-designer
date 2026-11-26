@@ -23,7 +23,8 @@
 ### C · Stack-up & Manufacturing
 
 - [ ] **PCB-09** — Confirm the layer count from INT-20 (the user's target, or the AI's choice with its one-line reason). Is there a special request for manufacturer, stack-up, finished PCB thickness, outer/inner copper weight, solder mask/silkscreen color and surface finish? Otherwise propose the price/performance defaults in section 03 to the user.
-- [ ] **PCB-10** — Are controlled impedance, special vias, edge plating/castellation, panelization, stencil, single/double-sided assembly or special manufacturing tolerances required? If so, get only the related manufacturer and user information; apply section 05.
+- [ ] **PCB-10** — Are controlled impedance, special vias, edge plating/castellation, panelization, stencil or special manufacturing tolerances required? If so, get only the related manufacturer and user information; apply section 05.
+- [ ] **PCB-22** — Ask explicitly: **Parts on one side only (Top) or on both sides (Top + Bottom)?** Default: one side (cheaper, one stencil, one assembly pass). Both sides only for a small board or a real need; then ask which parts may go on the bottom (default: small passives only; no heavy, tall or THT parts). Record the answer; PnP, stencils and the assembly drawing follow it.
 
 ### D · Optional CHASSIS_GND perimeter ring
 

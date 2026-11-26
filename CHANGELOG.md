@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.36 — 2026-11-26
+
+- PCB-22: ask before layout whether parts go on one side (Top) or both sides; default one side. If both, which parts may go on the bottom. LAY-13 follows the answer.
+
 ## v1.35 — 2026-11-26
 
 - INT-58: test point options are now explicit: No · Probe pads (1.5 × 1.5 mm default) · Pogo-pin fixture (≥ 1.0 mm pads, ≥ 2.54 mm spacing, one side, 2–3 tooling holes, pin type).
