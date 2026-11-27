@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.44 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.45 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.45 — 2026-11-27
+
+- LAY-22: no other net between the pads of a 0603 or smaller part on the same layer.
+- LAY-29: run the EDA track cleanup (no dangling, duplicate or looping segments, no extra branch to an already connected pad) and zoom over every part on each side before review.
+
 ## v1.44 — 2026-11-27
 
 - New output `<prefix>_BOM_Supplier.csv`: a short BOM to share with the assembler or supplier (designators, quantities, part and alternate part with manufacturer); fitted parts only, no price, stock or internal notes.
