@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.46 — 2026-11-27
+
+- LAY-22: the no-trace-between-pads limit is now 0402 or smaller (was 0603).
+
 ## v1.45 — 2026-11-27
 
 - LAY-22: no other net between the pads of a 0603 or smaller part on the same layer.
