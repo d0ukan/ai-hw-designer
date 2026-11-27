@@ -4,7 +4,7 @@
 
 | Document | HW AI Design Rules |
 | :--- | :--- |
-| **Version** | v1.43 |
+| **Version** | v1.44 |
 | **Scope** | Project Intake · Schematic Design · PCB Intake · PCB Layout · DFM · PCBA · Conditional RF and Aerospace (Aviation) rules · Revision, variants and outputs · Conditional battery/charging |
 | **Target manufacturers** | JLCPCB / PCBWay (Hobby default); user-approved manufacturer for other profiles |
 | **Design priority** | Reliability · Manufacturability · Cost/performance per project goal (INT-48) · Token efficiency |

@@ -11,6 +11,7 @@
 | :--- | :--- | :--- |
 | Gerber + drill | `<prefix>_Gerber.zip` | Layer set the manufacturer requires |
 | BOM | `<prefix>_BOM.csv` | Per variant; MPN, alternate part, DNP. The checked BOM |
+| Supplier BOM | `<prefix>_BOM_Supplier.csv` | Per variant, to share with the assembler or supplier: `Designator, Qty, Comment, Footprint, MPN, Manufacturer, Alternate MPN, Alternate Manufacturer`; fitted parts only; no price, stock or internal notes |
 | JLCPCB BOM | `<prefix>_BOM_JLC.csv` | Only if JLCPCB assembles with LCSC (Asia) sourcing (INT-18, INT-56); never in the Aerospace profile (no CoC/lot traceability): `Comment, Designator, Footprint, LCSC Part #` |
 | Detailed BOM | `<prefix>_BOM.xlsx` | If requested: all BOM columns plus unit price, qty × build qty, line total, stock, supplier link, check date; BOM total at the bottom. Real prices and stock only, with source and date; leave a cell empty and say so if it could not be checked |
 | Pick & Place | `<prefix>_PnP.csv` + `<prefix>_PnP.txt` | Per variant; DNP excluded. CSV is the checked format; the `.txt` is the same data tab-separated (many PCBA houses ask for it). `.pos`/`.xlsx` only on request |
