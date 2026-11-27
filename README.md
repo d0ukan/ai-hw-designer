@@ -6,7 +6,7 @@
 
 **A reproducible, model- and platform-independent hardware (PCB) design project; the cost/performance balance follows each project's goal.**
 
-[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.47 ([changelog](CHANGELOG.md))
+[![tests](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml/badge.svg)](https://github.com/d0ukan/hardware-for-anything/actions/workflows/tests.yml) · License: [MIT](LICENSE) · Version: v1.48 ([changelog](CHANGELOG.md))
 
 [![Template](https://img.shields.io/badge/GitHub-template-2ea44f?logo=github)](https://github.com/d0ukan/hardware-for-anything/generate) ![EDA](https://img.shields.io/badge/EDA-KiCad%20%C2%B7%20Altium%20%C2%B7%20EasyEDA-2b7bbf) ![AI](https://img.shields.io/badge/AI-any%20assistant-6b5bd6) ![Python](https://img.shields.io/badge/python-3.10%2B-3776ab?logo=python&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 
@@ -117,6 +117,7 @@ After the answer style and the project idea (INT-55), the Manager asks for the p
 - **Test points are asked early** (INT-58): none, probe pads (default 1.5 × 1.5 mm SMD, 1.0 mm on small boards) or a pogo-pin fixture (≥ 1.0 mm pads, 2.54 mm spacing, one side, tooling holes); plus which nets.
 - **Outputs for the factory:** BOM and PnP as CSV, PnP also as `.txt`; a short supplier BOM to share (parts, quantities, alternates); on request a JLCPCB-format BOM (only with LCSC/Asia sourcing, never for Aerospace) and a detailed Excel BOM with price, stock and totals (section 09).
 - **Aerospace BOM for FMECA:** authorized distributor, CoC/lot, qualification (MIL/QML/AEC-Q, VID/SMD), FIT, MTBF with source; IC errata checked (AVI-11, AVI-12).
+- **Full clearance table** (section 01): trace, copper, via, annular ring, PTH/NPTH, hole-to-hole, hole-to-copper, pad, mask, silkscreen and edge, a little above the JLCPCB/PCBWay limits so there is no extra cost.
 - **Routing checked by two reviewers:** two independent agents go over the layout net by net (needless bends, detours, stubs, loops…); shared findings are fixed, disagreements are argued once and the Manager or you decide (REV-22).
 - **Clean output documents:** one standard look with the same title block on every page and your logo, name, signature or document number if you give them; you choose the language (default English); every PDF and drawing layer is rendered and checked for overlapping text (REL-05).
 - **Only parts you can buy:** no NRND / Last Time Buy / EOL / Obsolete parts without your OK; stock is checked, written into the BOM (`Lifecycle`, `Stock`, `Checked`) and re-checked before G1; `check-bom` warns on risky parts (DFM-17, REV-20).

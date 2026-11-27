@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.48 — 2026-11-27
+
+- Section 01 table completed and re-checked against the JLCPCB and PCBWay capability pages: V-cut edge, via annular ring, PTH hole and ring, NPTH hole, hole-to-hole, via/PTH/NPTH to copper, pad to pad, solder mask expansion and dam, silkscreen line/height and silk-to-pad. Defaults stay a little above the limits.
+
 ## v1.47 — 2026-11-27
 
 - REV-22: every PCB review includes a routing review by two independent reviewers, net by net; shared findings go to REWORK, disagreements are argued once with evidence, then the Manager (or the user, if design intent changes) decides. Both lists go into `REVIEW_LOG.md`.
