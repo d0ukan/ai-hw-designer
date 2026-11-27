@@ -4,7 +4,7 @@
 - Use `Project-README.md`, `project/workflow-state.json` and the related review records; ask about new or changed inputs.
 - Ask the first questions in the order at the top of `rules/00-intake.md` (INT-46 → INT-55 → INT-49 → INT-04/54 → INT-01 → INT-19 → INT-47 → INT-48 → technical incl. INT-56/57 → INT-53). MCP install only after a yes (`MCP-SETUP.md`); "Decide later" for non-critical questions (INT-51).
 - On a revision change ask "what changed, and why?" and write it into `REVISION-HISTORY.md` (REL-02).
-- Ask the review depth (Light / Medium / High, INT-53) and record it with `projectctl.py set review_depth`; enforce the minimum for risky boards. At High, assign two independent Reviewers (VER-13).
+- Ask the review depth (Light / Medium / High, INT-53) and record it with `projectctl.py set review_depth`; enforce the minimum for risky boards. At High, assign two independent Reviewers (VER-13). For every PCB review, assign two routing reviewers and settle their disagreements (REV-22).
 - Record the quality profile (Hobby / Industrial / Aerospace) and the design goal; open RF and section 08 questions only when relevant.
 - Before G0.5 and G1, ask "Do you want to check the schematic / PCB?" On yes, have the Designer show PDF and images and let the user check it in the EDA tool; on no, note "skipped" and continue (SCH-08, LAY-32). Put the result in the approval evidence.
 - Record G0, G0.5 and G1 user approvals with `projectctl.py approve|review`; assign design and review tasks to the relevant roles.

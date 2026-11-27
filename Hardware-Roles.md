@@ -4,7 +4,7 @@
 
 | Document | HW AI Agent Roles & Workflow |
 | :--- | :--- |
-| **Version** | v1.46 |
+| **Version** | v1.47 |
 | **Team structure** | 1 Hardware Manager + 1 Hardware Designer + 1 Hardware Reviewer (2 independent Reviewers at review depth High, INT-53) |
 | **AI / Model** | Provider- and client-independent |
 | **Shared design rules** | [Hardware-Rules.md](Hardware-Rules.md) |
@@ -91,6 +91,7 @@ Roles are not model or product names. Codex, Claude, Gemini, DeepSeek and other 
 - [ ] **REV-19** — PCB review: the layout follows the PCB notes (SCH-16). After a schematic change during layout (LAY-33), review only the changed schematic area and its PCB update, and check the user was informed.
 - [ ] **REV-20** — BOM stock and lifecycle (DFM-17): every fitted part has `Lifecycle`, `Stock` and a recent `Checked` date; no NRND/LTB/EOL/Obsolete part without "user approved"; else REWORK.
 - [ ] **REV-21** — PCB checks: silk not on pads or mask openings (LAY-30), every part has a 3D model (LAY-34), part-to-edge and part-to-part distances (PCB-23, PCB-24), via tenting and sizes as approved (PCB-25); else REWORK.
+- [ ] **REV-22** — **Routing review by two reviewers (every depth):** Two independent routing reviewers (separate subagents, clean context, preferably different models; at depth High the two Reviewers do it) check only placement and routing, net by net and zoomed on each layer: needless bends or corners where a straight path exists, detours, stubs, loops, traces between small pads, acute angles, extra vias, return path, spacing, diff/HS/RF rules (LAY-17…29, section 05). Each lists findings as `net | layer | x,y | issue | rule | fix`. Then compare: shared findings go to REWORK; on a disagreement each gives its reason once with evidence; if still split, the Manager decides by the rules, or asks the user if it changes design intent. Record both lists and the outcome in `REVIEW_LOG.md`.
 
 **Independence rule:** The Reviewer does not change design files. The Designer makes the fixes; the Reviewer only updates review reports and finding statuses. An agent cannot give independent approval of its own design change.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.47 — 2026-11-27
+
+- REV-22: every PCB review includes a routing review by two independent reviewers, net by net; shared findings go to REWORK, disagreements are argued once with evidence, then the Manager (or the user, if design intent changes) decides. Both lists go into `REVIEW_LOG.md`.
+- LAY-23: if the target pad or via is in line, route straight; every bend needs a reason.
+
 ## v1.46 — 2026-11-27
 
 - LAY-22: the no-trace-between-pads limit is now 0402 or smaller (was 0603).

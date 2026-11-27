@@ -11,6 +11,7 @@
 - Check differential pairs: visible and noted in the schematic, recognized by the EDA, routed coupled, pair table matches (REV-17).
 - Check BOM lifecycle and stock (REV-20, DFM-17).
 - Check silk vs pads, 3D models, edge and part distances, via tenting (REV-21).
+- Routing review with a second reviewer, net by net; compare, discuss disagreements once (REV-22).
 - Check user-supplied modules: footprint matches the product the user buys, socket stocked, DNP and marked in BOM (REV-16).
 - Write the finding, severity, location, evidence and expected fix in the `REVIEW_LOG.md` format. Report the PASS/REWORK/BLOCKED result.
 - Reuse results already verified for the same revision; check the fixed areas and their effects. Do not give user approval or present unverified actions as passed.
